@@ -33,16 +33,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .home-logo{font-family:'Roboto',sans-serif;font-size:13rem;font-weight:900;letter-spacing:-8px;line-height:0.85;color:var(--text);opacity:0.92;}
 .home-logo span{color:var(--accent);}
 .home-btns{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:60px;}
-/* Pulsanti — niente cornice, grigio leggibile */
-.btn-main{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;padding:22px 72px;border-radius:4px;cursor:pointer;transition:opacity .2s;}
-.btn-main:active{opacity:0.6;transform:scale(0.97);}
-.btn-ghost{background:none;border:none;color:#6a7a8a;font-family:'Roboto',sans-serif;font-size:1.1rem;font-weight:400;letter-spacing:4px;text-transform:uppercase;padding:14px 40px;cursor:pointer;}
+/* Pulsanti — tutti uguale, bold, niente bordo */
+.btn-main{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 72px;cursor:pointer;transition:opacity .2s;}
+.btn-main:active{opacity:0.5;transform:scale(0.97);}
+.btn-ghost{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 72px;cursor:pointer;transition:opacity .2s;}
+.btn-ghost:active{opacity:0.5;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{background:var(--bg);flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;}
 .goal-header{padding:52px 36px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
 .goal-header-title{font-family:'Roboto',sans-serif;font-size:2rem;font-weight:900;letter-spacing:2px;color:var(--text);}
-.btn-back{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1rem;font-weight:500;letter-spacing:3px;text-transform:uppercase;padding:14px 0;cursor:pointer;}
+.btn-back{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 0;cursor:pointer;transition:opacity .2s;}
+.btn-back:active{opacity:0.5;}
 
 /* Sezione distanza - 2/3 schermo */
 .goal-dist-section{flex:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;}
@@ -73,9 +75,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 
 /* Pulsante avvia */
 .goal-start-wrap{padding:16px 36px 48px;flex-shrink:0;}
-.btn-start{width:100%;padding:26px;border-radius:6px;background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:500;letter-spacing:5px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
+.btn-start{width:100%;padding:22px;border-radius:0;background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
 .btn-start.ready{color:#a0b0c0;}
-.btn-start:active{opacity:0.6;transform:scale(0.99);}
+.btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
 #page-app{background:var(--bg);overflow:hidden;}
@@ -162,7 +164,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 #pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
 .pause-title{font-family:'Roboto',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
 .pause-btns{display:flex;gap:48px;}
-.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.2rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;padding:20px 52px;cursor:pointer;}
+.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'Roboto',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
+.btn-pause-action:active{opacity:0.5;}
 
 /* ═══ HISTORY ═══ */
 #page-history{background:var(--bg);flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
@@ -252,6 +255,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 <!-- APP -->
 <div id="page-app" class="page">
   <canvas id="track-canvas"></canvas>
+  <canvas id="particles-canvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
 
   <div id="boat-arrow">
     <svg width="28" height="36" viewBox="0 0 28 36">
@@ -536,14 +540,85 @@ function initHomeCanvas(){
   requestAnimationFrame(()=>{
     cv.width=cv.offsetWidth||window.innerWidth;cv.height=cv.offsetHeight||window.innerHeight;
     const ctx=cv.getContext('2d');
-    const pts=Array.from({length:60},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*3+1,vy:-(0.3+Math.random()*0.5),op:0.3+Math.random()*0.5}));
+    // Puntini che scendono dall'alto verso il basso
+    const pts=Array.from({length:60},()=>({
+      x:Math.random()*cv.width,
+      y:Math.random()*cv.height,
+      r:Math.random()*3+1,
+      vy:0.3+Math.random()*0.5,   // positivo = verso il basso
+      op:0.3+Math.random()*0.5
+    }));
     function frame(){
       ctx.clearRect(0,0,cv.width,cv.height);
-      pts.forEach(p=>{p.y+=p.vy;if(p.y<-5){p.y=cv.height+5;p.x=Math.random()*cv.width;}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();});
+      pts.forEach(p=>{
+        p.y+=p.vy;
+        if(p.y>cv.height+5){p.y=-5;p.x=Math.random()*cv.width;}  // riappare in cima
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();
+      });
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   });
+}
+
+// ═══════════════════════════════════════════════════════
+//  PARTICELLE SCHERMATA ALLENAMENTO
+//  Scendono dall'alto, velocità proporzionale al ritmo
+// ═══════════════════════════════════════════════════════
+let particlesCanvas=null, particlesCtx=null, particleRafId=null;
+let currentPaceSpeed=0.4; // velocità base, aumenta con il ritmo
+
+const APP_PARTICLES = Array.from({length:55},()=>({
+  x:Math.random(),   // posizione normalizzata 0-1
+  y:Math.random(),
+  r:Math.random()*2.5+0.8,
+  vy:0.3+Math.random()*0.4, // velocità relativa individuale
+  op:0.15+Math.random()*0.3
+}));
+
+function initParticles(){
+  particlesCanvas=document.getElementById('particles-canvas');
+  particlesCtx=particlesCanvas.getContext('2d');
+  particlesCanvas.width=window.innerWidth;
+  particlesCanvas.height=window.innerHeight;
+  window.addEventListener('resize',()=>{
+    if(particlesCanvas){particlesCanvas.width=window.innerWidth;particlesCanvas.height=window.innerHeight;}
+  });
+  if(particleRafId)cancelAnimationFrame(particleRafId);
+  animateParticles();
+}
+
+function animateParticles(){
+  particleRafId=requestAnimationFrame(animateParticles);
+  if(!particlesCanvas)return;
+  const W=particlesCanvas.width,H=particlesCanvas.height;
+  const ctx=particlesCtx;
+  ctx.clearRect(0,0,W,H);
+  APP_PARTICLES.forEach(p=>{
+    // Velocità = base individuale × currentPaceSpeed (modulata dal ritmo)
+    p.y+=p.vy*currentPaceSpeed;
+    if(p.y>1.02){p.y=-0.02;p.x=Math.random();}
+    ctx.beginPath();
+    ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(180,195,220,${p.op})`;
+    ctx.fill();
+  });
+}
+
+// Aggiorna velocità particelle dal passo (chiamata in updateUI)
+function updateParticleSpeed(meters, elapsedSec){
+  if(!isStarted||elapsedSec<3||meters<5){currentPaceSpeed=0.4;return;}
+  // m/s corrente (media sugli ultimi secondi dal paceWindow)
+  if(paceWindow.length>=2){
+    const dm=session.meters-paceWindow[0].m;
+    const dt=(Date.now()-paceWindow[0].t)/1000;
+    if(dm>5&&dt>0){
+      const mps=dm/dt; // metri al secondo
+      // Un vogatore a ritmo 2:00/500m fa 4.17 m/s — mappo 1-6 m/s su 0.2-2.0x
+      currentPaceSpeed=Math.max(0.2,Math.min(2.0, mps/3));
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -827,6 +902,7 @@ function updateUI(d){
   const watt=d.byteLength>=12?d.getUint8(11):0;
   updateChallenge(session.meters,watt,strokes);
   updateGoalBar(session.meters,getElapsedSec());
+  updateParticleSpeed(session.meters,getElapsedSec());
 
   if(d.byteLength>=12){
     if(watt>0)session.watts.push(watt);
@@ -920,7 +996,8 @@ async function startWorkout(){
   buildMilestones();
   document.getElementById('goal-progress-wrap').style.display=goalType?'block':'none';
   initTrackCanvas();
-  fetchWeather(); // meteo subito + aggiornato ad ogni sessione
+  initParticles();
+  fetchWeather();
   switchPage('page-app');
   try{
     const id=await dbAdd('sessions',{date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:0,time:'00:00:00',timeSec:0,maxWatt:0,avgWatt:0,strokes:0,avgSpm:0,avgBpm:0,maxBpm:0});
