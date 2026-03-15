@@ -79,28 +79,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 #boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
 #ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
 
-/* ── Header: timer | meteo | orologio ── */
-#app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:48px 32px 0;z-index:100;pointer-events:none;}
+/* ── Header: timer | meteo | orologio — margine 7mm ≈ 26px + safe area ── */
+#app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
 .hdr-timer{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:4px;color:var(--dim);}
 .hdr-weather{display:flex;flex-direction:column;align-items:center;gap:2px;}
 .hdr-weather-icon{font-size:1.4rem;line-height:1;}
 .hdr-weather-temps{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;letter-spacing:2px;color:var(--dim);}
 .hdr-clock{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:3px;color:var(--dim);}
 
-/* ── Watt sx ── */
-#watt-block{position:absolute;top:110px;left:32px;z-index:100;pointer-events:none;}
-.watt-num{font-family:'Barlow Condensed',sans-serif;font-size:5.5rem;font-weight:900;line-height:0.85;letter-spacing:-3px;color:var(--dim);}
-.watt-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:6px;}
+/* ── Watt sx — +70% font, margine 26px ── */
+#watt-block{position:absolute;top:108px;left:26px;z-index:100;pointer-events:none;}
+.watt-num{font-family:'Barlow Condensed',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--dim);}
+.watt-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:8px;}
 /* Barre watt */
-.watt-bars{margin-top:10px;display:flex;flex-direction:column;gap:4px;width:140px;}
-.watt-bar-track{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;position:relative;overflow:visible;}
-#watt-bar-curr{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .25s;}
-#watt-bar-prev{height:3px;background:var(--red);border-radius:1px;width:0%;transition:width .6s;opacity:0.7;}
+.watt-bars{margin-top:12px;display:flex;flex-direction:column;gap:5px;width:160px;}
+.watt-bar-track{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;position:relative;overflow:visible;}
+#watt-bar-curr{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .25s;}
+#watt-bar-prev{height:4px;background:var(--red);border-radius:2px;width:0%;transition:width .6s;opacity:0.7;}
 
-/* ── Metri dx ── */
-#meters-block{position:absolute;top:110px;right:32px;z-index:100;pointer-events:none;text-align:right;}
-.meters-num{font-family:'Barlow Condensed',sans-serif;font-size:5.5rem;font-weight:900;line-height:0.85;letter-spacing:-3px;color:var(--dim);}
-.meters-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:6px;text-align:right;}
+/* ── Metri dx — +70% font, margine 26px ── */
+#meters-block{position:absolute;top:108px;right:26px;z-index:100;pointer-events:none;text-align:right;}
+.meters-num{font-family:'Barlow Condensed',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--dim);}
+.meters-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:8px;text-align:right;}
 
 /* ── Ghost delta ── */
 #ghost-delta{position:absolute;top:96px;left:50%;transform:translateX(-50%);z-index:200;font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:3px;background:rgba(10,11,14,0.7);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:3px;padding:4px 14px;white-space:nowrap;display:none;}
@@ -125,34 +125,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .cr-badge.isnew{background:var(--gold);color:#000;}
 .cr-badge.nope{background:rgba(255,255,255,0.06);color:var(--dim);}
 
-/* ── Bottom stats ── */
+/* ── Bottom stats — margine 26px, font +50% ── */
 #bottom-stats{position:absolute;bottom:0;left:0;right:0;z-index:100;pointer-events:none;}
 
-/* Barra obiettivo con milestone */
-#goal-progress-wrap{padding:0 32px 8px;display:none;}
-.gp-header{display:flex;justify-content:space-between;margin-bottom:5px;}
+/* Barra obiettivo — più spessa, buon margine dai dati */
+#goal-progress-wrap{padding:0 26px 16px;display:none;}
+.gp-header{display:flex;justify-content:space-between;margin-bottom:7px;}
 .gp-label{font-size:0.5rem;letter-spacing:4px;color:var(--dim2);text-transform:uppercase;}
 #gp-eta{font-size:0.6rem;font-weight:600;letter-spacing:1px;color:var(--dim);}
-.gp-track{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;position:relative;}
-#gp-fill{height:100%;background:rgba(255,255,255,0.3);border-radius:2px;width:0%;transition:width .5s;}
+.gp-track{height:7px;background:rgba(255,255,255,0.05);border-radius:4px;position:relative;}
+#gp-fill{height:100%;background:rgba(255,255,255,0.3);border-radius:4px;width:0%;transition:width .5s;}
 #gp-fill.done{background:var(--green);}
 /* Milestone markers */
 .gp-milestones{position:absolute;inset:0;}
-.ms-marker{position:absolute;top:-4px;width:2px;height:12px;background:rgba(255,255,255,0.15);border-radius:1px;transform:translateX(-50%);}
+.ms-marker{position:absolute;top:-5px;width:2px;height:17px;background:rgba(255,255,255,0.15);border-radius:1px;transform:translateX(-50%);}
 .ms-marker.passed{background:rgba(255,255,255,0.35);}
-/* Animazione milestone */
 @keyframes ms-pop{0%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(2.5);background:rgba(255,255,255,0.8)}100%{transform:translateX(-50%) scaleY(1)}}
 .ms-marker.pop{animation:ms-pop .5s ease-out;}
 
 /* Divisore */
-.stats-div{height:1px;background:var(--border);margin:0 32px;}
+.stats-div{height:1px;background:var(--border);margin:0 26px;}
 
-/* 4 stat */
-.stats-row{display:flex;justify-content:space-evenly;padding:10px 16px 28px;}
-.stat-sm{text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.stat-icon{font-size:0.9rem;opacity:0.35;line-height:1;}
-.stat-sm-val{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;line-height:1;}
-.stat-sm-lbl{font-size:0.48rem;letter-spacing:3px;color:var(--dim2);text-transform:uppercase;}
+/* 4 stat — +50% font, padding orizzontale 26px, più spazio verticale */
+.stats-row{display:flex;justify-content:space-evenly;padding:14px 26px 36px;}
+.stat-sm{text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.stat-icon{font-size:1.1rem;opacity:0.35;line-height:1;}
+.stat-sm-val{font-family:'Barlow Condensed',sans-serif;font-size:3rem;font-weight:700;line-height:1;}
+.stat-sm-lbl{font-size:0.52rem;letter-spacing:3px;color:var(--dim2);text-transform:uppercase;}
 .stat-sep{width:1px;background:var(--border);align-self:stretch;margin:4px 0;}
 
 /* ═══ PAUSA ═══ */
@@ -507,11 +506,14 @@ function drawTrack(meters){
   // Ghost
   if(ghostSamples.length>0){const gm=getGhostMeters(getElapsedSec());if(gm!==null){const gPos=posAtMeters(gm);const[gx,gy]=toScreen(gPos[0],gPos[1]);const ga=document.getElementById('ghost-arrow');ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';}}
 
-  // Vignette ellittica
-  const vcx=W/2,vcy=H*0.52,vrx=W*0.62,vry=H*0.46;
+  // Vignette ellittica più spessa (+40%) — nasconde meglio gli estremi
+  const vcx=W/2,vcy=H*0.52,vrx=W*0.44,vry=H*0.32;
   ctx.save();ctx.translate(vcx,vcy);ctx.scale(1,vry/vrx);
-  const vign=ctx.createRadialGradient(0,0,vrx*0.28,0,0,vrx);
-  vign.addColorStop(0,'rgba(0,0,0,0)');vign.addColorStop(0.6,'rgba(10,11,14,0)');vign.addColorStop(0.85,'rgba(10,11,14,0.55)');vign.addColorStop(1,'rgba(10,11,14,1)');
+  const vign=ctx.createRadialGradient(0,0,vrx*0.22,0,0,vrx);
+  vign.addColorStop(0,  'rgba(0,0,0,0)');
+  vign.addColorStop(0.5,'rgba(10,11,14,0)');
+  vign.addColorStop(0.75,'rgba(10,11,14,0.7)');
+  vign.addColorStop(1,  'rgba(10,11,14,1)');
   ctx.fillStyle=vign;ctx.fillRect(-vrx,-vrx*(vrx/vry),vrx*2,vrx*2*(vrx/vry));ctx.restore();
 }
 
