@@ -14,9 +14,9 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#07090f;
-  --bg-top:#07090f;
-  --bg-bot:#0d1a2e;
+  --bg:#050810;
+  --bg-top:#050810;
+  --bg-bot:#0a1f3d;
   --surface:#0f1825; --border:rgba(255,255,255,0.07);
   --text:#e8eaf0; --dim:#6a7080; --dim2:#4a5060;
   --accent:#4fc3f7; --gold:#ffd54f; --red:#ef5350; --green:#66bb6a;
@@ -33,16 +33,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .home-logo{font-family:'Barlow Condensed',sans-serif;font-size:13rem;font-weight:900;letter-spacing:-8px;line-height:0.85;color:var(--text);opacity:0.92;}
 .home-logo span{color:var(--accent);}
 .home-btns{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:60px;}
-/* Pulsanti +30%, grigio uniforme */
-.btn-main{background:none;border:1px solid rgba(255,255,255,0.18);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:6px;text-transform:uppercase;padding:20px 68px;border-radius:4px;cursor:pointer;transition:all .2s;}
+/* Pulsanti — tutti grigi, dimensione uniforme */
+.btn-main{background:none;border:1px solid rgba(255,255,255,0.2);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:600;letter-spacing:7px;text-transform:uppercase;padding:22px 72px;border-radius:4px;cursor:pointer;transition:all .2s;}
 .btn-main:active{background:rgba(255,255,255,0.06);transform:scale(0.97);}
-.btn-ghost{background:none;border:none;color:var(--dim2);font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:5px;text-transform:uppercase;padding:13px;cursor:pointer;opacity:0.7;}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,0.1);color:var(--dim2);font-family:'Barlow Condensed',sans-serif;font-size:1rem;letter-spacing:5px;text-transform:uppercase;padding:14px 40px;border-radius:4px;cursor:pointer;opacity:0.8;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{background:var(--bg);flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;}
 .goal-header{padding:52px 36px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
 .goal-header-title{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;letter-spacing:2px;color:var(--text);}
-.btn-back{background:none;border:1px solid var(--border);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;padding:13px 26px;border-radius:4px;cursor:pointer;}
+.btn-back{background:none;border:1px solid var(--border);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;padding:14px 28px;border-radius:4px;cursor:pointer;}
 
 /* Sezione distanza - 2/3 schermo */
 .goal-dist-section{flex:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;}
@@ -73,8 +73,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 
 /* Pulsante avvia */
 .goal-start-wrap{padding:16px 36px 48px;flex-shrink:0;}
-.btn-start{width:100%;padding:26px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:6px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.btn-start.ready{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);color:var(--dim);}
+.btn-start{width:100%;padding:26px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.15);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:600;letter-spacing:7px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-start.ready{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.2);color:var(--dim);}
 .btn-start:active{transform:scale(0.99);}
 
 /* ═══ APP ═══ */
@@ -162,7 +162,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 #pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
 .pause-title{font-family:'Barlow Condensed',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
 .pause-btns{display:flex;gap:48px;}
-.btn-pause-action{background:none;border:1px solid var(--border);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;padding:18px 46px;border-radius:4px;cursor:pointer;}
+.btn-pause-action{background:none;border:1px solid rgba(255,255,255,0.15);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;padding:20px 52px;border-radius:4px;cursor:pointer;}
 
 /* ═══ HISTORY ═══ */
 #page-history{background:var(--bg);flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
@@ -352,8 +352,8 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
       </div>
       <div class="stat-sep"></div>
       <div class="stat-sm">
-        <!-- remo/voghe -->
-        <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><path d="M19 5 l-4 1 l3 3z" fill="currentColor"/><path d="M5 19 Q7 17 9 15"/></svg></div>
+        <!-- remo stilizzato -->
+        <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="4" y1="20" x2="20" y2="4"/><path d="M20 4 Q22 2 20 6 Q18 10 16 8 Q14 6 20 4Z" fill="currentColor" stroke="none"/></svg></div>
         <span class="stat-sm-val" id="v-val">0</span>
         <span class="stat-sm-lbl">voghe</span>
       </div>
@@ -536,10 +536,10 @@ function initHomeCanvas(){
   requestAnimationFrame(()=>{
     cv.width=cv.offsetWidth||window.innerWidth;cv.height=cv.offsetHeight||window.innerHeight;
     const ctx=cv.getContext('2d');
-    const pts=Array.from({length:60},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.5+0.3,vy:-(0.3+Math.random()*0.5),op:Math.random()}));
+    const pts=Array.from({length:60},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*3+1,vy:-(0.3+Math.random()*0.5),op:0.3+Math.random()*0.5}));
     function frame(){
       ctx.clearRect(0,0,cv.width,cv.height);
-      pts.forEach(p=>{p.y+=p.vy;if(p.y<-5){p.y=cv.height+5;p.x=Math.random()*cv.width;}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,190,205,${p.op*0.25})`;ctx.fill();});
+      pts.forEach(p=>{p.y+=p.vy;if(p.y<-5){p.y=cv.height+5;p.x=Math.random()*cv.width;}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();});
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
@@ -780,11 +780,11 @@ async function fetchWeather(){
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const data=await resp.json();
     const code=data.current_weather?.weathercode??data.daily?.weathercode?.[0]??0;
-    const tmax=data.daily?.temperature_2m_max?.[0];
-    const tmin=data.daily?.temperature_2m_min?.[0];
+    const rawMax=data.daily?.temperature_2m_max?.[0];
+    const rawMin=data.daily?.temperature_2m_min?.[0];
     document.getElementById('weather-icon').innerHTML=weatherCodeToSvg(code);
-    if(tmin!=null&&tmax!=null){
-      document.getElementById('weather-temps').textContent=Math.round(tmin)+'° / '+Math.round(tmax)+'°';
+    if(rawMax!=null&&rawMin!=null&&!isNaN(rawMax)&&!isNaN(rawMin)){
+      document.getElementById('weather-temps').textContent=Math.round(rawMin)+'° / '+Math.round(rawMax)+'°';
     }
   }catch(e){console.warn('Meteo:',e);}
 }
