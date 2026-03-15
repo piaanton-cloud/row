@@ -108,9 +108,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .meters-num{font-family:'Roboto',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--dim);}
 .meters-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:8px;text-align:right;}
 
-/* ── Ghost delta — spostato in basso vicino alle stat ── */
-#ghost-delta{position:absolute;bottom:230px;left:50%;transform:translateX(-50%);z-index:200;font-family:'Roboto',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:3px;background:rgba(5,8,16,0.75);backdrop-filter:blur(8px);border-radius:3px;padding:4px 14px;white-space:nowrap;display:none;}
-#page-app.active #ghost-delta{display:block;}
+/* ghost-delta rimosso */
 
 /* ── Sfida ── */
 #challenge-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;flex-direction:column;align-items:center;gap:6px;background:rgba(10,11,14,0.93);border:1px solid var(--accent);border-radius:8px;padding:20px 36px;backdrop-filter:blur(16px);text-align:center;pointer-events:none;}
@@ -298,8 +296,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     <div class="meters-label">Metri</div>
   </div>
 
-  <!-- Ghost delta -->
-  <div id="ghost-delta"></div>
+  <!-- Ghost delta rimosso — solo icona sul percorso -->
 
   <!-- Sfida -->
   <div id="challenge-banner">
@@ -520,23 +517,38 @@ function drawTrack(meters){
   // Ghost
   if(ghostSamples.length>0){const gm=getGhostMeters(getElapsedSec());if(gm!==null){const gPos=posAtMeters(gm);const[gx,gy]=toScreen(gPos[0],gPos[1]);const ga=document.getElementById('ghost-arrow');ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';}}
 
-  // ── Particelle — stessa velocità/verso della home, sotto la vignette ──
+  // ── Particelle — velocità fissa come home (no currentPaceSpeed) ──
   APP_PARTICLES.forEach(p=>{
-    p.y+=p.vy*currentPaceSpeed;
+    p.y+=p.vy;                                    // stessa velocità della home
     if(p.y>1.02){p.y=-0.02;p.x=Math.random();}
     ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
     ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();
   });
 
-  // Vignette ellittica — sopra le particelle, nasconde gli estremi del tracciato
-  const vcx=W/2,vcy=H*0.52,vrx=W*0.44,vry=H*0.32;
-  ctx.save();ctx.translate(vcx,vcy);ctx.scale(1,vry/vrx);
-  const vign=ctx.createRadialGradient(0,0,vrx*0.22,0,0,vrx);
-  vign.addColorStop(0,  'rgba(0,0,0,0)');
-  vign.addColorStop(0.5,'rgba(10,11,14,0)');
-  vign.addColorStop(0.75,'rgba(10,11,14,0.7)');
-  vign.addColorStop(1,  'rgba(10,11,14,1)');
-  ctx.fillStyle=vign;ctx.fillRect(-vrx,-vrx*(vrx/vry),vrx*2,vrx*2*(vrx/vry));ctx.restore();
+  // ── Vignette che copre TUTTO lo schermo tranne un'ellisse centrale ──
+  // Tecnica: rettangolo pieno + "buco" ellittico ritagliato con compositing
+  ctx.save();
+  ctx.globalCompositeOperation='source-over';
+  // Gradiente radiale ellittico — copre i 4 angoli e i bordi
+  const vcx=W/2, vcy=H*0.52;
+  // Usiamo 4 gradienti lineari per coprire i bordi completamente
+  // Top
+  const gt=ctx.createLinearGradient(0,0,0,H*0.18);
+  gt.addColorStop(0,'rgba(5,8,16,1)');gt.addColorStop(1,'rgba(5,8,16,0)');
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.22);
+  // Bottom
+  const gb=ctx.createLinearGradient(0,H,0,H*0.72);
+  gb.addColorStop(0,'rgba(5,8,16,1)');gb.addColorStop(1,'rgba(5,8,16,0)');
+  ctx.fillStyle=gb;ctx.fillRect(0,H*0.68,W,H*0.32);
+  // Left
+  const gl=ctx.createLinearGradient(0,0,W*0.18,0);
+  gl.addColorStop(0,'rgba(5,8,16,1)');gl.addColorStop(1,'rgba(5,8,16,0)');
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W*0.22,H);
+  // Right
+  const gr=ctx.createLinearGradient(W,0,W*0.82,0);
+  gr.addColorStop(0,'rgba(5,8,16,1)');gr.addColorStop(1,'rgba(5,8,16,0)');
+  ctx.fillStyle=gr;ctx.fillRect(W*0.78,0,W*0.22,H);
+  ctx.restore();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -764,15 +776,7 @@ function getGhostMeters(sec){
   const last=ghostSamples[ghostSamples.length-1];if(sec>=last.t)return last.m;
   for(let i=1;i<ghostSamples.length;i++){if(ghostSamples[i].t>=sec){const t=(sec-ghostSamples[i-1].t)/(ghostSamples[i].t-ghostSamples[i-1].t);return ghostSamples[i-1].m+(ghostSamples[i].m-ghostSamples[i-1].m)*t;}}return last.m;
 }
-function updateGhostDelta(myM,sec){
-  const el=document.getElementById('ghost-delta');
-  if(!ghostSamples.length){el.textContent='';el.style.visibility='hidden';return;}
-  el.style.visibility='visible';
-  const gm=getGhostMeters(sec);if(gm===null)return;const d=Math.round(myM-gm);
-  if(Math.abs(d)<3){el.textContent='= PARI';el.style.color='#fff';}
-  else if(d>0){el.textContent='+'+d+'m sul ghost';el.style.color='var(--green)';}
-  else{el.textContent=d+'m dal ghost';el.style.color='var(--red)';}
-}
+function updateGhostDelta(){} // rimosso — solo icona sul tracciato
 
 // ═══════════════════════════════════════════════════════
 //  GOAL PROGRESS BAR
@@ -891,23 +895,23 @@ function updateUI(d){
     document.getElementById('watt-bar-prev').style.width=Math.min((prevWatt/350)*100,100)+'%';
     prevWatt=watt;
   }
-  // Pace sugli ultimi 100m — campiona solo quando i metri cambiano
+  // ── Pace — media su 10 secondi ──
+  // Campiona solo quando i metri cambiano
   const nowMs=Date.now();
-  const lastPaceSample=paceWindow.length?paceWindow[paceWindow.length-1]:null;
-  if(!lastPaceSample||session.meters>lastPaceSample.m){
+  const lastP=paceWindow.length?paceWindow[paceWindow.length-1]:null;
+  if(!lastP||session.meters>lastP.m){
     paceWindow.push({m:session.meters,t:nowMs});
   }
-  while(paceWindow.length>1&&paceWindow[0].m<session.meters-PACE_WINDOW_M)paceWindow.shift();
+  // Finestra di 10 secondi
+  while(paceWindow.length>1&&(nowMs-paceWindow[0].t)>10000)paceWindow.shift();
   if(paceWindow.length>=2){
     const dm=session.meters-paceWindow[0].m;
     const dt=(nowMs-paceWindow[0].t)/1000;
-    if(dm>=10&&dt>0){
+    if(dm>=3&&dt>=3){
       const paceSec=(dt/dm)*500;
-      // Clamp: passo realistico tra 1:00 e 9:59 per 500m
       if(paceSec>=60&&paceSec<600){
-        const pm=Math.floor(paceSec/60);
-        const ps=Math.floor(paceSec%60);
-        document.getElementById('p-val').textContent=pm+':'+ps.toString().padStart(2,'0');
+        document.getElementById('p-val').textContent=
+          Math.floor(paceSec/60)+':'+Math.floor(paceSec%60).toString().padStart(2,'0');
       }
     }
   }
@@ -1028,7 +1032,6 @@ function resetSession(){
   resetSessionState();
   document.getElementById('app-timer').textContent='00:00:00';
   document.getElementById('ghost-arrow').style.display='none';
-  document.getElementById('ghost-delta').textContent='';
   goalType=null;goalValue=0;
   switchPage('page-home');
 }
