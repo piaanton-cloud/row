@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0b0e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>ROW</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0b0e;
+  --surface:#12141a;
+  --border:rgba(255,255,255,0.07);
+  --text:#e8eaf0;
+  --dim:#6a7080;
+  --accent:#4fc3f7;
+  --gold:#ffd54f;
+  --red:#ef5350;
+  --green:#66bb6a;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
+
+.page{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;}
+.page.active{display:flex;}
+
+/* ═══ HOME ═══ */
+#page-home{background:var(--bg);}
+.home-bg{position:absolute;inset:0;overflow:hidden;}
+.home-bg canvas{width:100%;height:100%;display:block;}
+.home-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;}
+.home-logo{font-family:'Barlow Condensed',sans-serif;font-size:13rem;font-weight:900;letter-spacing:-8px;line-height:0.85;color:var(--text);opacity:0.92;}
+.home-logo span{color:var(--accent);}
+.home-sub{font-size:0.65rem;letter-spacing:12px;color:var(--dim);text-transform:uppercase;margin-bottom:60px;margin-top:8px;}
+.home-btns{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.btn-main{background:none;border:1px solid rgba(255,255,255,0.18);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:6px;text-transform:uppercase;padding:16px 52px;border-radius:4px;cursor:pointer;transition:all .2s;}
+.btn-main:active{background:rgba(255,255,255,0.06);transform:scale(0.97);}
+.btn-sec{background:none;border:1px solid rgba(255,255,255,0.10);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;padding:12px 40px;border-radius:4px;cursor:pointer;}
+.btn-ghost{background:none;border:none;color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;letter-spacing:5px;text-transform:uppercase;padding:10px;cursor:pointer;opacity:0.6;}
+
+/* ═══ APP ═══ */
+#page-app{background:var(--bg);overflow:hidden;}
+#track-canvas{position:absolute;inset:0;width:100%;height:100%;}
+
+#boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
+#ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
+
+#app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:48px 36px 0;z-index:100;pointer-events:none;}
+.hdr-timer{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:400;letter-spacing:4px;color:var(--dim);}
+.hdr-loc{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:6px;color:var(--accent);text-transform:uppercase;}
+.hdr-clock{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:400;letter-spacing:3px;color:var(--dim);}
+
+#ghost-delta{position:absolute;top:102px;left:50%;transform:translateX(-50%);z-index:200;font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:3px;background:rgba(10,11,14,0.7);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:3px;padding:5px 16px;white-space:nowrap;display:none;}
+#page-app.active #ghost-delta{display:block;}
+
+#main-stats{position:absolute;bottom:0;left:0;right:0;z-index:100;pointer-events:none;}
+.stats-top{display:flex;justify-content:space-between;align-items:flex-end;padding:0 36px 8px;}
+.stat-big{display:flex;flex-direction:column;}
+.stat-big.right{align-items:flex-end;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:7.5rem;font-weight:900;line-height:0.85;letter-spacing:-4px;}
+.stat-lbl{font-size:0.6rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-top:8px;}
+.watt-bar{width:200px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:10px;}
+#watt-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .25s;}
+.stats-div{height:1px;background:var(--border);margin:0 36px;}
+.stats-row{display:flex;justify-content:space-evenly;padding:12px 20px 28px;}
+.stat-sm{text-align:center;flex:1;}
+.stat-sm-val{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:700;display:block;line-height:1;}
+.stat-sm-lbl{font-size:0.5rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-top:3px;display:block;}
+.stat-sep{width:1px;background:var(--border);align-self:stretch;margin:4px 0;}
+
+/* ═══ SFIDA ═══ */
+#challenge-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;flex-direction:column;align-items:center;gap:8px;background:rgba(10,11,14,0.92);border:1px solid var(--accent);border-radius:8px;padding:24px 40px;backdrop-filter:blur(16px);text-align:center;pointer-events:none;}
+.ch-eyebrow{font-size:0.55rem;letter-spacing:8px;color:var(--accent);text-transform:uppercase;}
+.ch-title{font-family:'Barlow Condensed',sans-serif;font-size:2.4rem;font-weight:900;color:var(--text);letter-spacing:1px;}
+.ch-desc{font-size:0.75rem;color:var(--dim);letter-spacing:1px;}
+.ch-progress{font-family:'Barlow Condensed',sans-serif;font-size:3.5rem;font-weight:900;color:var(--gold);letter-spacing:-2px;}
+.ch-bar-track{width:220px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:4px;}
+#ch-bar-fill{height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width .3s;}
+
+#challenge-result{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;flex-direction:column;align-items:center;gap:6px;background:rgba(10,11,14,0.95);border-radius:8px;padding:28px 44px;text-align:center;pointer-events:none;animation:rpop .4s ease-out;}
+@keyframes rpop{0%{transform:translate(-50%,-50%) scale(0.8);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.cr-label{font-size:0.55rem;letter-spacing:8px;text-transform:uppercase;color:var(--dim);}
+.cr-score{font-family:'Barlow Condensed',sans-serif;font-size:4.5rem;font-weight:900;letter-spacing:-2px;}
+.cr-vs{font-size:0.7rem;letter-spacing:3px;color:var(--dim);}
+.cr-record{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;color:var(--gold);}
+.cr-badge{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:4px;padding:6px 18px;border-radius:3px;margin-top:4px;}
+.cr-badge.isnew{background:var(--gold);color:#000;}
+.cr-badge.nope{background:rgba(255,255,255,0.08);color:var(--dim);}
+
+/* ═══ PAUSA ═══ */
+#pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
+.pause-title{font-family:'Barlow Condensed',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
+.pause-btns{display:flex;gap:48px;}
+
+/* ═══ HISTORY ═══ */
+#page-history{background:var(--bg);flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.hist-title{font-family:'Barlow Condensed',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;}
+.btn-back{background:none;border:1px solid var(--border);color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;padding:10px 20px;border-radius:4px;cursor:pointer;}
+.hist-scroll{flex:1;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;}
+th{color:var(--dim);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:0.55rem;font-weight:600;}
+td{padding:12px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:center;font-weight:400;color:rgba(255,255,255,0.6);}
+.td-m{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);}
+.td-date{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;color:var(--text);}
+.best-v{color:var(--gold)!important;font-weight:700;}
+
+/* ═══ RESUME ═══ */
+#page-resume{background:var(--bg);}
+.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+.res-hero{font-family:'Barlow Condensed',sans-serif;font-size:6rem;font-weight:900;letter-spacing:-3px;color:var(--text);}
+.res-unit{font-size:0.6rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:32px;}
+.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:92%;max-width:900px;margin-bottom:28px;}
+.res-item{background:var(--surface);border:1px solid var(--border);padding:16px 10px;border-radius:6px;text-align:center;}
+.res-val{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;display:block;color:var(--text);}
+.res-lab{font-size:0.45rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:4px;display:block;}
+.res-ch-wrap{width:92%;max-width:900px;margin-bottom:28px;}
+.res-ch-title{font-size:0.55rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
+.res-ch-list{display:flex;flex-direction:column;gap:6px;}
+.res-ch-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;}
+.res-ch-name{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:600;}
+.res-ch-score{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);}
+
+/* ═══ DB STATUS ═══ */
+#db-status{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:0.55rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .4s;}
+#db-status.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="home-bg"><canvas id="home-canvas"></canvas></div>
+  <div class="home-content">
+    <div class="home-logo">R<span>O</span>W</div>
+    <div class="home-btns" style="margin-top:60px;">
+      <button class="btn-main" onclick="connectBT()">Connetti</button>
+      <button class="btn-ghost" onclick="showHistory()">Logbook</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="page-app" class="page">
+  <canvas id="track-canvas"></canvas>
+
+  <div id="boat-arrow">
+    <svg width="28" height="36" viewBox="0 0 28 36">
+      <ellipse cx="14" cy="33" rx="8" ry="3" fill="rgba(0,0,0,0.4)"/>
+      <polygon points="14,2 26,30 14,24 2,30" fill="#ef5350" stroke="#ff8a80" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="14,2 20,18 14,14" fill="rgba(255,255,255,0.25)"/>
+    </svg>
+  </div>
+
+  <div id="ghost-arrow">
+    <svg width="24" height="30" viewBox="0 0 28 36" opacity="0.5">
+      <polygon points="14,2 26,30 14,24 2,30" fill="#90caf9" stroke="#bbdefb" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div id="app-header">
+    <span class="hdr-timer" id="app-timer">00:00:00</span>
+    <span class="hdr-loc">🇮🇹 Fiume Tevere</span>
+    <span class="hdr-clock" id="app-clock">--:--</span>
+  </div>
+
+  <div id="ghost-delta"></div>
+
+  <div id="challenge-banner">
+    <div class="ch-eyebrow" id="ch-eyebrow">Sfida</div>
+    <div class="ch-title"   id="ch-title">SPRINT</div>
+    <div class="ch-desc"    id="ch-desc">100 metri · massima potenza</div>
+    <div class="ch-progress" id="ch-progress">100m</div>
+    <div class="ch-bar-track"><div id="ch-bar-fill"></div></div>
+  </div>
+
+  <div id="challenge-result">
+    <div class="cr-label">Sfida completata</div>
+    <div class="cr-score"  id="cr-score">—</div>
+    <div class="cr-vs"     id="cr-vs">Record personale</div>
+    <div class="cr-record" id="cr-record">—</div>
+    <div class="cr-badge"  id="cr-badge">—</div>
+  </div>
+
+  <div id="main-stats">
+    <div class="stats-top">
+      <div class="stat-big">
+        <span class="stat-num" id="w-val" style="color:var(--accent)">0</span>
+        <span class="stat-lbl">Watt</span>
+        <div class="watt-bar"><div id="watt-fill"></div></div>
+      </div>
+      <div class="stat-big right">
+        <span class="stat-num" id="m-val">0</span>
+        <span class="stat-lbl" style="text-align:right">Metri</span>
+      </div>
+    </div>
+    <div class="stats-div"></div>
+    <div class="stats-row">
+      <div class="stat-sm"><span class="stat-sm-val" id="p-val" style="color:var(--gold)">–:––</span><span class="stat-sm-lbl">min/500m</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-sm"><span class="stat-sm-val" id="h-val" style="color:var(--red)">––</span><span class="stat-sm-lbl">bpm</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-sm"><span class="stat-sm-val" id="spm-val" style="color:var(--green)">0</span><span class="stat-sm-lbl">spm</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-sm"><span class="stat-sm-val" id="v-val">0</span><span class="stat-sm-lbl">voghe</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="page-history" class="page">
+  <div class="hist-hdr">
+    <div class="hist-title">LOGBOOK</div>
+    <button class="btn-back" onclick="switchPage('page-home')">← HOME</button>
+  </div>
+  <div class="hist-scroll">
+    <table>
+      <thead><tr>
+        <th>Data</th><th>Metri</th><th>Tempo</th><th>W med</th><th>W max</th><th>SPM</th><th>BPM</th>
+      </tr></thead>
+      <tbody id="hist-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RESUME -->
+<div id="page-resume" class="page">
+  <div class="res-eyebrow">Sessione completata</div>
+  <div class="res-hero" id="res-m">0</div>
+  <div class="res-unit">metri percorsi</div>
+  <div class="res-grid">
+    <div class="res-item"><span id="res-wa" class="res-val">0</span><span class="res-lab">Watt medi</span></div>
+    <div class="res-item"><span id="res-wm" class="res-val">0</span><span class="res-lab">Watt max</span></div>
+    <div class="res-item"><span id="res-t"  class="res-val">–</span><span class="res-lab">Tempo</span></div>
+    <div class="res-item"><span id="res-v"  class="res-val">0</span><span class="res-lab">Vogate</span></div>
+    <div class="res-item"><span id="res-cm" class="res-val">0</span><span class="res-lab">SPM medi</span></div>
+    <div class="res-item"><span id="res-hm" class="res-val">–</span><span class="res-lab">BPM medi</span></div>
+    <div class="res-item"><span id="res-hx" class="res-val">–</span><span class="res-lab">BPM max</span></div>
+    <div class="res-item"><span id="res-ch-count" class="res-val">0</span><span class="res-lab">Record sfide</span></div>
+  </div>
+  <div class="res-ch-wrap">
+    <div class="res-ch-title">Sfide intervallo</div>
+    <div class="res-ch-list" id="res-ch-list"></div>
+  </div>
+  <button class="btn-main" onclick="resetSession()">Fine</button>
+</div>
+
+<!-- PAUSA -->
+<div id="pause-overlay">
+  <div class="pause-title">PAUSA</div>
+  <div class="pause-btns">
+    <button class="btn-sec" onclick="resumeWorkout(event)">Riprendi</button>
+    <button class="btn-sec" style="color:var(--red)" onclick="saveAndFinish(event)">Salva &amp; esci</button>
+  </div>
+</div>
+
+<div id="db-status"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+//  IndexedDB — database locale
+// ═══════════════════════════════════════════════════════
+const DB_NAME = 'RowDB';
+const DB_VER  = 1;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      // Sessioni di allenamento
+      if (!d.objectStoreNames.contains('sessions')) {
+        const s = d.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('date', 'date', { unique: false });
+      }
+      // Campioni ghost (separati per non appesantire sessions)
+      if (!d.objectStoreNames.contains('samples')) {
+        const s = d.createObjectStore('samples', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('sessionId', 'sessionId', { unique: false });
+      }
+      // Record sfide
+      if (!d.objectStoreNames.contains('records')) {
+        d.createObjectStore('records', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+function dbPut(store, obj) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function dbAdd(store, obj) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).add(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function dbGetByIndex(store, index, value) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).index(index).getAll(value);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function dbGet(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+function showDbStatus(msg) {
+  const el = document.getElementById('db-status');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  TEVERE GPS
+// ═══════════════════════════════════════════════════════
+const TEVERE = [
+  [41.9337,12.4669],[41.9318,12.4685],[41.9295,12.4706],[41.9272,12.4718],
+  [41.9250,12.4712],[41.9228,12.4700],[41.9208,12.4690],[41.9188,12.4660],
+  [41.9168,12.4640],[41.9148,12.4628],[41.9128,12.4620],[41.9108,12.4614],
+  [41.9090,12.4606],[41.9072,12.4654],[41.9058,12.4680],[41.9042,12.4690],
+  [41.9025,12.4702],[41.9008,12.4712],[41.8992,12.4720],[41.8975,12.4724],
+  [41.8958,12.4722],[41.8942,12.4716],[41.8925,12.4706],[41.8908,12.4698],
+  [41.8895,12.4702],[41.8880,12.4710],[41.8862,12.4716],[41.8845,12.4712],
+  [41.8828,12.4704],[41.8812,12.4695]
+];
+
+const PONTI = [
+  [41.9337,12.4669,'Milvio'],
+  [41.9272,12.4718,'Flaminio'],
+  [41.9188,12.4660,'Risorgimento'],
+  [41.9108,12.4614,'Cavour'],
+  [41.9072,12.4654,"Sant'Angelo"],
+  [41.8992,12.4720,'V.Emanuele II'],
+  [41.8942,12.4716,'Sisto'],
+  [41.8880,12.4710,'Palatino'],
+  [41.8812,12.4695,'Testaccio'],
+];
+
+const POI = [
+  [41.9090,12.4615,"Castel\nSant'Angelo"],
+  [41.8900,12.4700,'Isola\nTiberina'],
+];
+
+// ─── Geometria ───
+function buildCumDist(pts) {
+  const d = [0];
+  for (let i = 1; i < pts.length; i++) {
+    const dlat = (pts[i][0] - pts[i-1][0]) * 111320;
+    const dlon = (pts[i][1] - pts[i-1][1]) * 111320 * Math.cos(pts[i-1][0] * Math.PI / 180);
+    d.push(d[i-1] + Math.sqrt(dlat*dlat + dlon*dlon));
+  }
+  return d;
+}
+const CUM     = buildCumDist(TEVERE);
+const TOTAL_M = CUM[CUM.length - 1];
+
+function posAtMeters(m) {
+  const real = Math.max(0, Math.min(m, TOTAL_M));
+  if (real <= 0) return TEVERE[0];
+  for (let i = 1; i < CUM.length; i++) {
+    if (CUM[i] >= real) {
+      const t = (real - CUM[i-1]) / (CUM[i] - CUM[i-1]);
+      return [
+        TEVERE[i-1][0] + (TEVERE[i][0] - TEVERE[i-1][0]) * t,
+        TEVERE[i-1][1] + (TEVERE[i][1] - TEVERE[i-1][1]) * t
+      ];
+    }
+  }
+  return TEVERE[TEVERE.length - 1];
+}
+
+function calcBearing(a, b) {
+  const dLon = (b[1] - a[1]) * Math.PI / 180;
+  const lat1 = a[0] * Math.PI / 180, lat2 = b[0] * Math.PI / 180;
+  const x = Math.sin(dLon) * Math.cos(lat2);
+  const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  return (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CANVAS TRACCIATO GT7
+// ═══════════════════════════════════════════════════════
+let trackCanvas = null, trackCtx = null;
+let currentBearing = 0;
+let rafId = null;
+let renderMeters = 0;
+const SCALE = 6.5;
+
+function latLonToLocal(lat, lon, refLat, refLon) {
+  const x = (lon - refLon) * 111320 * Math.cos(refLat * Math.PI / 180);
+  const y = -(lat - refLat) * 111320;
+  return [x, y];
+}
+
+// Loop di render separato da updateUI — fix bug #1
+function renderLoop() {
+  rafId = requestAnimationFrame(renderLoop);
+  drawTrack(renderMeters);
+}
+
+// Disegna una curva catmull-rom morbida attraverso i punti
+function drawSmoothPath(ctx, pts) {
+  if (pts.length < 2) return;
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(i - 1, 0)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(i + 2, pts.length - 1)];
+    // Tensione catmull-rom → bezier
+    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2[0], p2[1]);
+  }
+}
+
+function drawTrack(meters) {
+  if (!trackCanvas) return;
+  const W = trackCanvas.width, H = trackCanvas.height;
+  const ctx = trackCtx;
+
+  // ── Bearing smoothed ──
+  const pos  = posAtMeters(meters);
+  const pos2 = posAtMeters(Math.min(meters + 80, TOTAL_M));
+  const targetBearing = calcBearing(pos, pos2);
+  let delta = targetBearing - currentBearing;
+  if (delta >  180) delta -= 360;
+  if (delta < -180) delta += 360;
+  currentBearing = (currentBearing + delta * 0.1 + 360) % 360;
+
+  const b      = currentBearing * Math.PI / 180;
+  const refLat = pos[0], refLon = pos[1];
+
+  function toScreen(lat, lon) {
+    const [lx, ly] = latLonToLocal(lat, lon, refLat, refLon);
+    const rx = lx * Math.cos(-b) - ly * Math.sin(-b);
+    const ry = lx * Math.sin(-b) + ly * Math.cos(-b);
+    return [W / 2 + rx * SCALE, H * 0.52 + ry * SCALE];
+  }
+
+  // ── Sfondo puro ──
+  ctx.fillStyle = '#0a0b0e';
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Punti schermo dell'intero tracciato ──
+  const allPts = TEVERE.map(p => toScreen(p[0], p[1]));
+
+  // ── Tracciato: alone morbido + linea grigia ──
+  // Alone largo (sfumato)
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(180,195,220,0.06)';
+  ctx.lineWidth = 38;
+  drawSmoothPath(ctx, allPts); ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(180,195,220,0.10)';
+  ctx.lineWidth = 24;
+  drawSmoothPath(ctx, allPts); ctx.stroke();
+
+  // Linea principale grigia chiara
+  ctx.strokeStyle = 'rgba(200,212,230,0.55)';
+  ctx.lineWidth = 10;
+  drawSmoothPath(ctx, allPts); ctx.stroke();
+
+  // ── Indicatore prossima sfida ──
+  if (nextChallenge && !challengeActive) {
+    const cPos = posAtMeters(nextChallenge.startAt);
+    const [cx, cy] = toScreen(cPos[0], cPos[1]);
+    if (Math.hypot(cx - W/2, cy - H*0.52) < H * 0.48) {
+      ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,213,79,0.15)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,213,79,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.font = 'bold 11px Barlow Condensed, sans-serif';
+      ctx.fillStyle = 'rgba(255,213,79,0.8)'; ctx.textAlign = 'center';
+      ctx.fillText('⚡', cx, cy + 4);
+      const mToCh = Math.round(nextChallenge.startAt - meters);
+      if (mToCh > 0 && mToCh < 800) {
+        ctx.font = '600 10px Barlow Condensed, sans-serif';
+        ctx.fillStyle = 'rgba(255,213,79,0.6)';
+        ctx.fillText(mToCh + 'm', cx, cy - 16);
+      }
+    }
+  }
+
+  // ── Ghost sulla traccia ──
+  if (ghostSamples.length > 0) {
+    const gm = getGhostMeters(getElapsedSec());
+    if (gm !== null) {
+      const gPos = posAtMeters(gm);
+      const [gx, gy] = toScreen(gPos[0], gPos[1]);
+      const ga = document.getElementById('ghost-arrow');
+      ga.style.display = 'block';
+      ga.style.left  = gx + 'px';
+      ga.style.top   = gy + 'px';
+    }
+  }
+
+  // ── Vignette ellittica: il tracciato svanisce verso i bordi ──
+  // Usa un gradiente radiale centrato sulla freccia (W/2, H*0.52)
+  const cx = W / 2, cy = H * 0.52;
+  const rx = W * 0.62, ry = H * 0.46; // semiassi ellisse
+  // Simula ellisse con scale + gradiente circolare
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, ry / rx);
+  const vign = ctx.createRadialGradient(0, 0, rx * 0.28, 0, 0, rx);
+  vign.addColorStop(0,   'rgba(0,0,0,0)');
+  vign.addColorStop(0.6, 'rgba(10,11,14,0.0)');
+  vign.addColorStop(0.85,'rgba(10,11,14,0.55)');
+  vign.addColorStop(1,   'rgba(10,11,14,1)');
+  ctx.fillStyle = vign;
+  ctx.fillRect(-rx, -rx * (rx/ry), rx * 2, rx * 2 * (rx/ry));
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════════════════
+//  HOME CANVAS
+// ═══════════════════════════════════════════════════════
+function initHomeCanvas() {
+  const cv = document.getElementById('home-canvas');
+  // Attendi che il layout sia pronto
+  requestAnimationFrame(() => {
+    cv.width  = cv.offsetWidth  || window.innerWidth;
+    cv.height = cv.offsetHeight || window.innerHeight;
+    const ctx = cv.getContext('2d');
+    const pts = Array.from({length:60}, () => ({
+      x: Math.random() * cv.width,
+      y: Math.random() * cv.height,
+      r: Math.random() * 1.5 + 0.3,
+      vy: -(0.3 + Math.random() * 0.5),
+      op: Math.random()
+    }));
+    function frame() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      pts.forEach(p => {
+        p.y += p.vy;
+        if (p.y < -5) { p.y = cv.height + 5; p.x = Math.random() * cv.width; }
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(180,190,205,${p.op * 0.25})`; ctx.fill();
+      });
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  SFIDE INTERVALLO — definizioni immutabili (fix bug mutazione)
+// ═══════════════════════════════════════════════════════
+const CHALLENGE_DEFS = Object.freeze([
+  { id:'sprint',    km:1,   title:'SPRINT',    desc:'100 metri · massima potenza',     type:'max_watt',    dist:100 },
+  { id:'cadenza',   km:2,   title:'CADENZA',   desc:'200 metri · più voghe possibili', type:'max_strokes', dist:200 },
+  { id:'ritmo',     km:3,   title:'RITMO',     desc:'500 metri · mantieni il passo',   type:'best_pace',   dist:500 },
+  { id:'potenza',   km:4,   title:'POTENZA',   desc:'300 metri · non scendere mai',    type:'hold_watt',   dist:300 },
+  { id:'burst',     km:6,   title:'BURST',     desc:'100 metri · massima potenza',     type:'max_watt',    dist:100 },
+  { id:'endurance', km:7.5, title:'ENDURANCE', desc:'500 metri · ritmo costante',      type:'best_pace',   dist:500 },
+]);
+
+let challengeActive    = false;
+let currentChallenge   = null;
+let nextChallenge      = null;
+let challengeIdx       = 0;
+let challengeStartM    = 0;
+let challengeStartStr  = 0;
+let challengeStartTime = 0;
+let challengeWatts     = [];
+let challengeResults   = [];
+
+// startAt calcolato al momento dell'uso — non muta CHALLENGE_DEFS
+function getChallengeStartAt(ch) { return ch.km * 1000; }
+
+function setupChallenges() {
+  challengeActive   = false;
+  currentChallenge  = null;
+  challengeIdx      = 0;
+  challengeResults  = [];
+  nextChallenge     = CHALLENGE_DEFS[0];
+}
+
+function checkChallengeStart(meters) {
+  if (challengeActive || !nextChallenge) return;
+  if (meters >= getChallengeStartAt(nextChallenge)) startChallenge(nextChallenge, meters);
+}
+
+function startChallenge(ch, meters) {
+  challengeActive   = true;
+  currentChallenge  = ch;
+  challengeStartM   = meters;
+  challengeStartStr = session.strokes;
+  challengeStartTime = Date.now();
+  challengeWatts    = [];
+
+  const kmLabel = ch.km % 1 === 0 ? ch.km : ch.km.toFixed(1);
+  document.getElementById('ch-eyebrow').textContent  = 'Sfida al km ' + kmLabel;
+  document.getElementById('ch-title').textContent    = ch.title;
+  document.getElementById('ch-desc').textContent     = ch.desc;
+  document.getElementById('ch-progress').textContent = ch.dist + 'm';
+  document.getElementById('ch-bar-fill').style.width = '0%';
+  document.getElementById('challenge-banner').style.display = 'flex';
+}
+
+function updateChallenge(meters, watt, strokes) {
+  if (!challengeActive || !currentChallenge) return;
+  const elapsed = meters - challengeStartM;
+  const pct = Math.min((elapsed / currentChallenge.dist) * 100, 100);
+  document.getElementById('ch-bar-fill').style.width = pct + '%';
+  const rem = Math.max(0, Math.round(currentChallenge.dist - elapsed));
+  document.getElementById('ch-progress').textContent = rem > 0 ? rem + 'm' : '✓';
+  if (watt > 0) challengeWatts.push(watt);
+  if (elapsed >= currentChallenge.dist) endChallenge(meters, strokes);
+}
+
+function endChallenge(meters, strokes) {
+  challengeActive = false;
+  document.getElementById('challenge-banner').style.display = 'none';
+
+  const ch        = currentChallenge;
+  const elapsed   = Math.max(1, meters - challengeStartM); // fix divisione per zero
+  const timeSec   = Math.max(0.001, (Date.now() - challengeStartTime) / 1000);
+  const strokesDone = strokes - challengeStartStr;
+  const avgWatt   = challengeWatts.length
+    ? Math.round(challengeWatts.reduce((a,b) => a+b) / challengeWatts.length)
+    : 0;
+
+  let score, scoreLabel, recordKey;
+  if (ch.type === 'max_watt' || ch.type === 'hold_watt') {
+    score = avgWatt; scoreLabel = avgWatt + ' W medi'; recordKey = 'rec_' + ch.id + '_watt';
+  } else if (ch.type === 'max_strokes') {
+    score = strokesDone; scoreLabel = strokesDone + ' voghe'; recordKey = 'rec_' + ch.id + '_str';
+  } else {
+    const paceSec = timeSec / (elapsed / 500); // fix: elapsed >= 1
+    score = Math.round(paceSec);
+    const pm = Math.floor(paceSec / 60), ps = Math.floor(paceSec % 60);
+    scoreLabel = pm + ':' + ps.toString().padStart(2,'0') + '/500m';
+    recordKey = 'rec_' + ch.id + '_pace';
+  }
+
+  // Leggi record da IndexedDB, poi aggiorna
+  dbGet('records', recordKey).then(rec => {
+    const prev   = rec ? rec.value : 0;
+    const isNew  = ch.type === 'best_pace' ? (prev === 0 || score < prev) : (score > prev);
+    if (isNew) dbPut('records', { key: recordKey, value: score });
+    const record = isNew ? score : prev;
+
+    // UI risultato
+    document.getElementById('cr-score').textContent  = scoreLabel;
+    document.getElementById('cr-score').style.color  = isNew ? 'var(--gold)' : 'var(--text)';
+    let recVal = '';
+    if (ch.type === 'max_watt' || ch.type === 'hold_watt') recVal = record + ' W';
+    else if (ch.type === 'max_strokes') recVal = record + ' voghe';
+    else { const rpm=Math.floor(record/60),rps=record%60; recVal=rpm+':'+rps.toString().padStart(2,'0')+'/500m'; }
+    document.getElementById('cr-vs').textContent     = 'Record personale';
+    document.getElementById('cr-record').textContent = recVal;
+    const badge = document.getElementById('cr-badge');
+    badge.textContent  = isNew ? '🏆 NUOVO RECORD' : '· · ·';
+    badge.className    = 'cr-badge ' + (isNew ? 'isnew' : 'nope');
+
+    const resEl = document.getElementById('challenge-result');
+    resEl.style.display = 'flex';
+    setTimeout(() => { resEl.style.display = 'none'; }, 3500);
+
+    challengeResults.push({ id: ch.id, title: ch.title, score: scoreLabel, isNew });
+  }).catch(() => {
+    challengeResults.push({ id: ch.id, title: ch.title, score: scoreLabel, isNew: false });
+  });
+
+  // Prossima sfida
+  challengeIdx++;
+  nextChallenge = challengeIdx < CHALLENGE_DEFS.length ? CHALLENGE_DEFS[challengeIdx] : null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  GHOST
+// ═══════════════════════════════════════════════════════
+let ghostSamples = [];
+
+async function loadGhost() {
+  try {
+    const sessions = await dbGetAll('sessions');
+    if (!sessions.length) { ghostSamples = []; return; }
+    const best = sessions.reduce((a, b) => (a.meters || 0) > (b.meters || 0) ? a : b);
+    const samples = await dbGetByIndex('samples', 'sessionId', best.id);
+    ghostSamples = samples.sort((a, b) => a.t - b.t);
+  } catch {
+    ghostSamples = [];
+  }
+}
+
+function getGhostMeters(sec) {
+  if (!ghostSamples.length) return null;
+  if (sec <= 0) return ghostSamples[0].m || 0;
+  const last = ghostSamples[ghostSamples.length - 1];
+  if (sec >= last.t) return last.m;
+  for (let i = 1; i < ghostSamples.length; i++) {
+    if (ghostSamples[i].t >= sec) {
+      const t = (sec - ghostSamples[i-1].t) / (ghostSamples[i].t - ghostSamples[i-1].t);
+      return ghostSamples[i-1].m + (ghostSamples[i].m - ghostSamples[i-1].m) * t;
+    }
+  }
+  return last.m;
+}
+
+function updateGhostDelta(myM, sec) {
+  const el = document.getElementById('ghost-delta');
+  if (!ghostSamples.length) { el.textContent = ''; return; }
+  const gm = getGhostMeters(sec);
+  if (gm === null) return;
+  const d = Math.round(myM - gm);
+  if (Math.abs(d) < 3)  { el.textContent = '= PARI';            el.style.color = '#fff'; }
+  else if (d > 0)        { el.textContent = '+' + d + 'm sul ghost'; el.style.color = 'var(--green)'; }
+  else                   { el.textContent = d + 'm dal ghost';   el.style.color = 'var(--red)'; }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOGICA WORKOUT
+// ═══════════════════════════════════════════════════════
+let isStarted      = false;
+let isPaused       = false;
+let startTime      = 0;
+let elapsedAtPause = 0;
+let timerInterval  = null;
+let currentSessionId = null;
+let session = { meters:0, maxWatt:0, watts:[], strokes:0, spms:[], bpms:[], maxBpm:0 };
+let lastSampleSec  = -1;
+let pendingSamples = [];
+
+// Buffer a finestra scorrevole per SPM (ultimi 20 secondi)
+// Ogni elemento: { t: secondi, strokes: vogate_cumulative }
+let spmWindow = [];
+const SPM_WINDOW_SEC = 20;
+
+// Buffer a finestra scorrevole per Pace (ultimi 100 metri)
+// Ogni elemento: { m: metri_cumulativi, t: timestamp_ms }
+let paceWindow = [];
+const PACE_WINDOW_M = 100;
+
+function resetSessionState() {
+  isStarted      = false;
+  isPaused       = false;
+  startTime      = 0;
+  elapsedAtPause = 0;           // fix bug #5 — reset elapsedAtPause
+  lastSampleSec  = -1;
+  currentSessionId = null;
+  pendingSamples = [];
+  renderMeters   = 0;
+  currentBearing = 0;
+  session = { meters:0, maxWatt:0, watts:[], strokes:0, spms:[], bpms:[], maxBpm:0 };
+  spmWindow  = [];
+  paceWindow = [];
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function getElapsedSec() {
+  if (!isStarted) return 0;
+  return (Date.now() - startTime + elapsedAtPause) / 1000;
+}
+
+function updateUI(d) {
+  const strokes = d.getUint16(3, true);
+  if (!isStarted && strokes > 0) {
+    isStarted = true;
+    startTime = Date.now();
+    if (timerInterval) clearInterval(timerInterval); // fix doppio interval
+    timerInterval = setInterval(tickTimer, 1000);
+    document.getElementById('ghost-arrow').style.display = ghostSamples.length ? 'block' : 'none';
+  }
+
+  session.meters  = d.getUint16(6, true);
+  session.strokes = strokes;
+  renderMeters    = session.meters; // aggiorna il valore che il renderLoop usa
+
+  const sec = Math.floor(getElapsedSec());
+  if (sec > lastSampleSec) {
+    lastSampleSec = sec;
+    pendingSamples.push({ t: sec, m: session.meters });
+    // Flush a IndexedDB ogni 10 campioni
+    if (pendingSamples.length >= 10 && currentSessionId !== null) flushSamples();
+  }
+
+  // UI testo
+  document.getElementById('m-val').textContent = session.meters;
+  updateGhostDelta(session.meters, getElapsedSec());
+  checkChallengeStart(session.meters);
+  const watt = d.byteLength >= 12 ? d.getUint8(11) : 0;
+  updateChallenge(session.meters, watt, strokes);
+
+  if (d.byteLength >= 12) {
+    if (watt > 0) session.watts.push(watt);
+    if (watt > session.maxWatt) session.maxWatt = watt;
+    document.getElementById('w-val').textContent = watt;
+    document.getElementById('watt-fill').style.width = Math.min((watt / 350) * 100, 100) + '%';
+  }
+  if (d.byteLength >= 10) {
+    // Pace calcolato sugli ultimi 100 metri (finestra scorrevole)
+    const nowMs = Date.now();
+    paceWindow.push({ m: session.meters, t: nowMs });
+    // Rimuovi campioni oltre 100m fa
+    const mThresh = session.meters - PACE_WINDOW_M;
+    while (paceWindow.length > 1 && paceWindow[0].m < mThresh) paceWindow.shift();
+    // Calcola pace solo se la finestra copre almeno 20m e almeno 2 punti
+    if (paceWindow.length >= 2) {
+      const dm = session.meters - paceWindow[0].m;
+      const dt = (nowMs - paceWindow[0].t) / 1000; // secondi
+      if (dm > 20 && dt > 0) {
+        const paceSec = (dt / dm) * 500; // secondi per 500m
+        const pm = Math.floor(paceSec / 60);
+        const ps = Math.floor(paceSec % 60);
+        document.getElementById('p-val').textContent = pm + ':' + ps.toString().padStart(2,'0');
+      }
+    }
+  }
+  if (d.byteLength >= 21) {
+    const hh = d.getUint8(20);
+    if (hh > 0) {
+      session.bpms.push(hh);
+      if (hh > session.maxBpm) session.maxBpm = hh;
+      document.getElementById('h-val').textContent = hh;
+    }
+  }
+  // SPM calcolato sugli ultimi 20 secondi (finestra scorrevole)
+  const nowSec = getElapsedSec();
+  spmWindow.push({ t: nowSec, strokes: session.strokes });
+  // Rimuovi campioni oltre 20 secondi fa
+  const tThresh = nowSec - SPM_WINDOW_SEC;
+  while (spmWindow.length > 1 && spmWindow[0].t < tThresh) spmWindow.shift();
+  // Calcola SPM solo se la finestra copre almeno 5 secondi
+  let spmDisplay = 0;
+  if (spmWindow.length >= 2) {
+    const dStrokes = session.strokes - spmWindow[0].strokes;
+    const dTime    = nowSec - spmWindow[0].t;
+    if (dTime >= 5) spmDisplay = Math.round((dStrokes / dTime) * 60);
+  }
+  // Salva per medie finali
+  if (spmDisplay > 0) session.spms.push(spmDisplay);
+  document.getElementById('v-val').textContent   = session.strokes;
+  document.getElementById('spm-val').textContent = spmDisplay || '—';
+}
+
+async function flushSamples() {
+  if (!currentSessionId || !pendingSamples.length) return;
+  const toFlush = pendingSamples.splice(0); // svuota l'array atomicamente
+  for (const s of toFlush) {
+    await dbAdd('samples', { sessionId: currentSessionId, t: s.t, m: s.m }).catch(() => {});
+  }
+}
+
+function tickTimer() {
+  if (isPaused) return;
+  const d = Date.now() - startTime + elapsedAtPause;
+  const h = Math.floor(d / 3600000).toString().padStart(2,'0');
+  const m = Math.floor((d % 3600000) / 60000).toString().padStart(2,'0');
+  const s = Math.floor((d % 60000) / 1000).toString().padStart(2,'0');
+  document.getElementById('app-timer').textContent = h + ':' + m + ':' + s;
+}
+
+function tickClock() {
+  const n = new Date();
+  document.getElementById('app-clock').textContent =
+    n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0');
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ═══════════════════════════════════════════════════════
+//  BLUETOOTH
+// ═══════════════════════════════════════════════════════
+async function connectBT() {
+  try {
+    const dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [0x1826] }] });
+    const srv = await dev.gatt.connect();
+    const svc = await srv.getPrimaryService(0x1826);
+    const ch  = await svc.getCharacteristic(0x2AD1);
+    await ch.startNotifications(); // prima le notifiche, poi switcha pagina
+    await enterWorkout();
+    ch.addEventListener('characteristicvaluechanged', ev => { if (!isPaused) updateUI(ev.target.value); });
+  } catch(e) {
+    console.error('BT error:', e);
+    // fix bug #8: se fallisce, non rimane bloccato in page-app
+    switchPage('page-home');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  SIMULATORE
+// ═══════════════════════════════════════════════════════
+let simInt = null;
+
+async function startSim() {
+  await enterWorkout();
+  if (simInt) { clearInterval(simInt); simInt = null; }
+  let simM=0, simStr=0, simW=120, simWd=1, simBpm=145, simBd=1;
+  simInt = setInterval(() => {
+    if (isPaused) return;
+    simM  += 3 + Math.random() * 2;
+    simStr++;
+    simW  += simWd * (4 + Math.random() * 12);
+    if (simW > 280) { simW = 280; simWd = -1; }
+    if (simW <  80) { simW =  80; simWd =  1; }
+    simBpm += simBd * (0.3 + Math.random());
+    if (simBpm > 172) { simBpm = 172; simBd = -1; }
+    if (simBpm < 132) { simBpm = 132; simBd =  1; }
+    const simSpm = 20 + Math.round(Math.random() * 6); // fix bug #4
+    const buf = new ArrayBuffer(22), dv = new DataView(buf);
+    dv.setUint16(3, simStr, true);
+    dv.setUint16(6, Math.round(simM), true);
+    dv.setUint8(9, Math.round(60000 / (simW || 1) * 0.8));
+    dv.setUint8(11, Math.round(simW));
+    dv.setUint8(17, simSpm);
+    dv.setUint8(20, Math.round(simBpm));
+    updateUI(dv);
+  }, 400);
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGAZIONE
+// ═══════════════════════════════════════════════════════
+async function enterWorkout() {
+  resetSessionState(); // fix bug #5 — sempre reset prima di entrare
+  await loadGhost();
+  setupChallenges();
+  initTrackCanvas();
+  switchPage('page-app');
+  // Crea sessione in IndexedDB subito (per poter salvare campioni in tempo reale)
+  try {
+    const id = await dbAdd('sessions', {
+      date: new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'}),
+      timestamp: Date.now(),
+      meters: 0, time: '00:00:00', timeSec: 0,
+      maxWatt: 0, avgWatt: 0, strokes: 0, avgSpm: 0, avgBpm: 0, maxBpm: 0
+    });
+    currentSessionId = id;
+  } catch(e) { console.error('DB session create error:', e); }
+}
+
+function initTrackCanvas() {
+  trackCanvas = document.getElementById('track-canvas');
+  trackCtx    = trackCanvas.getContext('2d');
+  trackCanvas.width  = window.innerWidth;
+  trackCanvas.height = window.innerHeight;
+  // Rimuovi listener precedente se presente (fix listener accumulo)
+  window.onresize = () => {
+    if (trackCanvas) {
+      trackCanvas.width  = window.innerWidth;
+      trackCanvas.height = window.innerHeight;
+    }
+  };
+  if (rafId) cancelAnimationFrame(rafId);
+  renderLoop(); // fix bug #1 — render loop separato
+}
+
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Tap su page-app → pausa (solo canvas, non su bottoni)
+document.addEventListener('click', e => {
+  if (!isStarted || isPaused || !document.getElementById('page-app').classList.contains('active')) return;
+  if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+  isPaused = true;
+  elapsedAtPause += Date.now() - startTime;
+  document.getElementById('pause-overlay').style.display = 'flex';
+});
+
+function resumeWorkout(e) {
+  if (e) e.stopPropagation();
+  isPaused  = false;
+  startTime = Date.now();
+  document.getElementById('pause-overlay').style.display = 'none';
+}
+
+async function saveAndFinish(e) {
+  if (e) e.stopPropagation();
+  // Ferma simulatore
+  if (simInt) { clearInterval(simInt); simInt = null; }
+  // Ferma render loop
+  if (rafId)  { cancelAnimationFrame(rafId); rafId = null; }
+
+  const dur  = document.getElementById('app-timer').textContent;
+  const avgW = session.watts.length ? Math.round(session.watts.reduce((a,b)=>a+b) / session.watts.length) : 0;
+  const avgS = session.spms.length  ? Math.round(session.spms.reduce((a,b)=>a+b)  / session.spms.length)  : 0;
+  const avgB = session.bpms.length  ? Math.round(session.bpms.reduce((a,b)=>a+b)  / session.bpms.length)  : 0;
+
+  // Aggiorna sessione in IndexedDB con i dati finali
+  if (currentSessionId !== null) {
+    try {
+      await flushSamples(); // flush campioni rimasti
+      await dbPut('sessions', {
+        id: currentSessionId,
+        date: new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'}),
+        timestamp: Date.now(),
+        meters: session.meters, time: dur, timeSec: parseTime(dur),
+        maxWatt: session.maxWatt, avgWatt: avgW, strokes: session.strokes,
+        avgSpm: avgS, avgBpm: avgB, maxBpm: session.maxBpm
+      });
+      showDbStatus('✓ Sessione salvata');
+    } catch(err) {
+      console.error('DB save error:', err);
+      showDbStatus('⚠ Errore salvataggio');
+    }
+  }
+
+  // UI resume
+  document.getElementById('res-m').textContent  = session.meters;
+  document.getElementById('res-wa').textContent = avgW + ' W';
+  document.getElementById('res-wm').textContent = session.maxWatt + ' W';
+  document.getElementById('res-t').textContent  = dur;
+  document.getElementById('res-v').textContent  = session.strokes;
+  document.getElementById('res-cm').textContent = avgS;
+  document.getElementById('res-hm').textContent = avgB || '—';
+  document.getElementById('res-hx').textContent = session.maxBpm || '—';
+  const won = challengeResults.filter(c => c.isNew).length;
+  document.getElementById('res-ch-count').textContent = won;
+  document.getElementById('res-ch-list').innerHTML = challengeResults.map(c => `
+    <div class="res-ch-item">
+      <div><div class="res-ch-name">${c.title}</div><div style="font-size:.65rem;color:var(--dim)">${c.score}</div></div>
+      <div class="res-ch-score">${c.isNew ? '🏆 REC' : '·'}</div>
+    </div>`).join('');
+
+  document.getElementById('pause-overlay').style.display = 'none';
+  switchPage('page-resume');
+}
+
+// Fine sessione — torna a home e resetta tutto
+function resetSession() {
+  resetSessionState();
+  document.getElementById('app-timer').textContent = '00:00:00';
+  document.getElementById('ghost-arrow').style.display = 'none';
+  document.getElementById('ghost-delta').textContent = '';
+  switchPage('page-home');
+}
+
+async function showHistory() {
+  try {
+    const sessions = await dbGetAll('sessions');
+    // fix bug #6 — gestisce sessioni con campi mancanti
+    const valid = sessions.filter(s => s.meters > 0);
+    const bests = {
+      meters:  Math.max(0, ...valid.map(s => s.meters  || 0)),
+      avgWatt: Math.max(0, ...valid.map(s => s.avgWatt || 0)),
+    };
+    document.getElementById('hist-body').innerHTML = valid.slice().reverse().map(s => `
+      <tr>
+        <td class="td-date">${s.date || '—'}</td>
+        <td class="td-m ${s.meters === bests.meters ? 'best-v' : ''}">${s.meters}m</td>
+        <td>${s.time || '—'}</td>
+        <td class="${s.avgWatt === bests.avgWatt ? 'best-v' : ''}">${s.avgWatt || 0}W</td>
+        <td>${s.maxWatt || 0}W</td>
+        <td>${s.avgSpm  || 0}</td>
+        <td>${s.avgBpm  || 0}</td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('hist-body').innerHTML = '<tr><td colspan="7" style="color:var(--dim);padding:20px">Nessun dato</td></tr>';
+  }
+  switchPage('page-history');
+}
+
+function parseTime(t) {
+  const p = t.split(':');
+  return (+p[0]) * 3600 + (+p[1]) * 60 + (+p[2]);
+}
+
+// ═══════════════════════════════════════════════════════
+//  FULLSCREEN
+// ═══════════════════════════════════════════════════════
+function reqFS() {
+  const el = document.documentElement;
+  const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (fn) fn.call(el).catch(() => {});
+}
+document.addEventListener('click', function fs() {
+  reqFS(); document.removeEventListener('click', fs);
+}, { once: true, capture: true });
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+openDB()
+  .then(() => { showDbStatus('DB pronto'); })
+  .catch(e => { console.error('IndexedDB non disponibile:', e); showDbStatus('DB non disponibile'); });
+
+initHomeCanvas();
+
+// Service Worker per PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

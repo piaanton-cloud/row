@@ -1,0 +1,17 @@
+{
+  "name": "ROW",
+  "short_name": "ROW",
+  "description": "Ergometro Tevere",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0a0b0e",
+  "theme_color": "#0a0b0e",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
