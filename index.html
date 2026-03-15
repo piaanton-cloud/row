@@ -85,13 +85,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 #boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
 #ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
 
-/* ── Header: timer | meteo | orologio — margine 7mm ≈ 26px + safe area ── */
+/* ── Header: timer sx | orologio dx ── */
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
 .hdr-timer{font-family:'Roboto',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:4px;color:var(--dim);}
-.hdr-weather{display:flex;flex-direction:column;align-items:center;gap:3px;}
-.hdr-weather-icon{font-size:3.5rem;line-height:1;}
-.hdr-weather-temps{font-family:'Roboto',sans-serif;font-size:1.85rem;letter-spacing:2px;color:var(--dim);}
 .hdr-clock{font-family:'Roboto',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:3px;color:var(--dim);}
+
+/* ── Calorie — sotto i watt ── */
+#calories-block{margin-top:16px;}
+.cal-row{display:flex;align-items:center;gap:8px;}
+.cal-icon{color:var(--dim2);opacity:0.7;}
+.cal-num{font-family:'Roboto',sans-serif;font-size:2.2rem;font-weight:700;color:var(--dim);line-height:1;}
+.cal-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:4px;}
+
+/* ── Meteo — sotto i metri ── */
+#weather-block{margin-top:16px;text-align:right;}
+.hdr-weather-icon{line-height:1;display:block;text-align:right;}
+.hdr-weather-temps{font-family:'Roboto',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--dim);display:block;text-align:right;margin-top:4px;}
 
 /* ── Watt sx — +70% font, margine 26px ── */
 #watt-block{position:absolute;top:108px;left:26px;z-index:100;pointer-events:none;}
@@ -270,13 +279,6 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
   <!-- Header -->
   <div id="app-header">
     <span class="hdr-timer" id="app-timer">00:00:00</span>
-    <div class="hdr-weather">
-      <div class="hdr-weather-icon" id="weather-icon">
-        <!-- SVG meteo default — sole -->
-        <svg id="weather-svg" viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </div>
-      <div class="hdr-weather-temps" id="weather-temps">— / —</div>
-    </div>
     <span class="hdr-clock" id="app-clock">--:--</span>
   </div>
 
@@ -288,12 +290,27 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
       <div class="watt-bar-track"><div id="watt-bar-curr"></div></div>
       <div class="watt-bar-track"><div id="watt-bar-prev"></div></div>
     </div>
+    <!-- Calorie sotto i watt -->
+    <div id="calories-block">
+      <div class="cal-row">
+        <span class="cal-icon"><svg viewBox="0 0 24 24" width="1.6rem" height="1.6rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 4.5-5 9a5 5 0 0 0 10 0c0-4.5-5-9-5-9z"/><path d="M9 14s1 1 3 1 3-1 3-1"/></svg></span>
+        <span class="cal-num" id="cal-val">0</span>
+      </div>
+      <div class="cal-label">kcal</div>
+    </div>
   </div>
 
   <!-- Metri block dx -->
   <div id="meters-block">
     <div class="meters-num" id="m-val">0</div>
     <div class="meters-label">Metri</div>
+    <!-- Meteo sotto i metri -->
+    <div id="weather-block">
+      <div class="hdr-weather-icon" id="weather-icon">
+        <svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </div>
+      <div class="hdr-weather-temps" id="weather-temps">— / —</div>
+    </div>
   </div>
 
   <!-- Ghost delta rimosso — solo icona sul percorso -->
@@ -355,7 +372,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
         <!-- remo stilizzato -->
         <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="4" y1="20" x2="20" y2="4"/><path d="M20 4 Q22 2 20 6 Q18 10 16 8 Q14 6 20 4Z" fill="currentColor" stroke="none"/></svg></div>
         <span class="stat-sm-val" id="v-val">0</span>
-        <span class="stat-sm-lbl">voghe</span>
+        <span class="stat-sm-lbl">strokes</span>
       </div>
     </div>
   </div>
@@ -921,12 +938,12 @@ function updateGoalBar(meters,elapsedSec){
 //  METEO MILANO (Open-Meteo, no API key)
 // ═══════════════════════════════════════════════════════
 const WEATHER_SVGS={
-  sun:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-  cloud:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
-  rain:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>`,
-  storm:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`,
-  snow:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>`,
-  fog:`<svg viewBox="0 0 24 24" width="3.5rem" height="3.5rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  cloud:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
+  rain:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>`,
+  storm:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`,
+  snow:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>`,
+  fog:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
 };
 function weatherCodeToSvg(c){const n=Number(c);if(n<=1)return WEATHER_SVGS.sun;if(n<=3)return WEATHER_SVGS.cloud;if(n<=48)return WEATHER_SVGS.fog;if(n<=67)return WEATHER_SVGS.rain;if(n<=77)return WEATHER_SVGS.snow;return WEATHER_SVGS.storm;}
 
@@ -1005,6 +1022,10 @@ function updateUI(d){
     // Barra rossa (precedente)
     document.getElementById('watt-bar-prev').style.width=Math.min((prevWatt/350)*100,100)+'%';
     prevWatt=watt;
+    // Calorie: formula METs-based kcal = W_avg * elapsed * 0.00024
+    const avgWattNow=session.watts.length?Math.round(session.watts.reduce((a,b)=>a+b)/session.watts.length):0;
+    const kcal=Math.round(avgWattNow*getElapsedSec()*0.00024);
+    document.getElementById('cal-val').textContent=kcal;
   }
   // ── Pace — aggiornata ogni 10s tramite tickPace, qui solo raccolta dati ──
   const nowMs=Date.now();
