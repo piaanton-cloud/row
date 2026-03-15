@@ -537,50 +537,67 @@ function initHomeCanvas(){
 //  GOAL SCREEN — caroselli
 // ═══════════════════════════════════════════════════════
 let goalType=null, goalValue=0;
+// Valore attualmente visibile nei due caroselli (indice 0-based)
+let distIdx=4;  // default 5km
+let timeIdx=19; // default 20min
 
 function buildCarousels(){
   buildCarousel('dist-carousel', 1, 15, 'km', 'dist');
   buildCarousel('time-carousel', 1, 120, 'min', 'time');
+  // Preseleziona distanza di default (5km = indice 4)
+  setTimeout(()=>{
+    scrollCarouselTo('dist-carousel', distIdx);
+    goalType='dist'; goalValue=(distIdx+1)*1000;
+    document.getElementById('btn-start-workout').classList.add('ready');
+  }, 80);
 }
 
 function buildCarousel(id, min, max, unit, type){
   const el=document.getElementById(id);
   el.innerHTML='';
-  // Padding vuoto sopra/sotto per centrare il primo/ultimo
   const pad=document.createElement('div');pad.style.height='60px';pad.style.flexShrink='0';el.appendChild(pad);
   for(let v=min;v<=max;v++){
     const item=document.createElement('div');
     item.className='goal-item';item.dataset.val=v;item.dataset.type=type;
     item.innerHTML=`<span class="goal-item-val">${v}</span><span class="goal-item-unit">${unit}</span>`;
-    item.addEventListener('click',()=>selectGoal(type,v));
+    item.addEventListener('click',()=>{
+      const idx=v-min;
+      selectGoal(type,v,idx);
+      scrollCarouselTo(id,idx);
+    });
     el.appendChild(item);
   }
   const pad2=document.createElement('div');pad2.style.height='60px';pad2.style.flexShrink='0';el.appendChild(pad2);
 
-  // Scroll snap: aggiorna selezione visiva durante scroll
-  el.addEventListener('scroll',()=>updateCarouselSelection(el,type),{passive:true});
+  // Aggiorna selezione visiva E goalType/goalValue durante lo scroll
+  let scrollTimer=null;
+  el.addEventListener('scroll',()=>{
+    updateCarouselSelection(el,type);
+    // Debounce: aggiorna goal 150ms dopo che lo scroll si ferma
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(()=>{
+      const idx=Math.round(el.scrollTop/60);
+      const val=min+idx;
+      if(val>=min&&val<=max) selectGoal(type, val, idx);
+    },150);
+  },{passive:true});
 }
 
 function updateCarouselSelection(el,type){
-  const scrollTop=el.scrollTop;
-  const idx=Math.round(scrollTop/60);
+  const idx=Math.round(el.scrollTop/60);
   el.querySelectorAll('.goal-item').forEach((item,i)=>{
     item.classList.toggle('selected',i===idx);
   });
 }
 
-function selectGoal(type, val){
-  // Deseleziona l'altro tipo
+function selectGoal(type, val, idx){
   if(type==='dist'){
-    goalType='dist'; goalValue=val*1000;
-    // Reset visivo time carousel
+    goalType='dist'; goalValue=val*1000; distIdx=idx;
+    // Deseleziona visivamente time carousel, ma non azzera goalType
     document.getElementById('time-carousel').querySelectorAll('.goal-item').forEach(i=>i.classList.remove('selected'));
-    // Scrolla dist carousel al valore
-    scrollCarouselTo('dist-carousel',val-1);
   } else {
-    goalType='time'; goalValue=val*60;
+    goalType='time'; goalValue=val*60; timeIdx=idx;
     document.getElementById('dist-carousel').querySelectorAll('.goal-item').forEach(i=>i.classList.remove('selected'));
-    scrollCarouselTo('time-carousel',val-1);
   }
   document.getElementById('btn-start-workout').classList.add('ready');
 }
@@ -588,7 +605,6 @@ function selectGoal(type, val){
 function scrollCarouselTo(id,idx){
   const el=document.getElementById(id);
   el.scrollTo({top:idx*60,behavior:'smooth'});
-  // Aggiorna selezione visiva
   setTimeout(()=>updateCarouselSelection(el,id.includes('dist')?'dist':'time'),300);
 }
 
