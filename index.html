@@ -463,7 +463,26 @@ function calcBearing(a,b){const dLon=(b[1]-a[1])*Math.PI/180;const lat1=a[0]*Mat
 // ═══════════════════════════════════════════════════════
 //  CANVAS TRACCIATO
 // ═══════════════════════════════════════════════════════
-let trackCanvas=null,trackCtx=null,currentBearing=0,rafId=null,renderMeters=0;
+let trackCanvas=null,trackCtx=null,currentBearing=0,rafId=null;
+let renderMeters=0;      // metri interpolati (smooth)
+let targetMeters=0;      // metri reali dall'ergometro
+let lastRenderTs=0;      // timestamp ultimo frame per delta-time
+let metersPerSec=0;      // velocità stimata m/s per interpolazione
+let lastBtMs=0;          // timestamp ultima notifica BT
+
+function renderLoop(ts){
+  rafId=requestAnimationFrame(renderLoop);
+  if(!lastRenderTs) lastRenderTs=ts;
+  const dt=Math.min((ts-lastRenderTs)/1000, 0.1); // cap a 100ms per evitare salti
+  lastRenderTs=ts;
+  // Avanza renderMeters verso targetMeters alla velocità stimata
+  if(targetMeters>renderMeters){
+    const step=Math.max(metersPerSec*dt, 0.02);
+    renderMeters=Math.min(targetMeters, renderMeters+step);
+  }
+  drawTrack(renderMeters);
+}
+
 const SCALE=6.5;
 
 function latLonToLocal(lat,lon,refLat,refLon){const x=(lon-refLon)*111320*Math.cos(refLat*Math.PI/180);const y=-(lat-refLat)*111320;return[x,y];}
@@ -478,8 +497,6 @@ function drawSmoothPath(ctx,pts){
     ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2[0],p2[1]);
   }
 }
-
-function renderLoop(){rafId=requestAnimationFrame(renderLoop);drawTrack(renderMeters);}
 
 function drawTrack(meters){
   if(!trackCanvas)return;
@@ -509,11 +526,11 @@ function drawTrack(meters){
     const distL=Math.hypot(lx-W/2,ly-H*0.52);
     const distR=Math.hypot(rx-W/2,ry-H*0.52);
     if(distL<visRadius){
-      ctx.beginPath();ctx.arc(lx,ly,2,0,Math.PI*2);
+      ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);
       ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
     }
     if(distR<visRadius){
-      ctx.beginPath();ctx.arc(rx,ry,2,0,Math.PI*2);
+      ctx.beginPath();ctx.arc(rx,ry,3,0,Math.PI*2);
       ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
     }
   });
@@ -574,10 +591,10 @@ function drawTrack(meters){
   // Tecnica: rettangolo pieno + "buco" ellittico ritagliato con compositing
   ctx.save();
   ctx.globalCompositeOperation='source-over';
-  // Top — più alto per coprire zona header/meteo
-  const gt=ctx.createLinearGradient(0,0,0,H*0.32);
+  // Top — copre ancora di più per nascondere il percorso nell'area header
+  const gt=ctx.createLinearGradient(0,0,0,H*0.44);
   gt.addColorStop(0,'rgba(5,8,16,1)');gt.addColorStop(1,'rgba(5,8,16,0)');
-  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.36);
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.48);
   // Bottom
   const gb=ctx.createLinearGradient(0,H,0,H*0.72);
   gb.addColorStop(0,'rgba(5,8,16,1)');gb.addColorStop(1,'rgba(5,8,16,0)');
@@ -676,18 +693,16 @@ const POI_COLORS={
 let LANE_MARKERS=[];
 function buildLaneMarkers(){
   LANE_MARKERS=[];
-  for(let m2=0;m2<=TOTAL_M;m2+=5){
+  for(let m2=0;m2<=TOTAL_M;m2+=15){ // ogni 15m (-70%), r=3 (+50%)
     const pos=posAtMeters(m2);
     const pos2=posAtMeters(Math.min(m2+5,TOTAL_M));
     const bear=calcBearing(pos,pos2)*Math.PI/180;
-    // Perpendicolare al percorso: offset laterale 18m a sinistra e destra
     const perpX=Math.cos(bear+Math.PI/2);
     const perpY=Math.sin(bear+Math.PI/2);
     const latOff=18/111320;
     const lonOff=18/(111320*Math.cos(pos[0]*Math.PI/180));
     LANE_MARKERS.push({
       m:m2,
-      // Due puntini: sponda sinistra e destra
       L:[pos[0]+perpX*latOff*0.7, pos[1]+perpY*lonOff*0.7],
       R:[pos[0]-perpX*latOff*0.7, pos[1]-perpY*lonOff*0.7],
     });
@@ -934,7 +949,7 @@ async function fetchWeather(){
 // ═══════════════════════════════════════════════════════
 //  LOGICA WORKOUT
 // ═══════════════════════════════════════════════════════
-let isStarted=false,isPaused=false,startTime=0,elapsedAtPause=0,timerInterval=null;
+let isStarted=false,isPaused=false,startTime=0,elapsedAtPause=0,timerInterval=null,paceInterval=null;
 let currentSessionId=null;
 let session={meters:0,maxWatt:0,watts:[],strokes:0,spms:[],bpms:[],maxBpm:0};
 let lastSampleSec=-1,pendingSamples=[];
@@ -943,10 +958,11 @@ let paceWindow=[]; const PACE_WINDOW_M=100;
 
 function resetSessionState(){
   isStarted=false;isPaused=false;startTime=0;elapsedAtPause=0;lastSampleSec=-1;
-  currentSessionId=null;pendingSamples=[];renderMeters=0;currentBearing=0;lastMilestone=0;prevWatt=0;
+  currentSessionId=null;pendingSamples=[];renderMeters=0;targetMeters=0;metersPerSec=0;lastRenderTs=0;lastBtMs=0;currentBearing=0;lastMilestone=0;prevWatt=0;
   session={meters:0,maxWatt:0,watts:[],strokes:0,spms:[],bpms:[],maxBpm:0};
   spmWindow=[];paceWindow=[];
   if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  if(paceInterval){clearInterval(paceInterval);paceInterval=null;}
 }
 
 function getElapsedSec(){return isStarted?(Date.now()-startTime+elapsedAtPause)/1000:0;}
@@ -957,9 +973,19 @@ function updateUI(d){
     isStarted=true;startTime=Date.now();
     if(timerInterval)clearInterval(timerInterval);
     timerInterval=setInterval(tickTimer,1000);
+    if(paceInterval)clearInterval(paceInterval);
+    paceInterval=setInterval(tickPace,10000);
     document.getElementById('ghost-arrow').style.display=ghostSamples.length?'block':'none';
   }
-  session.meters=d.getUint16(6,true);session.strokes=strokes;renderMeters=session.meters;
+  session.meters=d.getUint16(6,true);session.strokes=strokes;
+  // Interpolazione fluida: calcola velocità reale tra due notifiche BT
+  const nowForInterp=Date.now();
+  if(targetMeters>0&&session.meters>targetMeters&&lastBtMs>0){
+    const dtBt=(nowForInterp-lastBtMs)/1000;
+    if(dtBt>0) metersPerSec=(session.meters-targetMeters)/dtBt;
+  }
+  targetMeters=session.meters;
+  lastBtMs=nowForInterp;
   const sec=Math.floor(getElapsedSec());
   if(sec>lastSampleSec){lastSampleSec=sec;pendingSamples.push({t:sec,m:session.meters});if(pendingSamples.length>=10&&currentSessionId!==null)flushSamples();}
 
@@ -980,26 +1006,14 @@ function updateUI(d){
     document.getElementById('watt-bar-prev').style.width=Math.min((prevWatt/350)*100,100)+'%';
     prevWatt=watt;
   }
-  // ── Pace — media su 10 secondi ──
-  // Campiona solo quando i metri cambiano
+  // ── Pace — aggiornata ogni 10s tramite tickPace, qui solo raccolta dati ──
   const nowMs=Date.now();
   const lastP=paceWindow.length?paceWindow[paceWindow.length-1]:null;
   if(!lastP||session.meters>lastP.m){
     paceWindow.push({m:session.meters,t:nowMs});
   }
-  // Finestra di 10 secondi
-  while(paceWindow.length>1&&(nowMs-paceWindow[0].t)>10000)paceWindow.shift();
-  if(paceWindow.length>=2){
-    const dm=session.meters-paceWindow[0].m;
-    const dt=(nowMs-paceWindow[0].t)/1000;
-    if(dm>=3&&dt>=3){
-      const paceSec=(dt/dm)*500;
-      if(paceSec>=60&&paceSec<600){
-        document.getElementById('p-val').textContent=
-          Math.floor(paceSec/60)+':'+Math.floor(paceSec%60).toString().padStart(2,'0');
-      }
-    }
-  }
+  // Mantieni finestra 15s di dati
+  while(paceWindow.length>1&&(nowMs-paceWindow[0].t)>15000)paceWindow.shift();
 
   if(d.byteLength>=21){const hh=d.getUint8(20);if(hh>0){session.bpms.push(hh);if(hh>session.maxBpm)session.maxBpm=hh;document.getElementById('h-val').textContent=hh;}}
 
@@ -1027,6 +1041,21 @@ function tickTimer(){
   const m=Math.floor((d%3600000)/60000).toString().padStart(2,'0');
   const s=Math.floor((d%60000)/1000).toString().padStart(2,'0');
   document.getElementById('app-timer').textContent=h+':'+m+':'+s;
+}
+
+// Aggiorna il ritmo ogni 10 secondi
+function tickPace(){
+  if(!isStarted||isPaused||paceWindow.length<2) return;
+  const nowMs=Date.now();
+  const dm=session.meters-paceWindow[0].m;
+  const dt=(nowMs-paceWindow[0].t)/1000;
+  if(dm>=5&&dt>=5){
+    const paceSec=(dt/dm)*500;
+    if(paceSec>=60&&paceSec<600){
+      document.getElementById('p-val').textContent=
+        Math.floor(paceSec/60)+':'+Math.floor(paceSec%60).toString().padStart(2,'0');
+    }
+  }
 }
 function tickClock(){const n=new Date();document.getElementById('app-clock').textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');}
 setInterval(tickClock,1000);tickClock();
