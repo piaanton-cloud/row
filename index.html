@@ -500,6 +500,51 @@ function drawTrack(meters){
   ctx.strokeStyle='rgba(180,195,220,0.10)';ctx.lineWidth=24;drawSmoothPath(ctx,allPts);ctx.stroke();
   ctx.strokeStyle='rgba(200,212,230,0.55)';ctx.lineWidth=10;drawSmoothPath(ctx,allPts);ctx.stroke();
 
+  // ── Segnalini ogni 5m ai lati del percorso ──
+  // Solo quelli visibili (entro ~600px dal centro)
+  const visRadius=Math.min(W,H)*0.52;
+  LANE_MARKERS.forEach(mk=>{
+    const[lx,ly]=toScreen(mk.L[0],mk.L[1]);
+    const[rx,ry]=toScreen(mk.R[0],mk.R[1]);
+    const distL=Math.hypot(lx-W/2,ly-H*0.52);
+    const distR=Math.hypot(rx-W/2,ry-H*0.52);
+    if(distL<visRadius){
+      ctx.beginPath();ctx.arc(lx,ly,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
+    }
+    if(distR<visRadius){
+      ctx.beginPath();ctx.arc(rx,ry,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
+    }
+  });
+
+  // ── POI — pallino + nome che appare entro 300m ──
+  TEVERE_POI_DATA.forEach(([km,plat,plon,pname,ptype])=>{
+    const[px,py]=toScreen(plat,plon);
+    const dist=Math.hypot(px-W/2,py-H*0.52);
+    if(dist>visRadius) return;
+    const col=POI_COLORS[ptype]||'rgba(180,195,220,0.85)';
+    // Pallino
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
+    ctx.strokeStyle=col.replace('0.85','0.3');ctx.lineWidth=1.5;ctx.stroke();
+    // Nome — appare solo entro 300px dal centro (vicino alla freccia)
+    if(dist<300){
+      const opacity=Math.max(0,1-(dist/300));
+      ctx.save();
+      ctx.globalAlpha=opacity;
+      ctx.font='500 11px Roboto,sans-serif';
+      ctx.textAlign='center';
+      ctx.fillStyle=col;
+      // Ombra per leggibilità
+      ctx.shadowColor='rgba(5,8,16,0.9)';ctx.shadowBlur=6;
+      const lines=pname.split('\n');
+      lines.forEach((line,i)=>ctx.fillText(line,px,py-14-(lines.length-1-i)*14));
+      ctx.restore();
+    }
+  });
+
   // Sfida
   if(nextChallenge&&!challengeActive){
     const cPos=posAtMeters(nextChallenge.startAt);
@@ -517,11 +562,11 @@ function drawTrack(meters){
   // Ghost
   if(ghostSamples.length>0){const gm=getGhostMeters(getElapsedSec());if(gm!==null){const gPos=posAtMeters(gm);const[gx,gy]=toScreen(gPos[0],gPos[1]);const ga=document.getElementById('ghost-arrow');ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';}}
 
-  // ── Particelle — velocità fissa come home (no currentPaceSpeed) ──
+  // ── Particelle identiche alla home ──
   APP_PARTICLES.forEach(p=>{
-    p.y+=p.vy;                                    // stessa velocità della home
-    if(p.y>1.02){p.y=-0.02;p.x=Math.random();}
-    ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+    p.y+=p.vy;
+    if(p.y>H+5){p.y=-5;p.x=Math.random()*W;}
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();
   });
 
@@ -529,13 +574,10 @@ function drawTrack(meters){
   // Tecnica: rettangolo pieno + "buco" ellittico ritagliato con compositing
   ctx.save();
   ctx.globalCompositeOperation='source-over';
-  // Gradiente radiale ellittico — copre i 4 angoli e i bordi
-  const vcx=W/2, vcy=H*0.52;
-  // Usiamo 4 gradienti lineari per coprire i bordi completamente
-  // Top
-  const gt=ctx.createLinearGradient(0,0,0,H*0.18);
+  // Top — più alto per coprire zona header/meteo
+  const gt=ctx.createLinearGradient(0,0,0,H*0.32);
   gt.addColorStop(0,'rgba(5,8,16,1)');gt.addColorStop(1,'rgba(5,8,16,0)');
-  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.22);
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.36);
   // Bottom
   const gb=ctx.createLinearGradient(0,H,0,H*0.72);
   gb.addColorStop(0,'rgba(5,8,16,1)');gb.addColorStop(1,'rgba(5,8,16,0)');
@@ -585,26 +627,70 @@ function initHomeCanvas(){
 //  PARTICELLE SCHERMATA ALLENAMENTO
 //  Scendono dall'alto, velocità proporzionale al ritmo
 // ═══════════════════════════════════════════════════════
-let currentPaceSpeed=0.4; // velocità base, aumenta con il ritmo
+// Particelle identiche alla home — inizializzate in px quando il canvas è pronto
+let APP_PARTICLES = [];
+function initAppParticles(W, H){
+  APP_PARTICLES = Array.from({length:60},()=>({
+    x: Math.random()*W,
+    y: Math.random()*H,
+    r: Math.random()*3+1,
+    vy: 0.3+Math.random()*0.5,
+    op: 0.3+Math.random()*0.5
+  }));
+}
 
-const APP_PARTICLES = Array.from({length:55},()=>({
-  x:Math.random(),   // posizione normalizzata 0-1
-  y:Math.random(),
-  r:Math.random()*2.5+0.8,
-  vy:0.3+Math.random()*0.4, // velocità relativa individuale
-  op:0.15+Math.random()*0.3
-}));
+// ═══════════════════════════════════════════════════════
+//  PUNTI DI INTERESSE SUL TEVERE
+//  [distanza_km, lat, lon, nome, tipo]
+// ═══════════════════════════════════════════════════════
+const TEVERE_POI_DATA=[
+  [0.0,  41.9337,12.4669,'Ponte Milvio',       'ponte'],
+  [0.5,  41.9285,12.4680,'Foro Italico',        'monumento'],
+  [1.2,  41.9272,12.4718,'Ponte Flaminio',      'ponte'],
+  [2.0,  41.9220,12.4720,'Auditorium Parco\ndella Musica','architettura'],
+  [2.8,  41.9188,12.4660,'Ponte della Musica',  'ponte'],
+  [3.5,  41.9090,12.4606,'Castel\nSant\'Angelo','monumento'],
+  [4.1,  41.9072,12.4654,'Ponte\nSant\'Angelo', 'ponte'],
+  [4.8,  41.9030,12.4702,'Palazzo di Giustizia','architettura'],
+  [5.2,  41.8992,12.4720,'Ponte V.\nEmanuele II','ponte'],
+  [5.9,  41.8960,12.4680,'Trastevere',          'quartiere'],
+  [6.4,  41.8900,12.4700,'Isola Tiberina',      'isola'],
+  [6.8,  41.8880,12.4710,'Ponte Garibaldi',     'ponte'],
+  [7.2,  41.8860,12.4700,'Tempio di Ercole\nVincitore','monumento'],
+  [7.8,  41.8845,12.4712,'Ponte Palatino',      'ponte'],
+  [8.3,  41.8820,12.4680,'Piramide Cestia',     'monumento'],
+  [8.8,  41.8812,12.4695,'Ponte Testaccio',     'ponte'],
+];
 
-// Aggiorna velocità particelle dal passo (chiamata in updateUI)
-function updateParticleSpeed(meters, elapsedSec){
-  if(!isStarted||elapsedSec<3||meters<5){currentPaceSpeed=0.4;return;}
-  if(paceWindow.length>=2){
-    const dm=session.meters-paceWindow[0].m;
-    const dt=(Date.now()-paceWindow[0].t)/1000;
-    if(dm>5&&dt>0){
-      const mps=dm/dt;
-      currentPaceSpeed=Math.max(0.2,Math.min(2.0, mps/3));
-    }
+// Colori per tipo
+const POI_COLORS={
+  ponte:       'rgba(180,195,220,0.85)',
+  monumento:   'rgba(255,213,79,0.85)',
+  architettura:'rgba(150,200,255,0.85)',
+  quartiere:   'rgba(150,220,150,0.80)',
+  isola:       'rgba(180,230,180,0.85)',
+};
+
+// Genera punti segnalini ogni 5m lungo il percorso
+// Precomputati per performance
+let LANE_MARKERS=[];
+function buildLaneMarkers(){
+  LANE_MARKERS=[];
+  for(let m2=0;m2<=TOTAL_M;m2+=5){
+    const pos=posAtMeters(m2);
+    const pos2=posAtMeters(Math.min(m2+5,TOTAL_M));
+    const bear=calcBearing(pos,pos2)*Math.PI/180;
+    // Perpendicolare al percorso: offset laterale 18m a sinistra e destra
+    const perpX=Math.cos(bear+Math.PI/2);
+    const perpY=Math.sin(bear+Math.PI/2);
+    const latOff=18/111320;
+    const lonOff=18/(111320*Math.cos(pos[0]*Math.PI/180));
+    LANE_MARKERS.push({
+      m:m2,
+      // Due puntini: sponda sinistra e destra
+      L:[pos[0]+perpX*latOff*0.7, pos[1]+perpY*lonOff*0.7],
+      R:[pos[0]-perpX*latOff*0.7, pos[1]-perpY*lonOff*0.7],
+    });
   }
 }
 
@@ -883,7 +969,6 @@ function updateUI(d){
   const watt=d.byteLength>=12?d.getUint8(11):0;
   updateChallenge(session.meters,watt,strokes);
   updateGoalBar(session.meters,getElapsedSec());
-  updateParticleSpeed(session.meters,getElapsedSec());
 
   if(d.byteLength>=12){
     if(watt>0)session.watts.push(watt);
@@ -974,6 +1059,7 @@ async function startWorkout(){
   resetSessionState();
   await loadGhost();
   setupChallenges();
+  buildLaneMarkers();
   buildMilestones();
   document.getElementById('goal-progress-wrap').style.display=goalType?'block':'none';
   initTrackCanvas();
@@ -988,7 +1074,8 @@ async function startWorkout(){
 function initTrackCanvas(){
   trackCanvas=document.getElementById('track-canvas');trackCtx=trackCanvas.getContext('2d');
   trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;
-  window.onresize=()=>{if(trackCanvas){trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;}};
+  initAppParticles(trackCanvas.width, trackCanvas.height);
+  window.onresize=()=>{if(trackCanvas){trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;initAppParticles(trackCanvas.width,trackCanvas.height);}};
   if(rafId)cancelAnimationFrame(rafId);
   renderLoop();
 }
