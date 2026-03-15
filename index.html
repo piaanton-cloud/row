@@ -80,7 +80,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
-#page-app{background:var(--bg);overflow:hidden;}
+#page-app{overflow:hidden;} /* background già dal .page gradient */
 #track-canvas{position:absolute;inset:0;width:100%;height:100%;}
 #boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
 #ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
@@ -108,8 +108,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .meters-num{font-family:'Roboto',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--dim);}
 .meters-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:8px;text-align:right;}
 
-/* ── Ghost delta ── */
-#ghost-delta{position:absolute;top:96px;left:50%;transform:translateX(-50%);z-index:200;font-family:'Roboto',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:3px;background:rgba(10,11,14,0.7);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:3px;padding:4px 14px;white-space:nowrap;display:none;}
+/* ── Ghost delta — spostato in basso vicino alle stat ── */
+#ghost-delta{position:absolute;bottom:230px;left:50%;transform:translateX(-50%);z-index:200;font-family:'Roboto',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:3px;background:rgba(5,8,16,0.75);backdrop-filter:blur(8px);border-radius:3px;padding:4px 14px;white-space:nowrap;display:none;}
 #page-app.active #ghost-delta{display:block;}
 
 /* ── Sfida ── */
@@ -255,7 +255,6 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 <!-- APP -->
 <div id="page-app" class="page">
   <canvas id="track-canvas"></canvas>
-  <canvas id="particles-canvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
 
   <div id="boat-arrow">
     <svg width="28" height="36" viewBox="0 0 28 36">
@@ -497,7 +496,7 @@ function drawTrack(meters){
   const b=currentBearing*Math.PI/180,refLat=pos[0],refLon=pos[1];
   function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
 
-  ctx.fillStyle='#0a0b0e';ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H); // sfondo trasparente — mostra gradiente CSS della pagina
   const allPts=TEVERE.map(p=>toScreen(p[0],p[1]));
   ctx.lineCap='round';ctx.lineJoin='round';
   ctx.strokeStyle='rgba(180,195,220,0.06)';ctx.lineWidth=38;drawSmoothPath(ctx,allPts);ctx.stroke();
@@ -521,7 +520,15 @@ function drawTrack(meters){
   // Ghost
   if(ghostSamples.length>0){const gm=getGhostMeters(getElapsedSec());if(gm!==null){const gPos=posAtMeters(gm);const[gx,gy]=toScreen(gPos[0],gPos[1]);const ga=document.getElementById('ghost-arrow');ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';}}
 
-  // Vignette ellittica più spessa (+40%) — nasconde meglio gli estremi
+  // ── Particelle — stessa velocità/verso della home, sotto la vignette ──
+  APP_PARTICLES.forEach(p=>{
+    p.y+=p.vy*currentPaceSpeed;
+    if(p.y>1.02){p.y=-0.02;p.x=Math.random();}
+    ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();
+  });
+
+  // Vignette ellittica — sopra le particelle, nasconde gli estremi del tracciato
   const vcx=W/2,vcy=H*0.52,vrx=W*0.44,vry=H*0.32;
   ctx.save();ctx.translate(vcx,vcy);ctx.scale(1,vry/vrx);
   const vign=ctx.createRadialGradient(0,0,vrx*0.22,0,0,vrx);
@@ -566,7 +573,6 @@ function initHomeCanvas(){
 //  PARTICELLE SCHERMATA ALLENAMENTO
 //  Scendono dall'alto, velocità proporzionale al ritmo
 // ═══════════════════════════════════════════════════════
-let particlesCanvas=null, particlesCtx=null, particleRafId=null;
 let currentPaceSpeed=0.4; // velocità base, aumenta con il ritmo
 
 const APP_PARTICLES = Array.from({length:55},()=>({
@@ -577,45 +583,14 @@ const APP_PARTICLES = Array.from({length:55},()=>({
   op:0.15+Math.random()*0.3
 }));
 
-function initParticles(){
-  particlesCanvas=document.getElementById('particles-canvas');
-  particlesCtx=particlesCanvas.getContext('2d');
-  particlesCanvas.width=window.innerWidth;
-  particlesCanvas.height=window.innerHeight;
-  window.addEventListener('resize',()=>{
-    if(particlesCanvas){particlesCanvas.width=window.innerWidth;particlesCanvas.height=window.innerHeight;}
-  });
-  if(particleRafId)cancelAnimationFrame(particleRafId);
-  animateParticles();
-}
-
-function animateParticles(){
-  particleRafId=requestAnimationFrame(animateParticles);
-  if(!particlesCanvas)return;
-  const W=particlesCanvas.width,H=particlesCanvas.height;
-  const ctx=particlesCtx;
-  ctx.clearRect(0,0,W,H);
-  APP_PARTICLES.forEach(p=>{
-    // Velocità = base individuale × currentPaceSpeed (modulata dal ritmo)
-    p.y+=p.vy*currentPaceSpeed;
-    if(p.y>1.02){p.y=-0.02;p.x=Math.random();}
-    ctx.beginPath();
-    ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(180,195,220,${p.op})`;
-    ctx.fill();
-  });
-}
-
 // Aggiorna velocità particelle dal passo (chiamata in updateUI)
 function updateParticleSpeed(meters, elapsedSec){
   if(!isStarted||elapsedSec<3||meters<5){currentPaceSpeed=0.4;return;}
-  // m/s corrente (media sugli ultimi secondi dal paceWindow)
   if(paceWindow.length>=2){
     const dm=session.meters-paceWindow[0].m;
     const dt=(Date.now()-paceWindow[0].t)/1000;
     if(dm>5&&dt>0){
-      const mps=dm/dt; // metri al secondo
-      // Un vogatore a ritmo 2:00/500m fa 4.17 m/s — mappo 1-6 m/s su 0.2-2.0x
+      const mps=dm/dt;
       currentPaceSpeed=Math.max(0.2,Math.min(2.0, mps/3));
     }
   }
@@ -790,7 +765,9 @@ function getGhostMeters(sec){
   for(let i=1;i<ghostSamples.length;i++){if(ghostSamples[i].t>=sec){const t=(sec-ghostSamples[i-1].t)/(ghostSamples[i].t-ghostSamples[i-1].t);return ghostSamples[i-1].m+(ghostSamples[i].m-ghostSamples[i-1].m)*t;}}return last.m;
 }
 function updateGhostDelta(myM,sec){
-  const el=document.getElementById('ghost-delta');if(!ghostSamples.length){el.textContent='';return;}
+  const el=document.getElementById('ghost-delta');
+  if(!ghostSamples.length){el.textContent='';el.style.visibility='hidden';return;}
+  el.style.visibility='visible';
   const gm=getGhostMeters(sec);if(gm===null)return;const d=Math.round(myM-gm);
   if(Math.abs(d)<3){el.textContent='= PARI';el.style.color='#fff';}
   else if(d>0){el.textContent='+'+d+'m sul ghost';el.style.color='var(--green)';}
@@ -996,7 +973,6 @@ async function startWorkout(){
   buildMilestones();
   document.getElementById('goal-progress-wrap').style.display=goalType?'block':'none';
   initTrackCanvas();
-  initParticles();
   fetchWeather();
   switchPage('page-app');
   try{
