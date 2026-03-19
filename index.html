@@ -1690,7 +1690,21 @@ document.addEventListener('click',function fs(){reqFS();document.removeEventList
 // ═══════════════════════════════════════════════════════
 openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
 initHomeCanvas();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
+
+// Blocca orientamento in landscape
+if(screen.orientation&&screen.orientation.lock){
+  screen.orientation.lock('landscape').catch(()=>{});
+}
+document.addEventListener('click',function fs(){
+  const el=document.documentElement;
+  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen;
+  if(fn)fn.call(el).then(()=>{
+    if(screen.orientation&&screen.orientation.lock)
+      screen.orientation.lock('landscape').catch(()=>{});
+  }).catch(()=>{});
+  document.removeEventListener('click',fs);
+},{once:true,capture:true});
 </script>
 </body>
 </html>

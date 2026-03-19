@@ -1,12 +1,12 @@
 {
   "name": "ROW",
   "short_name": "ROW",
-  "description": "Ergometro Tevere",
-  "start_url": "/",
+  "description": "Rowing Ergometer",
+  "start_url": "/row/",
   "display": "fullscreen",
-  "orientation": "portrait",
-  "background_color": "#0a0b0e",
-  "theme_color": "#0a0b0e",
+  "orientation": "landscape",
+  "background_color": "#050810",
+  "theme_color": "#050810",
   "icons": [
     {
       "src": "icon.png",
