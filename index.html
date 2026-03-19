@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <title>ROW</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 /* ── LANDSCAPE LOCK ── */
 #rotate-msg{
@@ -37,40 +37,56 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 
 /* ═══ HOME ═══ */
 #page-home{background:#050810;}
-.home-bg{position:absolute;inset:0;overflow:hidden;}
-.home-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 
-/* ROW container — occupa tutta la larghezza */
-.home-row-wrap{
+/* Immagine di sfondo — unsplash fiume/lago scuro */
+.home-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80');
+  background-size:cover;background-position:center;
+  filter:grayscale(60%) brightness(0.35);
+}
+/* Overlay scuro per leggibilità */
+.home-bg::after{content:'';position:absolute;inset:0;background:rgba(5,8,16,0.55);}
+
+/* Contenuto centrato */
+.home-content{
   position:relative;z-index:10;
-  width:100%;
-  display:flex;align-items:center;justify-content:center;
-}
-.home-row-svg{width:100%;height:auto;display:block;overflow:visible;}
-
-/* Pulsanti dentro la O */
-.home-o-btns{
-  position:absolute;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:0;
-  /* posizionamento via JS dopo il render */
+  gap:0;width:100%;
 }
+
+/* ROW — Playfair Display, elegante */
+.home-logo{
+  font-family:'Playfair Display',serif;
+  font-size:11rem;font-weight:900;
+  letter-spacing:0.05em;
+  color:#ffffff;
+  line-height:1;
+  margin-bottom:48px;
+  user-select:none;
+}
+.home-logo span{color:#4fc3f7;}
+
+/* Pulsanti — Inter, minimalisti */
+.home-btns{display:flex;flex-direction:column;align-items:center;gap:0;}
 .btn-main{
   background:none;border:none;
-  color:rgba(255,255,255,0.80);
-  font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:700;
-  letter-spacing:5px;text-transform:uppercase;
-  padding:18px 0;cursor:pointer;transition:opacity .15s;white-space:nowrap;
+  color:rgba(255,255,255,0.72);
+  font-family:'Inter',sans-serif;font-size:0.8rem;font-weight:500;
+  letter-spacing:8px;text-transform:uppercase;
+  padding:18px 60px;cursor:pointer;transition:color .2s;
 }
-.btn-main:active{opacity:0.35;}
+.btn-main:hover{color:rgba(255,255,255,1);}
+.btn-main:active{opacity:0.5;}
 .btn-ghost{
   background:none;border:none;
-  color:rgba(255,255,255,0.32);
-  font-family:'Inter',sans-serif;font-size:1rem;font-weight:500;
-  letter-spacing:5px;text-transform:uppercase;
-  padding:12px 0;cursor:pointer;transition:opacity .15s;white-space:nowrap;
+  color:rgba(255,255,255,0.28);
+  font-family:'Inter',sans-serif;font-size:0.7rem;font-weight:400;
+  letter-spacing:8px;text-transform:uppercase;
+  padding:12px 60px;cursor:pointer;transition:color .2s;
 }
-.btn-ghost:active{opacity:0.15;}
+.btn-ghost:hover{color:rgba(255,255,255,0.55);}
+.btn-ghost:active{opacity:0.3;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;}
@@ -260,24 +276,10 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 
 <!-- HOME -->
 <div id="page-home" class="page active">
-  <div class="home-bg"><canvas id="home-canvas"></canvas></div>
-
-  <div class="home-row-wrap" id="home-row-wrap">
-    <!-- ROW in SVG — R e W grigi, O azzurra, a tutta larghezza -->
-    <svg class="home-row-svg" id="home-svg" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
-      <!-- R -->
-      <text x="0" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
-            fill="rgba(232,234,240,0.88)" letter-spacing="-4">R</text>
-      <!-- O azzurra -->
-      <text x="93" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
-            fill="#4fc3f7" letter-spacing="-4" id="home-o-letter">O</text>
-      <!-- W -->
-      <text x="186" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
-            fill="rgba(232,234,240,0.88)" letter-spacing="-4">W</text>
-    </svg>
-
-    <!-- Pulsanti sovrapposti alla O -->
-    <div class="home-o-btns" id="home-o-btns">
+  <div class="home-bg"></div>
+  <div class="home-content">
+    <div class="home-logo">R<span>O</span>W</div>
+    <div class="home-btns">
       <button class="btn-main" onclick="connectBT()">Connetti</button>
       <button class="btn-ghost" onclick="showHistory()">Logbook</button>
     </div>
@@ -1631,9 +1633,6 @@ document.addEventListener('click',function fs(){reqFS();document.removeEventList
 //  INIT
 // ═══════════════════════════════════════════════════════
 openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
-initHomeCanvas();
-// Posiziona i pulsanti sulla O dopo che il DOM è renderizzato
-requestAnimationFrame(()=>requestAnimationFrame(positionOBtns));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
 
 // Forza landscape — tutti i metodi disponibili
