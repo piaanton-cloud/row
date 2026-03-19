@@ -26,18 +26,55 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
-#page-home{background:none;}
-.home-bg{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bot) 100%);}
+#page-home{background:none;justify-content:flex-end;}
+.home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{width:100%;height:100%;display:block;}
-.home-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;}
-.home-logo{font-family:'Inter',sans-serif;font-size:13rem;font-weight:900;letter-spacing:-8px;line-height:0.85;color:var(--text);opacity:0.92;}
-.home-logo span{color:var(--accent);}
-.home-btns{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:60px;}
+
+/* Contenuto home — in basso */
+.home-content{
+  position:relative;z-index:10;
+  width:100%;
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding:0 44px 64px;
+  gap:0;
+}
+/* ROW — enorme, a sinistra, sfumato */
+.home-logo{
+  font-family:'Inter',sans-serif;
+  font-size:9rem;font-weight:900;
+  letter-spacing:-6px;line-height:0.85;
+  background:linear-gradient(135deg,#ffffff 0%,#4fc3f7 60%,#1e64dc 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:32px;
+  user-select:none;
+}
+/* Sottotitolo */
+.home-sub{
+  font-family:'Inter',sans-serif;
+  font-size:0.62rem;font-weight:500;
+  letter-spacing:8px;color:rgba(255,255,255,0.28);
+  text-transform:uppercase;
+  margin-bottom:52px;
+}
+.home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
 /* Pulsanti — tutti uguale, bold, niente bordo */
-.btn-main{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 72px;cursor:pointer;transition:opacity .2s;}
-.btn-main:active{opacity:0.5;transform:scale(0.97);}
-.btn-ghost{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 72px;cursor:pointer;transition:opacity .2s;}
-.btn-ghost:active{opacity:0.5;}
+.btn-main{
+  background:none;border:none;
+  color:rgba(255,255,255,0.75);
+  font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:600;
+  letter-spacing:4px;text-transform:uppercase;
+  padding:14px 0;cursor:pointer;transition:opacity .15s;
+}
+.btn-main:active{opacity:0.4;}
+.btn-ghost{
+  background:none;border:none;
+  color:rgba(255,255,255,0.35);
+  font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:500;
+  letter-spacing:4px;text-transform:uppercase;
+  padding:10px 0;cursor:pointer;transition:opacity .15s;
+}
+.btn-ghost:active{opacity:0.2;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;}
@@ -45,17 +82,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .goal-header-title{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;letter-spacing:1px;color:var(--text);}
 
 /* ── Sezione fiumi (metà superiore) ── */
-.goal-rivers-section{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px 8px;gap:10px;}
-.goal-rivers-label{font-size:0.52rem;letter-spacing:7px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;}
-.river-cards{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
-.river-cards::-webkit-scrollbar{display:none;}
-.river-card{flex-shrink:0;width:130px;border-radius:14px;padding:14px 12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid transparent;}
-.river-card.selected{border-color:rgba(255,255,255,0.6);transform:scale(1.04);}
-.river-card:active{transform:scale(0.97);}
-.river-card-flag{font-size:1.6rem;line-height:1;margin-bottom:6px;}
-.river-card-name{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.1;}
-.river-card-city{font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:400;color:rgba(255,255,255,0.7);margin-top:3px;letter-spacing:0.5px;}
-.river-card-km{font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:500;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+.goal-rivers-section{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:16px 16px 8px;gap:10px;}
+.goal-rivers-label{font-size:0.52rem;letter-spacing:7px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;text-align:center;}
+.river-cards{display:flex;gap:0;justify-content:space-evenly;align-items:center;padding:0;}
+.river-card{flex:1;max-width:19%;border-radius:14px;padding:12px 6px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.river-card.selected{border-color:rgba(255,255,255,0.7);transform:scale(1.06);}
+.river-card:active{transform:scale(0.96);}
+.river-card-flag{font-size:1.5rem;line-height:1;margin-bottom:5px;}
+.river-card-name{font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:700;color:#fff;line-height:1.1;}
+.river-card-city{font-family:'Inter',sans-serif;font-size:0.52rem;font-weight:400;color:rgba(255,255,255,0.7);margin-top:2px;letter-spacing:0.3px;}
+.river-card-km{font-family:'Inter',sans-serif;font-size:0.48rem;font-weight:500;color:rgba(255,255,255,0.5);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
 
 /* Divisore */
 .goal-divider-h{height:1px;background:var(--border);margin:0 20px;flex-shrink:0;}
@@ -96,8 +132,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 
 /* ── Header: timer sx | orologio dx ── */
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
-.hdr-timer{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:4px;color:var(--dim);}
-.hdr-clock{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:3px;color:var(--dim);}
+.hdr-timer{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:3px;color:var(--dim);}
+.hdr-clock{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:2px;color:var(--dim);}
 
 /* ── Calorie — sotto i watt ── */
 #calories-block{margin-top:26px;}
@@ -222,7 +258,8 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 <div id="page-home" class="page active">
   <div class="home-bg"><canvas id="home-canvas"></canvas></div>
   <div class="home-content">
-    <div class="home-logo">R<span>O</span>W</div>
+    <div class="home-logo">ROW</div>
+
     <div class="home-btns">
       <button class="btn-main" onclick="connectBT()">Connetti</button>
       <button class="btn-ghost" onclick="showHistory()">Logbook</button>
@@ -484,7 +521,7 @@ function showDbStatus(msg){const el=document.getElementById('db-status');el.text
 const RIVERS = {
   tevere: {
     id:'tevere', name:'Tevere', city:'Roma · Italia', flag:'🇮🇹',
-    color:'#e85d2a', colorDark:'#b8381a',
+    color:'#EA4335', colorDark:'#B31412',  // Google Red — Tevere
     pts:[
       [41.9337,12.4669],[41.9318,12.4685],[41.9295,12.4706],[41.9272,12.4718],
       [41.9250,12.4712],[41.9228,12.4700],[41.9208,12.4690],[41.9188,12.4660],
@@ -509,19 +546,30 @@ const RIVERS = {
       [41.9337,12.4669,'Ponte Milvio','ponte'],
       [41.9285,12.4680,'Foro Italico','monumento'],
       [41.9272,12.4718,'Ponte Flaminio','ponte'],
+      [41.9220,12.4720,'Auditorium\nParco Musica','architettura'],
+      [41.9188,12.4660,'Ponte\ndella Musica','ponte'],
+      [41.9108,12.4614,'Palazzo\ndi Giustizia','architettura'],
       [41.9090,12.4606,"Castel\nSant'Angelo",'monumento'],
       [41.9072,12.4654,"Ponte\nSant'Angelo",'ponte'],
       [41.8992,12.4720,"Ponte V.\nEmanuele II",'ponte'],
+      [41.8960,12.4680,'Trastevere','quartiere'],
       [41.8900,12.4700,'Isola Tiberina','isola'],
+      [41.8880,12.4710,'Ponte Garibaldi','ponte'],
+      [41.8860,12.4700,"Tempio di Ercole\nVincitore",'monumento'],
+      [41.8845,12.4712,'Ponte Palatino','ponte'],
+      [41.8820,12.4680,'Piramide Cestia','monumento'],
       [41.8812,12.4695,'Ponte Testaccio','ponte'],
       [41.8760,12.4648,"Ponte\nIndustriale",'ponte'],
+      [41.8682,12.4612,"Centrale\nMontemartini",'architettura'],
       [41.8568,12.4562,"Ponte\nMarconi",'ponte'],
+      [41.8472,12.4536,'Magliana','quartiere'],
+      [41.8376,12.4492,"Ponte\ndella Magliana",'ponte'],
       [41.8136,12.4378,"Ponte\nMezzocammino",'ponte'],
     ],
   },
   arno: {
     id:'arno', name:'Arno', city:'Firenze · Italia', flag:'🇮🇹',
-    color:'#2a9d6e', colorDark:'#1a7050',
+    color:'#34A853', colorDark:'#1E7E34',  // Google Green — Arno
     pts:[
       [43.7896,11.2462],[43.7888,11.2490],[43.7882,11.2520],[43.7878,11.2550],
       [43.7874,11.2580],[43.7871,11.2610],[43.7868,11.2640],[43.7866,11.2670],
@@ -538,18 +586,24 @@ const RIVERS = {
       [43.7612,11.3542],[43.7602,11.3565],[43.7592,11.3588],[43.7582,11.3610],
     ],
     poi:[
-      [43.7896,11.2462,'Cascine','quartiere'],
-      [43.7854,11.2810,'Ponte\nalla Vittoria','ponte'],
-      [43.7828,11.2940,'Ponte\nAmerigo Vespucci','ponte'],
-      [43.7816,11.3000,'Ponte\nalla Carraia','ponte'],
-      [43.7808,11.3042,'Ponte\nSanta Trinita','ponte'],
-      [43.7800,11.3080,'Ponte\nVecchio','monumento'],
-      [43.7686,11.3402,'Ponte\nGrazie','ponte'],
+      [43.7896,11.2462,'Parco\ndelle Cascine','quartiere'],
+      [43.7854,11.2810,"Ponte\nalla Vittoria",'ponte'],
+      [43.7828,11.2940,"Ponte\nAm. Vespucci",'ponte'],
+      [43.7816,11.3000,"Ponte\nalla Carraia",'ponte'],
+      [43.7808,11.3042,"Ponte\nSanta Trinita",'ponte'],
+      [43.7800,11.3080,'Ponte Vecchio','monumento'],
+      [43.7792,11.3110,"Palazzo\nPitti",'architettura'],
+      [43.7788,11.3130,"Giardino\ndi Boboli",'quartiere'],
+      [43.7780,11.3168,"Ponte\ndelle Grazie",'ponte'],
+      [43.7762,11.3220,"Ponte\nSan Niccolò",'ponte'],
+      [43.7740,11.3260,"Basilica\nSan Miniato",'monumento'],
+      [43.7700,11.3360,"Ponte\na Rubaconte",'ponte'],
+      [43.7652,11.3460,"Ponte\nda Verrazzano",'ponte'],
     ],
   },
   po: {
     id:'po', name:'Po', city:'Torino · Italia', flag:'🇮🇹',
-    color:'#7b35c2', colorDark:'#5520a0',
+    color:'#FBBC04', colorDark:'#C68400',  // Google Yellow — Po
     pts:[
       [45.0580,7.6950],[45.0570,7.6980],[45.0560,7.7010],[45.0548,7.7040],
       [45.0535,7.7068],[45.0522,7.7095],[45.0508,7.7122],[45.0494,7.7148],
@@ -566,17 +620,24 @@ const RIVERS = {
       [44.9920,7.8200],[44.9906,7.8228],[44.9892,7.8256],[44.9878,7.8284],
     ],
     poi:[
-      [45.0580,7.6950,'Parco\nMichelotti','quartiere'],
-      [45.0508,7.7122,'Ponte\nUmberto I','ponte'],
-      [45.0424,7.7278,'Ponte\nVittorio\nEmanuele I','ponte'],
-      [45.0298,7.7500,'Borgo\nPo','quartiere'],
-      [45.0172,7.7725,'Ponte\nIsabella','ponte'],
-      [45.0046,7.7952,'Ponte\ndi Moncalieri','ponte'],
+      [45.0580,7.6950,"Parco\nMichelotti",'quartiere'],
+      [45.0560,7.7010,"Villa\ndella Regina",'architettura'],
+      [45.0535,7.7068,"Ponte\nUmberto I",'ponte'],
+      [45.0508,7.7122,"Gran\nMadre di Dio",'monumento'],
+      [45.0480,7.7174,"Ponte\nVittorio\nEmanuele I",'ponte'],
+      [45.0452,7.7226,"Parco\ndel Valentino",'quartiere'],
+      [45.0424,7.7278,"Castello\ndel Valentino",'architettura'],
+      [45.0396,7.7332,"Borgo\nMedievale",'monumento'],
+      [45.0368,7.7382,"Ponte\nIsabella",'ponte'],
+      [45.0298,7.7500,"Borgo\nPo",'quartiere'],
+      [45.0200,7.7675,"Ponte\nPrinc. Oddone",'ponte'],
+      [45.0060,7.7926,"Ponte\ndi Moncalieri",'ponte'],
+      [44.9920,7.8200,"Reggia\ndi Moncalieri",'architettura'],
     ],
   },
   senna: {
     id:'senna', name:'Senna', city:'Parigi · Francia', flag:'🇫🇷',
-    color:'#1a6bb5', colorDark:'#0f4a8a',
+    color:'#4285F4', colorDark:'#1A56C4',  // Google Blue — Senna
     pts:[
       [48.8534,2.3490],[48.8536,2.3460],[48.8538,2.3430],[48.8540,2.3400],
       [48.8541,2.3370],[48.8542,2.3340],[48.8543,2.3310],[48.8544,2.3280],
@@ -594,18 +655,25 @@ const RIVERS = {
     ],
     poi:[
       [48.8534,2.3490,'Notre-Dame','monumento'],
-      [48.8545,2.3220,'Île\nde la Cité','isola'],
+      [48.8545,2.3220,"Île\nde la Cité",'isola'],
+      [48.8542,2.3130,"Sainte-\nChapelle",'architettura'],
       [48.8540,2.3070,'Pont Neuf','ponte'],
-      [48.8527,2.2890,'Musée\ndu Louvre','monumento'],
-      [48.8506,2.2712,'Pont de\nla Concorde','ponte'],
-      [48.8490,2.2600,'Place de\nla Concorde','monumento'],
-      [48.8460,2.2404,'Pont\nde l\'Alma','ponte'],
+      [48.8535,2.2980,"Musée\ndu Louvre",'monumento'],
+      [48.8527,2.2890,"Pont\ndes Arts",'ponte'],
+      [48.8521,2.2830,"Institut\nde France",'architettura'],
+      [48.8514,2.2770,"Pont de\nla Concorde",'ponte'],
+      [48.8506,2.2712,"Musée\nd'Orsay",'monumento'],
+      [48.8490,2.2600,"Place de\nla Concorde",'monumento'],
+      [48.8474,2.2488,"Grand\nPalais",'architettura'],
+      [48.8460,2.2404,"Pont\nde l'Alma",'ponte'],
+      [48.8440,2.2292,"Champ\nde Mars",'quartiere'],
       [48.8396,2.2096,'Tour Eiffel','monumento'],
+      [48.8375,2.2012,"Pont\nde Grenelle",'ponte'],
     ],
   },
   tamigi: {
     id:'tamigi', name:'Tamigi', city:'Londra · UK', flag:'🇬🇧',
-    color:'#c2352a', colorDark:'#8a1a12',
+    color:'#00ACC1', colorDark:'#006978',  // Google Teal — Tamigi
     pts:[
       [51.4680,-0.2160],[51.4676,-0.2130],[51.4672,-0.2100],[51.4669,-0.2070],
       [51.4666,-0.2040],[51.4664,-0.2010],[51.4662,-0.1980],[51.4660,-0.1950],
@@ -622,13 +690,20 @@ const RIVERS = {
       [51.4726,-0.0720],[51.4728,-0.0690],[51.4730,-0.0660],[51.4732,-0.0630],
     ],
     poi:[
-      [51.4680,-0.2160,'Putney\nBridge','ponte'],
-      [51.4656,-0.1860,'Hammersmith\nBridge','ponte'],
-      [51.4662,-0.1680,'Chiswick\nBridge','ponte'],
-      [51.4676,-0.1470,'Kew\nBridge','ponte'],
-      [51.4690,-0.1260,'Richmond\nBridge','ponte'],
-      [51.4706,-0.1020,'Twickenham\nBridge','ponte'],
-      [51.4720,-0.0810,'Kingston\nBridge','ponte'],
+      [51.4680,-0.2160,"Putney\nBridge",'ponte'],
+      [51.4664,-0.2010,"Fulham\nPalace",'architettura'],
+      [51.4656,-0.1860,"Hammersmith\nBridge",'ponte'],
+      [51.4662,-0.1680,"Chiswick\nHouse",'architettura'],
+      [51.4666,-0.1620,"Chiswick\nBridge",'ponte'],
+      [51.4676,-0.1470,"Kew\nBridge",'ponte'],
+      [51.4678,-0.1440,"Kew\nGardens",'quartiere'],
+      [51.4690,-0.1260,"Richmond\nBridge",'ponte'],
+      [51.4692,-0.1230,"Richmond\nPark",'quartiere'],
+      [51.4700,-0.1110,"Richmond\nHill",'architettura'],
+      [51.4706,-0.1020,"Twickenham\nBridge",'ponte'],
+      [51.4712,-0.0930,"Ham\nHouse",'architettura'],
+      [51.4720,-0.0810,"Kingston\nBridge",'ponte'],
+      [51.4726,-0.0720,"Hampton\nCourt",'monumento'],
     ],
   },
 };
@@ -844,29 +919,120 @@ function drawTrack(meters){
 }
 
 // ═══════════════════════════════════════════════════════
-//  HOME CANVAS
+//  HOME CANVAS — scena fiume animata
 // ═══════════════════════════════════════════════════════
 function initHomeCanvas(){
   const cv=document.getElementById('home-canvas');
   requestAnimationFrame(()=>{
-    cv.width=cv.offsetWidth||window.innerWidth;cv.height=cv.offsetHeight||window.innerHeight;
+    const W=cv.width=cv.offsetWidth||window.innerWidth;
+    const H=cv.height=cv.offsetHeight||window.innerHeight;
     const ctx=cv.getContext('2d');
-    // Puntini che scendono dall'alto verso il basso
-    const pts=Array.from({length:60},()=>({
-      x:Math.random()*cv.width,
-      y:Math.random()*cv.height,
-      r:Math.random()*3+1,
-      vy:0.3+Math.random()*0.5,   // positivo = verso il basso
-      op:0.3+Math.random()*0.5
+    let t=0;
+
+    // Particelle / riflessi luce sull'acqua
+    const sparkles=Array.from({length:80},()=>({
+      x:Math.random()*W, y:H*0.3+Math.random()*H*0.7,
+      r:Math.random()*2+0.5,
+      vx:(Math.random()-.5)*0.3,
+      vy:-(0.1+Math.random()*0.3),
+      op:Math.random()*0.5+0.1,
+      life:Math.random(),
     }));
+
+    function wave(x, amp, freq, phase, yBase){
+      return yBase + Math.sin(x*freq + phase)*amp
+                   + Math.sin(x*freq*1.7 + phase*1.3)*amp*0.4
+                   + Math.sin(x*freq*0.5 + phase*0.7)*amp*0.2;
+    }
+
     function frame(){
-      ctx.clearRect(0,0,cv.width,cv.height);
-      pts.forEach(p=>{
-        p.y+=p.vy;
-        if(p.y>cv.height+5){p.y=-5;p.x=Math.random()*cv.width;}  // riappare in cima
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(180,195,220,${p.op})`;ctx.fill();
+      t+=0.012;
+      ctx.clearRect(0,0,W,H);
+
+      // Sfondo gradiente cielo/acqua
+      const bg=ctx.createLinearGradient(0,0,0,H);
+      bg.addColorStop(0,  '#030508');
+      bg.addColorStop(0.35,'#060c18');
+      bg.addColorStop(0.55,'#081428');
+      bg.addColorStop(1,   '#0a1f3d');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+      // Stelle lontane (puntini fissi in alto)
+      ctx.save();
+      for(let i=0;i<40;i++){
+        const sx=((i*137.5)%W);
+        const sy=((i*73.1)%H*0.4);
+        const flicker=0.3+0.2*Math.sin(t*2+i);
+        ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);
+        ctx.fillStyle=`rgba(200,215,240,${flicker})`;ctx.fill();
+      }
+      ctx.restore();
+
+      // Onde del fiume — 5 strati sovrapposti
+      const layers=[
+        {yBase:H*0.52,amp:18,freq:0.008,phase:t,     color:[15,50,160],  op:0.9, blur:false},
+        {yBase:H*0.58,amp:22,freq:0.006,phase:t*0.8, color:[20,80,200],  op:0.75,blur:false},
+        {yBase:H*0.65,amp:16,freq:0.010,phase:t*1.2, color:[30,110,220], op:0.6, blur:false},
+        {yBase:H*0.73,amp:20,freq:0.007,phase:t*0.6, color:[50,150,235], op:0.5, blur:false},
+        {yBase:H*0.82,amp:14,freq:0.012,phase:t*1.4, color:[79,195,247], op:0.4, blur:false},
+      ];
+
+      layers.forEach(l=>{
+        ctx.beginPath();
+        ctx.moveTo(0,H);
+        for(let x=0;x<=W;x+=4){
+          ctx.lineTo(x, wave(x,l.amp,l.freq,l.phase,l.yBase));
+        }
+        ctx.lineTo(W,H);ctx.closePath();
+        const [r,g,b]=l.color;
+        const grad=ctx.createLinearGradient(0,l.yBase-l.amp,0,H);
+        grad.addColorStop(0,  `rgba(${r},${g},${b},${l.op})`);
+        grad.addColorStop(0.4,`rgba(${r},${g},${b},${l.op*0.7})`);
+        grad.addColorStop(1,  `rgba(${r+20},${g+40},${b+40},${l.op*0.3})`);
+        ctx.fillStyle=grad;ctx.fill();
       });
+
+      // Riflesso luminoso sulla superficie (luce della luna)
+      const ry=wave(W/2,18,0.008,t,H*0.52);
+      const refGrad=ctx.createRadialGradient(W*0.6,ry,0,W*0.6,ry,W*0.35);
+      refGrad.addColorStop(0,'rgba(79,195,247,0.18)');
+      refGrad.addColorStop(0.4,'rgba(79,195,247,0.06)');
+      refGrad.addColorStop(1,'rgba(79,195,247,0)');
+      ctx.fillStyle=refGrad;ctx.fillRect(0,H*0.4,W,H*0.6);
+
+      // Particelle/riflessi sull'acqua
+      sparkles.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy;p.life+=0.008;
+        if(p.y<H*0.35||p.life>1){
+          p.x=Math.random()*W;p.y=H*0.5+Math.random()*H*0.5;
+          p.life=0;p.op=Math.random()*0.5+0.1;
+        }
+        const fade=Math.sin(p.life*Math.PI);
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(140,210,255,${fade*p.op})`;ctx.fill();
+      });
+
+      // Orizzonte — linea luminosa tra cielo e acqua
+      const horizY=wave(W/2,18,0.008,t,H*0.52);
+      const hg=ctx.createLinearGradient(0,horizY-3,0,horizY+3);
+      hg.addColorStop(0,'rgba(79,195,247,0)');
+      hg.addColorStop(0.5,'rgba(79,195,247,0.35)');
+      hg.addColorStop(1,'rgba(79,195,247,0)');
+      ctx.fillStyle=hg;
+      ctx.beginPath();
+      for(let x=0;x<=W;x+=4) ctx.lineTo(x,wave(x,18,0.008,t,H*0.52)-2);
+      for(let x=W;x>=0;x-=4) ctx.lineTo(x,wave(x,18,0.008,t,H*0.52)+2);
+      ctx.closePath();ctx.fill();
+
+      // Vignette ai bordi
+      const vt=ctx.createLinearGradient(0,0,0,H*0.28);
+      vt.addColorStop(0,'rgba(3,5,8,1)');vt.addColorStop(1,'rgba(3,5,8,0)');
+      ctx.fillStyle=vt;ctx.fillRect(0,0,W,H*0.32);
+
+      const vl=ctx.createLinearGradient(0,0,W*0.22,0);
+      vl.addColorStop(0,'rgba(3,5,8,0.9)');vl.addColorStop(1,'rgba(3,5,8,0)');
+      ctx.fillStyle=vl;ctx.fillRect(0,0,W*0.25,H);
+
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
