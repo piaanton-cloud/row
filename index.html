@@ -40,43 +40,52 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .btn-ghost:active{opacity:0.5;}
 
 /* ═══ GOAL SCREEN ═══ */
-#page-goal{background:var(--bg);flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;}
-.goal-header{padding:52px 36px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.goal-header-title{font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;letter-spacing:2px;color:var(--text);}
-.btn-back{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 0;cursor:pointer;transition:opacity .2s;}
-.btn-back:active{opacity:0.5;}
+#page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;}
+.goal-header{padding:calc(env(safe-area-inset-top,0px)+36px) 28px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.goal-header-title{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;letter-spacing:1px;color:var(--text);}
 
-/* Sezione distanza - 2/3 schermo */
-.goal-dist-section{flex:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;}
-.goal-section-label{font-size:0.55rem;letter-spacing:8px;color:var(--dim);text-transform:uppercase;margin-bottom:16px;}
-.goal-carousel-wrap{position:relative;height:180px;width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-/* Fade top/bottom del carosello */
-.goal-carousel-wrap::before,.goal-carousel-wrap::after{content:'';position:absolute;left:0;right:0;height:60px;z-index:10;pointer-events:none;}
-.goal-carousel-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg),transparent);}
-.goal-carousel-wrap::after{bottom:0;background:linear-gradient(to top,var(--bg),transparent);}
+/* ── Sezione fiumi (metà superiore) ── */
+.goal-rivers-section{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px 8px;gap:10px;}
+.goal-rivers-label{font-size:0.52rem;letter-spacing:7px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;}
+.river-cards{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.river-cards::-webkit-scrollbar{display:none;}
+.river-card{flex-shrink:0;width:130px;border-radius:14px;padding:14px 12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid transparent;}
+.river-card.selected{border-color:rgba(255,255,255,0.6);transform:scale(1.04);}
+.river-card:active{transform:scale(0.97);}
+.river-card-flag{font-size:1.6rem;line-height:1;margin-bottom:6px;}
+.river-card-name{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.1;}
+.river-card-city{font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:400;color:rgba(255,255,255,0.7);margin-top:3px;letter-spacing:0.5px;}
+.river-card-km{font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:500;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+
+/* Divisore */
+.goal-divider-h{height:1px;background:var(--border);margin:0 20px;flex-shrink:0;}
+
+/* ── Sezione obiettivo (metà inferiore) ── */
+.goal-obj-section{flex:1;display:flex;flex-direction:column;padding:8px 20px 0;}
+.goal-obj-tabs{display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);}
+.goal-obj-tab{flex:1;padding:10px;text-align:center;font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--dim2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.goal-obj-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.goal-obj-content{flex:1;display:flex;align-items:center;justify-content:center;}
+.goal-carousel-wrap{position:relative;height:160px;width:100%;overflow:hidden;}
+.goal-carousel-wrap::before,.goal-carousel-wrap::after{content:'';position:absolute;left:0;right:0;height:50px;z-index:10;pointer-events:none;}
+.goal-carousel-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg-top),transparent);}
+.goal-carousel-wrap::after{bottom:0;background:linear-gradient(to top,var(--bg-top),transparent);}
 .goal-carousel{overflow-y:scroll;height:100%;width:100%;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;flex-direction:column;align-items:center;}
 .goal-carousel::-webkit-scrollbar{display:none;}
-.goal-item{flex-shrink:0;height:60px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;cursor:pointer;transition:all .2s;width:100%;}
-.goal-item-val{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:700;color:var(--dim2);transition:all .2s;letter-spacing:-1px;}
-.goal-item.selected .goal-item-val{font-size:3.8rem;color:var(--text);font-weight:900;}
-.goal-item-unit{font-size:0.7rem;letter-spacing:3px;color:var(--dim2);margin-left:8px;text-transform:uppercase;transition:all .2s;}
+.goal-item{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;cursor:pointer;width:100%;}
+.goal-item-val{font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:700;color:var(--dim2);transition:all .15s;letter-spacing:-1px;}
+.goal-item.selected .goal-item-val{font-size:3.2rem;color:var(--text);font-weight:900;}
+.goal-item-unit{font-size:0.62rem;letter-spacing:3px;color:var(--dim2);margin-left:6px;text-transform:uppercase;}
 .goal-item.selected .goal-item-unit{color:var(--dim);}
-/* Linee selezione */
-.goal-selector-lines{position:absolute;left:36px;right:36px;pointer-events:none;z-index:5;}
-.goal-selector-line{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,0.08);}
-.goal-selector-line.top{top:calc(50% - 30px);}
-.goal-selector-line.bot{top:calc(50% + 30px);}
-
-/* Divider */
-.goal-divider{height:1px;background:var(--border);margin:0 36px;flex-shrink:0;}
-
-/* Sezione tempo - 1/3 schermo */
-.goal-time-section{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;}
+.goal-selector-lines{position:absolute;left:0;right:0;pointer-events:none;z-index:5;}
+.goal-selector-line{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,0.07);}
+.goal-selector-line.top{top:calc(50% - 28px);}
+.goal-selector-line.bot{top:calc(50% + 28px);}
 
 /* Pulsante avvia */
-.goal-start-wrap{padding:16px 36px 48px;flex-shrink:0;}
-.btn-start{width:100%;padding:22px;border-radius:0;background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
-.btn-start.ready{color:#a0b0c0;}
+.goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
+.btn-start{width:100%;padding:20px;border-radius:0;background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
+.btn-start.ready{color:#c0d0e0;}
 .btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
@@ -224,33 +233,47 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 <!-- GOAL SCREEN -->
 <div id="page-goal" class="page">
   <div class="goal-header">
-    <div class="goal-header-title">OBIETTIVO</div>
+    <div class="goal-header-title">ALLENAMENTO</div>
     <button class="btn-back" onclick="switchPage('page-home')">← INDIETRO</button>
   </div>
 
-  <!-- DISTANZA (2/3) -->
-  <div class="goal-dist-section">
-    <div class="goal-section-label">Distanza</div>
-    <div class="goal-carousel-wrap">
-      <div class="goal-selector-lines">
-        <div class="goal-selector-line top"></div>
-        <div class="goal-selector-line bot"></div>
-      </div>
-      <div class="goal-carousel" id="dist-carousel"></div>
+  <!-- FIUMI -->
+  <div class="goal-rivers-section">
+    <div class="goal-rivers-label">Scegli il fiume</div>
+    <div class="river-cards" id="river-cards">
+      <!-- generato da JS -->
     </div>
   </div>
 
-  <div class="goal-divider"></div>
+  <div class="goal-divider-h"></div>
 
-  <!-- TEMPO (1/3) -->
-  <div class="goal-time-section">
-    <div class="goal-section-label">Tempo</div>
-    <div class="goal-carousel-wrap" style="height:150px">
-      <div class="goal-selector-lines">
-        <div class="goal-selector-line top"></div>
-        <div class="goal-selector-line bot"></div>
+  <!-- OBIETTIVO -->
+  <div class="goal-obj-section">
+    <div class="goal-obj-tabs">
+      <div class="goal-obj-tab active" id="tab-dist" onclick="switchObjTab('dist')">Distanza</div>
+      <div class="goal-obj-tab" id="tab-time" onclick="switchObjTab('time')">Tempo</div>
+    </div>
+    <div class="goal-obj-content">
+      <!-- Distanza -->
+      <div id="obj-dist" style="width:100%">
+        <div class="goal-carousel-wrap">
+          <div class="goal-selector-lines">
+            <div class="goal-selector-line top"></div>
+            <div class="goal-selector-line bot"></div>
+          </div>
+          <div class="goal-carousel" id="dist-carousel"></div>
+        </div>
       </div>
-      <div class="goal-carousel" id="time-carousel"></div>
+      <!-- Tempo -->
+      <div id="obj-time" style="width:100%;display:none">
+        <div class="goal-carousel-wrap">
+          <div class="goal-selector-lines">
+            <div class="goal-selector-line top"></div>
+            <div class="goal-selector-line bot"></div>
+          </div>
+          <div class="goal-carousel" id="time-carousel"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -456,40 +479,171 @@ function dbGet(store,key){return new Promise((res,rej)=>{const tx=db.transaction
 function showDbStatus(msg){const el=document.getElementById('db-status');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
 
 // ═══════════════════════════════════════════════════════
-//  TEVERE GPS
+//  DATABASE FIUMI
 // ═══════════════════════════════════════════════════════
-const TEVERE=[
-  // Ponte Milvio → Testaccio (originale ~6.7km)
-  [41.9337,12.4669],[41.9318,12.4685],[41.9295,12.4706],[41.9272,12.4718],
-  [41.9250,12.4712],[41.9228,12.4700],[41.9208,12.4690],[41.9188,12.4660],
-  [41.9168,12.4640],[41.9148,12.4628],[41.9128,12.4620],[41.9108,12.4614],
-  [41.9090,12.4606],[41.9072,12.4654],[41.9058,12.4680],[41.9042,12.4690],
-  [41.9025,12.4702],[41.9008,12.4712],[41.8992,12.4720],[41.8975,12.4724],
-  [41.8958,12.4722],[41.8942,12.4716],[41.8925,12.4706],[41.8908,12.4698],
-  [41.8895,12.4702],[41.8880,12.4710],[41.8862,12.4716],[41.8845,12.4712],
-  [41.8828,12.4704],[41.8812,12.4695],
-  // Testaccio → Magliana → Ostiense (~4km)
-  [41.8795,12.4680],[41.8778,12.4662],[41.8760,12.4648],[41.8742,12.4638],
-  [41.8722,12.4630],[41.8702,12.4622],[41.8682,12.4612],[41.8660,12.4600],
-  [41.8638,12.4588],[41.8615,12.4578],[41.8592,12.4570],[41.8568,12.4562],
-  // Magliana → Marconi (~3km)
-  [41.8544,12.4555],[41.8520,12.4548],[41.8496,12.4542],[41.8472,12.4536],
-  [41.8448,12.4528],[41.8424,12.4518],[41.8400,12.4506],[41.8376,12.4492],
-  // Verso EUR / Vitinia (~3km)
-  [41.8352,12.4478],[41.8328,12.4465],[41.8304,12.4452],[41.8280,12.4440],
-  [41.8256,12.4428],[41.8232,12.4418],[41.8208,12.4408],[41.8184,12.4398],
-  [41.8160,12.4388],[41.8136,12.4378],[41.8112,12.4368],[41.8088,12.4358],
-  // Verso Acilia / Dragona (completa a ~17km)
-  [41.8064,12.4348],[41.8040,12.4338],[41.8016,12.4328],[41.7992,12.4318],
-  [41.7968,12.4308],[41.7944,12.4298],
-];
-const PONTI=[[41.9337,12.4669,'Milvio'],[41.9272,12.4718,'Flaminio'],[41.9188,12.4660,'Risorgimento'],[41.9108,12.4614,'Cavour'],[41.9072,12.4654,"Sant'Angelo"],[41.8992,12.4720,'V.Emanuele II'],[41.8942,12.4716,'Sisto'],[41.8880,12.4710,'Palatino'],[41.8812,12.4695,'Testaccio']];
-const POI=[[41.9090,12.4615,"Castel\nSant'Angelo"],[41.8900,12.4700,'Isola\nTiberina']];
+const RIVERS = {
+  tevere: {
+    id:'tevere', name:'Tevere', city:'Roma · Italia', flag:'🇮🇹',
+    color:'#e85d2a', colorDark:'#b8381a',
+    pts:[
+      [41.9337,12.4669],[41.9318,12.4685],[41.9295,12.4706],[41.9272,12.4718],
+      [41.9250,12.4712],[41.9228,12.4700],[41.9208,12.4690],[41.9188,12.4660],
+      [41.9168,12.4640],[41.9148,12.4628],[41.9128,12.4620],[41.9108,12.4614],
+      [41.9090,12.4606],[41.9072,12.4654],[41.9058,12.4680],[41.9042,12.4690],
+      [41.9025,12.4702],[41.9008,12.4712],[41.8992,12.4720],[41.8975,12.4724],
+      [41.8958,12.4722],[41.8942,12.4716],[41.8925,12.4706],[41.8908,12.4698],
+      [41.8895,12.4702],[41.8880,12.4710],[41.8862,12.4716],[41.8845,12.4712],
+      [41.8828,12.4704],[41.8812,12.4695],
+      [41.8795,12.4680],[41.8778,12.4662],[41.8760,12.4648],[41.8742,12.4638],
+      [41.8722,12.4630],[41.8702,12.4622],[41.8682,12.4612],[41.8660,12.4600],
+      [41.8638,12.4588],[41.8615,12.4578],[41.8592,12.4570],[41.8568,12.4562],
+      [41.8544,12.4555],[41.8520,12.4548],[41.8496,12.4542],[41.8472,12.4536],
+      [41.8448,12.4528],[41.8424,12.4518],[41.8400,12.4506],[41.8376,12.4492],
+      [41.8352,12.4478],[41.8328,12.4465],[41.8304,12.4452],[41.8280,12.4440],
+      [41.8256,12.4428],[41.8232,12.4418],[41.8208,12.4408],[41.8184,12.4398],
+      [41.8160,12.4388],[41.8136,12.4378],[41.8112,12.4368],[41.8088,12.4358],
+      [41.8064,12.4348],[41.8040,12.4338],[41.8016,12.4328],[41.7992,12.4318],
+      [41.7968,12.4308],[41.7944,12.4298],
+    ],
+    poi:[
+      [41.9337,12.4669,'Ponte Milvio','ponte'],
+      [41.9285,12.4680,'Foro Italico','monumento'],
+      [41.9272,12.4718,'Ponte Flaminio','ponte'],
+      [41.9090,12.4606,"Castel\nSant'Angelo",'monumento'],
+      [41.9072,12.4654,"Ponte\nSant'Angelo",'ponte'],
+      [41.8992,12.4720,"Ponte V.\nEmanuele II",'ponte'],
+      [41.8900,12.4700,'Isola Tiberina','isola'],
+      [41.8812,12.4695,'Ponte Testaccio','ponte'],
+      [41.8760,12.4648,"Ponte\nIndustriale",'ponte'],
+      [41.8568,12.4562,"Ponte\nMarconi",'ponte'],
+      [41.8136,12.4378,"Ponte\nMezzocammino",'ponte'],
+    ],
+  },
+  arno: {
+    id:'arno', name:'Arno', city:'Firenze · Italia', flag:'🇮🇹',
+    color:'#2a9d6e', colorDark:'#1a7050',
+    pts:[
+      [43.7896,11.2462],[43.7888,11.2490],[43.7882,11.2520],[43.7878,11.2550],
+      [43.7874,11.2580],[43.7871,11.2610],[43.7868,11.2640],[43.7866,11.2670],
+      [43.7864,11.2700],[43.7862,11.2730],[43.7860,11.2758],[43.7857,11.2785],
+      [43.7854,11.2810],[43.7850,11.2835],[43.7845,11.2858],[43.7840,11.2880],
+      [43.7836,11.2900],[43.7832,11.2920],[43.7828,11.2940],[43.7824,11.2960],
+      [43.7820,11.2980],[43.7816,11.3000],[43.7812,11.3020],[43.7808,11.3042],
+      [43.7803,11.3065],[43.7798,11.3088],[43.7792,11.3110],[43.7786,11.3130],
+      [43.7780,11.3150],[43.7774,11.3168],[43.7768,11.3185],[43.7762,11.3202],
+      [43.7756,11.3220],[43.7748,11.3240],[43.7740,11.3260],[43.7732,11.3280],
+      [43.7724,11.3300],[43.7716,11.3320],[43.7708,11.3340],[43.7700,11.3360],
+      [43.7692,11.3380],[43.7682,11.3400],[43.7672,11.3420],[43.7662,11.3440],
+      [43.7652,11.3460],[43.7642,11.3480],[43.7632,11.3500],[43.7622,11.3520],
+      [43.7612,11.3542],[43.7602,11.3565],[43.7592,11.3588],[43.7582,11.3610],
+    ],
+    poi:[
+      [43.7896,11.2462,'Cascine','quartiere'],
+      [43.7854,11.2810,'Ponte\nalla Vittoria','ponte'],
+      [43.7828,11.2940,'Ponte\nAmerigo Vespucci','ponte'],
+      [43.7816,11.3000,'Ponte\nalla Carraia','ponte'],
+      [43.7808,11.3042,'Ponte\nSanta Trinita','ponte'],
+      [43.7800,11.3080,'Ponte\nVecchio','monumento'],
+      [43.7686,11.3402,'Ponte\nGrazie','ponte'],
+    ],
+  },
+  po: {
+    id:'po', name:'Po', city:'Torino · Italia', flag:'🇮🇹',
+    color:'#7b35c2', colorDark:'#5520a0',
+    pts:[
+      [45.0580,7.6950],[45.0570,7.6980],[45.0560,7.7010],[45.0548,7.7040],
+      [45.0535,7.7068],[45.0522,7.7095],[45.0508,7.7122],[45.0494,7.7148],
+      [45.0480,7.7174],[45.0466,7.7200],[45.0452,7.7226],[45.0438,7.7252],
+      [45.0424,7.7278],[45.0410,7.7305],[45.0396,7.7332],[45.0382,7.7358],
+      [45.0368,7.7382],[45.0354,7.7405],[45.0340,7.7428],[45.0326,7.7452],
+      [45.0312,7.7476],[45.0298,7.7500],[45.0284,7.7525],[45.0270,7.7550],
+      [45.0256,7.7575],[45.0242,7.7600],[45.0228,7.7625],[45.0214,7.7650],
+      [45.0200,7.7675],[45.0186,7.7700],[45.0172,7.7725],[45.0158,7.7750],
+      [45.0144,7.7775],[45.0130,7.7800],[45.0116,7.7825],[45.0102,7.7850],
+      [45.0088,7.7875],[45.0074,7.7900],[45.0060,7.7926],[45.0046,7.7952],
+      [45.0032,7.7978],[45.0018,7.8005],[45.0004,7.8032],[44.9990,7.8060],
+      [44.9976,7.8088],[44.9962,7.8116],[44.9948,7.8144],[44.9934,7.8172],
+      [44.9920,7.8200],[44.9906,7.8228],[44.9892,7.8256],[44.9878,7.8284],
+    ],
+    poi:[
+      [45.0580,7.6950,'Parco\nMichelotti','quartiere'],
+      [45.0508,7.7122,'Ponte\nUmberto I','ponte'],
+      [45.0424,7.7278,'Ponte\nVittorio\nEmanuele I','ponte'],
+      [45.0298,7.7500,'Borgo\nPo','quartiere'],
+      [45.0172,7.7725,'Ponte\nIsabella','ponte'],
+      [45.0046,7.7952,'Ponte\ndi Moncalieri','ponte'],
+    ],
+  },
+  senna: {
+    id:'senna', name:'Senna', city:'Parigi · Francia', flag:'🇫🇷',
+    color:'#1a6bb5', colorDark:'#0f4a8a',
+    pts:[
+      [48.8534,2.3490],[48.8536,2.3460],[48.8538,2.3430],[48.8540,2.3400],
+      [48.8541,2.3370],[48.8542,2.3340],[48.8543,2.3310],[48.8544,2.3280],
+      [48.8545,2.3250],[48.8545,2.3220],[48.8544,2.3190],[48.8543,2.3160],
+      [48.8542,2.3130],[48.8541,2.3100],[48.8540,2.3070],[48.8539,2.3040],
+      [48.8537,2.3010],[48.8535,2.2980],[48.8533,2.2950],[48.8530,2.2920],
+      [48.8527,2.2890],[48.8524,2.2860],[48.8521,2.2830],[48.8518,2.2800],
+      [48.8514,2.2770],[48.8510,2.2740],[48.8506,2.2712],[48.8502,2.2684],
+      [48.8498,2.2656],[48.8494,2.2628],[48.8490,2.2600],[48.8486,2.2572],
+      [48.8482,2.2544],[48.8478,2.2516],[48.8474,2.2488],[48.8470,2.2460],
+      [48.8465,2.2432],[48.8460,2.2404],[48.8455,2.2376],[48.8450,2.2348],
+      [48.8445,2.2320],[48.8440,2.2292],[48.8434,2.2264],[48.8428,2.2236],
+      [48.8422,2.2208],[48.8416,2.2180],[48.8410,2.2152],[48.8403,2.2124],
+      [48.8396,2.2096],[48.8389,2.2068],[48.8382,2.2040],[48.8375,2.2012],
+    ],
+    poi:[
+      [48.8534,2.3490,'Notre-Dame','monumento'],
+      [48.8545,2.3220,'Île\nde la Cité','isola'],
+      [48.8540,2.3070,'Pont Neuf','ponte'],
+      [48.8527,2.2890,'Musée\ndu Louvre','monumento'],
+      [48.8506,2.2712,'Pont de\nla Concorde','ponte'],
+      [48.8490,2.2600,'Place de\nla Concorde','monumento'],
+      [48.8460,2.2404,'Pont\nde l\'Alma','ponte'],
+      [48.8396,2.2096,'Tour Eiffel','monumento'],
+    ],
+  },
+  tamigi: {
+    id:'tamigi', name:'Tamigi', city:'Londra · UK', flag:'🇬🇧',
+    color:'#c2352a', colorDark:'#8a1a12',
+    pts:[
+      [51.4680,-0.2160],[51.4676,-0.2130],[51.4672,-0.2100],[51.4669,-0.2070],
+      [51.4666,-0.2040],[51.4664,-0.2010],[51.4662,-0.1980],[51.4660,-0.1950],
+      [51.4658,-0.1920],[51.4657,-0.1890],[51.4656,-0.1860],[51.4656,-0.1830],
+      [51.4656,-0.1800],[51.4657,-0.1770],[51.4658,-0.1740],[51.4660,-0.1710],
+      [51.4662,-0.1680],[51.4664,-0.1650],[51.4666,-0.1620],[51.4668,-0.1590],
+      [51.4670,-0.1560],[51.4672,-0.1530],[51.4674,-0.1500],[51.4676,-0.1470],
+      [51.4678,-0.1440],[51.4680,-0.1410],[51.4682,-0.1380],[51.4684,-0.1350],
+      [51.4686,-0.1320],[51.4688,-0.1290],[51.4690,-0.1260],[51.4692,-0.1230],
+      [51.4694,-0.1200],[51.4696,-0.1170],[51.4698,-0.1140],[51.4700,-0.1110],
+      [51.4702,-0.1080],[51.4704,-0.1050],[51.4706,-0.1020],[51.4708,-0.0990],
+      [51.4710,-0.0960],[51.4712,-0.0930],[51.4714,-0.0900],[51.4716,-0.0870],
+      [51.4718,-0.0840],[51.4720,-0.0810],[51.4722,-0.0780],[51.4724,-0.0750],
+      [51.4726,-0.0720],[51.4728,-0.0690],[51.4730,-0.0660],[51.4732,-0.0630],
+    ],
+    poi:[
+      [51.4680,-0.2160,'Putney\nBridge','ponte'],
+      [51.4656,-0.1860,'Hammersmith\nBridge','ponte'],
+      [51.4662,-0.1680,'Chiswick\nBridge','ponte'],
+      [51.4676,-0.1470,'Kew\nBridge','ponte'],
+      [51.4690,-0.1260,'Richmond\nBridge','ponte'],
+      [51.4706,-0.1020,'Twickenham\nBridge','ponte'],
+      [51.4720,-0.0810,'Kingston\nBridge','ponte'],
+    ],
+  },
+};
+
+const RIVER_ORDER=['tevere','arno','po','senna','tamigi'];
+
+// Fiume e dati correnti (sostituiscono TEVERE, TEVERE_POI_DATA globali)
+let selectedRiverId='tevere';
+let ACTIVE_PTS=RIVERS.tevere.pts;
+let ACTIVE_POI=RIVERS.tevere.poi;
 
 function buildCumDist(pts){const d=[0];for(let i=1;i<pts.length;i++){const dlat=(pts[i][0]-pts[i-1][0])*111320;const dlon=(pts[i][1]-pts[i-1][1])*111320*Math.cos(pts[i-1][0]*Math.PI/180);d.push(d[i-1]+Math.sqrt(dlat*dlat+dlon*dlon));}return d;}
-const CUM=buildCumDist(TEVERE);
-const TOTAL_M=CUM[CUM.length-1];
-function posAtMeters(m){const real=Math.max(0,Math.min(m,TOTAL_M));if(real<=0)return TEVERE[0];for(let i=1;i<CUM.length;i++){if(CUM[i]>=real){const t=(real-CUM[i-1])/(CUM[i]-CUM[i-1]);return[TEVERE[i-1][0]+(TEVERE[i][0]-TEVERE[i-1][0])*t,TEVERE[i-1][1]+(TEVERE[i][1]-TEVERE[i-1][1])*t];}}return TEVERE[TEVERE.length-1];}
+let CUM=buildCumDist(ACTIVE_PTS);
+let TOTAL_M=CUM[CUM.length-1];
+function posAtMeters(m){const real=Math.max(0,Math.min(m,TOTAL_M));if(real<=0)return ACTIVE_PTS[0];for(let i=1;i<CUM.length;i++){if(CUM[i]>=real){const t=(real-CUM[i-1])/(CUM[i]-CUM[i-1]);return[ACTIVE_PTS[i-1][0]+(ACTIVE_PTS[i][0]-ACTIVE_PTS[i-1][0])*t,ACTIVE_PTS[i-1][1]+(ACTIVE_PTS[i][1]-ACTIVE_PTS[i-1][1])*t];}}return ACTIVE_PTS[ACTIVE_PTS.length-1];}
 function calcBearing(a,b){const dLon=(b[1]-a[1])*Math.PI/180;const lat1=a[0]*Math.PI/180,lat2=b[0]*Math.PI/180;const x=Math.sin(dLon)*Math.cos(lat2);const y=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);return(Math.atan2(x,y)*180/Math.PI+360)%360;}
 
 // ═══════════════════════════════════════════════════════
@@ -543,7 +697,7 @@ function drawTrack(meters){
   function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
 
   ctx.clearRect(0,0,W,H);
-  const allPts=TEVERE.map(p=>toScreen(p[0],p[1]));
+  const allPts=ACTIVE_PTS.map(p=>toScreen(p[0],p[1]));
   ctx.lineCap='round';ctx.lineJoin='round';
 
   // ── FIUME — sfumatura morbida blu→azzurro con molti strati sovrapposti ──
@@ -602,7 +756,7 @@ function drawTrack(meters){
   });
 
   // ── POI +200% — pallino sul percorso, nome a destra del fiume ──
-  TEVERE_POI_DATA.forEach(([km,plat,plon,pname,ptype])=>{
+  ACTIVE_POI.forEach(([km,plat,plon,pname,ptype])=>{
     const[px,py]=toScreen(plat,plon);
     const dist=Math.hypot(px-W/2,py-H*0.52);
     if(dist>visRadius) return;
@@ -799,76 +953,105 @@ function buildLaneMarkers(){
 // ═══════════════════════════════════════════════════════
 //  GOAL SCREEN — caroselli
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  GOAL SCREEN — fiumi + caroselli
+// ═══════════════════════════════════════════════════════
 let goalType=null, goalValue=0;
-// Valore attualmente visibile nei due caroselli (indice 0-based)
-let distIdx=4;  // default 5km
-let timeIdx=19; // default 20min
+let distIdx=4, timeIdx=19;
+let currentObjTab='dist';
 
-function buildCarousels(){
-  buildCarousel('dist-carousel', 1, 15, 'km', 'dist');
-  buildCarousel('time-carousel', 1, 120, 'min', 'time');
-  // Preseleziona distanza di default (5km = indice 4)
+function buildGoalScreen(){
+  buildRiverCards();
+  buildCarousel('dist-carousel',1,15,'km','dist');
+  buildCarousel('time-carousel',1,120,'min','time');
   setTimeout(()=>{
-    scrollCarouselTo('dist-carousel', distIdx);
-    goalType='dist'; goalValue=(distIdx+1)*1000;
-    document.getElementById('btn-start-workout').classList.add('ready');
-  }, 80);
+    scrollCarouselTo('dist-carousel',distIdx);
+    if(!goalType){goalType='dist';goalValue=(distIdx+1)*1000;}
+    checkStartReady();
+  },80);
 }
 
-function buildCarousel(id, min, max, unit, type){
-  const el=document.getElementById(id);
-  el.innerHTML='';
-  const pad=document.createElement('div');pad.style.height='60px';pad.style.flexShrink='0';el.appendChild(pad);
+function buildRiverCards(){
+  const wrap=document.getElementById('river-cards');
+  wrap.innerHTML='';
+  RIVER_ORDER.forEach(rid=>{
+    const r=RIVERS[rid];
+    const card=document.createElement('div');
+    card.className='river-card'+(rid===selectedRiverId?' selected':'');
+    card.style.background=`linear-gradient(135deg,${r.color},${r.colorDark})`;
+    const km=Math.round(buildCumDist(r.pts).slice(-1)[0]/1000);
+    card.innerHTML=`
+      <div class="river-card-flag">${r.flag}</div>
+      <div class="river-card-name">${r.name}</div>
+      <div class="river-card-city">${r.city}</div>
+      <div class="river-card-km">fino a ${km} km</div>`;
+    card.addEventListener('click',()=>selectRiver(rid));
+    wrap.appendChild(card);
+  });
+}
+
+function selectRiver(rid){
+  selectedRiverId=rid;
+  document.querySelectorAll('.river-card').forEach((c,i)=>{
+    c.classList.toggle('selected',RIVER_ORDER[i]===rid);
+  });
+  checkStartReady();
+}
+
+function switchObjTab(tab){
+  currentObjTab=tab;
+  document.getElementById('tab-dist').classList.toggle('active',tab==='dist');
+  document.getElementById('tab-time').classList.toggle('active',tab==='time');
+  document.getElementById('obj-dist').style.display=tab==='dist'?'block':'none';
+  document.getElementById('obj-time').style.display=tab==='time'?'block':'none';
+  if(tab==='dist'){goalType='dist';goalValue=(distIdx+1)*1000;}
+  else{goalType='time';goalValue=(timeIdx+1)*60;}
+  checkStartReady();
+}
+
+function checkStartReady(){
+  const ready=!!goalType&&!!goalValue&&!!selectedRiverId;
+  document.getElementById('btn-start-workout').classList.toggle('ready',ready);
+}
+
+function buildCarousel(id,min,max,unit,type){
+  const el=document.getElementById(id);el.innerHTML='';
+  const pad=document.createElement('div');pad.style.height='56px';pad.style.flexShrink='0';el.appendChild(pad);
   for(let v=min;v<=max;v++){
-    const item=document.createElement('div');
-    item.className='goal-item';item.dataset.val=v;item.dataset.type=type;
+    const item=document.createElement('div');item.className='goal-item';
     item.innerHTML=`<span class="goal-item-val">${v}</span><span class="goal-item-unit">${unit}</span>`;
     item.addEventListener('click',()=>{
       const idx=v-min;
-      selectGoal(type,v,idx);
-      scrollCarouselTo(id,idx);
+      if(type==='dist'){distIdx=idx;goalType='dist';goalValue=v*1000;}
+      else{timeIdx=idx;goalType='time';goalValue=v*60;}
+      scrollCarouselTo(id,idx);checkStartReady();
     });
     el.appendChild(item);
   }
-  const pad2=document.createElement('div');pad2.style.height='60px';pad2.style.flexShrink='0';el.appendChild(pad2);
-
-  // Aggiorna selezione visiva E goalType/goalValue durante lo scroll
+  const pad2=document.createElement('div');pad2.style.height='56px';pad2.style.flexShrink='0';el.appendChild(pad2);
   let scrollTimer=null;
   el.addEventListener('scroll',()=>{
-    updateCarouselSelection(el,type);
-    // Debounce: aggiorna goal 150ms dopo che lo scroll si ferma
-    clearTimeout(scrollTimer);
-    scrollTimer=setTimeout(()=>{
-      const idx=Math.round(el.scrollTop/60);
-      const val=min+idx;
-      if(val>=min&&val<=max) selectGoal(type, val, idx);
+    updateCarouselSelection(el);
+    clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{
+      const idx=Math.round(el.scrollTop/56);const val=min+idx;
+      if(val>=min&&val<=max){
+        if(type==='dist'){distIdx=idx;goalType='dist';goalValue=val*1000;}
+        else{timeIdx=idx;goalType='time';goalValue=val*60;}
+        checkStartReady();
+      }
     },150);
   },{passive:true});
 }
 
-function updateCarouselSelection(el,type){
-  const idx=Math.round(el.scrollTop/60);
-  el.querySelectorAll('.goal-item').forEach((item,i)=>{
-    item.classList.toggle('selected',i===idx);
-  });
-}
-
-function selectGoal(type, val, idx){
-  if(type==='dist'){
-    goalType='dist'; goalValue=val*1000; distIdx=idx;
-    // Deseleziona visivamente time carousel, ma non azzera goalType
-    document.getElementById('time-carousel').querySelectorAll('.goal-item').forEach(i=>i.classList.remove('selected'));
-  } else {
-    goalType='time'; goalValue=val*60; timeIdx=idx;
-    document.getElementById('dist-carousel').querySelectorAll('.goal-item').forEach(i=>i.classList.remove('selected'));
-  }
-  document.getElementById('btn-start-workout').classList.add('ready');
+function updateCarouselSelection(el){
+  const idx=Math.round(el.scrollTop/56);
+  el.querySelectorAll('.goal-item').forEach((item,i)=>item.classList.toggle('selected',i===idx));
 }
 
 function scrollCarouselTo(id,idx){
   const el=document.getElementById(id);
-  el.scrollTo({top:idx*60,behavior:'smooth'});
-  setTimeout(()=>updateCarouselSelection(el,id.includes('dist')?'dist':'time'),300);
+  el.scrollTo({top:idx*56,behavior:'smooth'});
+  setTimeout(()=>updateCarouselSelection(el),300);
 }
 
 // Milestone setup basato sull'obiettivo
@@ -1221,12 +1404,18 @@ async function connectBT(){
 //  NAVIGAZIONE
 // ═══════════════════════════════════════════════════════
 function showGoalScreen(){
-  buildCarousels();
+  buildGoalScreen();
   switchPage('page-goal');
 }
 
 async function startWorkout(){
-  if(!goalType)return;
+  if(!goalType||!selectedRiverId)return;
+  // Attiva il fiume selezionato
+  const river=RIVERS[selectedRiverId];
+  ACTIVE_PTS=river.pts;
+  ACTIVE_POI=river.poi;
+  CUM=buildCumDist(ACTIVE_PTS);
+  TOTAL_M=CUM[CUM.length-1];
   resetSessionState();
   await loadGhost();
   setupChallenges();
