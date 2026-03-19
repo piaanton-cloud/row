@@ -36,50 +36,41 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
-#page-home{background:none;}
+#page-home{background:#050810;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 
-/* Contenuto home — sovrapposto in basso a sinistra */
-.home-content{
-  position:absolute;
-  inset:0;
-  z-index:10;
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
-  padding:0 52px;
-  pointer-events:none;
+/* ROW container — occupa tutta la larghezza */
+.home-row-wrap{
+  position:relative;z-index:10;
+  width:100%;
+  display:flex;align-items:center;justify-content:center;
 }
-.home-content button{pointer-events:auto;}
+.home-row-svg{width:100%;height:auto;display:block;overflow:visible;}
 
-/* ROW — enorme, gradiente bianco→azzurro→blu */
-.home-logo{
-  font-family:'Inter',sans-serif;
-  font-size:10rem;font-weight:900;
-  letter-spacing:-6px;line-height:0.85;
-  background:linear-gradient(135deg,#ffffff 0%,#4fc3f7 60%,#1e64dc 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-  margin-bottom:48px;
-  user-select:none;
+/* Pulsanti dentro la O */
+.home-o-btns{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;
+  /* posizionamento via JS dopo il render */
 }
-.home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
-/* Pulsanti */
 .btn-main{
   background:none;border:none;
   color:rgba(255,255,255,0.80);
-  font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:600;
+  font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:700;
   letter-spacing:5px;text-transform:uppercase;
-  padding:20px 0;cursor:pointer;transition:opacity .15s;
+  padding:18px 0;cursor:pointer;transition:opacity .15s;white-space:nowrap;
 }
-.btn-main:active{opacity:0.4;}
+.btn-main:active{opacity:0.35;}
 .btn-ghost{
   background:none;border:none;
-  color:rgba(255,255,255,0.38);
-  font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:500;
+  color:rgba(255,255,255,0.32);
+  font-family:'Inter',sans-serif;font-size:1rem;font-weight:500;
   letter-spacing:5px;text-transform:uppercase;
-  padding:16px 0;cursor:pointer;transition:opacity .15s;
+  padding:12px 0;cursor:pointer;transition:opacity .15s;white-space:nowrap;
 }
-.btn-ghost:active{opacity:0.2;}
+.btn-ghost:active{opacity:0.15;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;}
@@ -270,10 +261,23 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 <!-- HOME -->
 <div id="page-home" class="page active">
   <div class="home-bg"><canvas id="home-canvas"></canvas></div>
-  <div class="home-content">
-    <div class="home-logo">ROW</div>
 
-    <div class="home-btns">
+  <div class="home-row-wrap" id="home-row-wrap">
+    <!-- ROW in SVG — R e W grigi, O azzurra, a tutta larghezza -->
+    <svg class="home-row-svg" id="home-svg" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
+      <!-- R -->
+      <text x="0" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
+            fill="rgba(232,234,240,0.88)" letter-spacing="-4">R</text>
+      <!-- O azzurra -->
+      <text x="93" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
+            fill="#4fc3f7" letter-spacing="-4" id="home-o-letter">O</text>
+      <!-- W -->
+      <text x="186" y="95" font-family="Inter,sans-serif" font-size="100" font-weight="900"
+            fill="rgba(232,234,240,0.88)" letter-spacing="-4">W</text>
+    </svg>
+
+    <!-- Pulsanti sovrapposti alla O -->
+    <div class="home-o-btns" id="home-o-btns">
       <button class="btn-main" onclick="connectBT()">Connetti</button>
       <button class="btn-ghost" onclick="showHistory()">Logbook</button>
     </div>
@@ -932,115 +936,49 @@ function drawTrack(meters){
 }
 
 // ═══════════════════════════════════════════════════════
-//  HOME CANVAS — scena fiume animata
+//  HOME CANVAS — puntini che salgono
 // ═══════════════════════════════════════════════════════
 function initHomeCanvas(){
   const cv=document.getElementById('home-canvas');
-  const W=cv.width=window.innerWidth;
-  const H=cv.height=window.innerHeight;
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  window.addEventListener('resize',()=>{cv.width=window.innerWidth;cv.height=window.innerHeight;positionOBtns();});
   const ctx=cv.getContext('2d');
-  window.addEventListener('resize',()=>{
-    cv.width=window.innerWidth;cv.height=window.innerHeight;
-  });
-  let t=0;
-
-    // Particelle / riflessi luce sull'acqua
-    const sparkles=Array.from({length:80},()=>({
-      x:Math.random()*W, y:H*0.3+Math.random()*H*0.7,
-      r:Math.random()*2+0.5,
-      vx:(Math.random()-.5)*0.3,
-      vy:-(0.1+Math.random()*0.3),
-      op:Math.random()*0.5+0.1,
-      life:Math.random(),
-    }));
-
-    function wave(x, amp, freq, phase, yBase){
-      return yBase + Math.sin(x*freq + phase)*amp
-                   + Math.sin(x*freq*1.7 + phase*1.3)*amp*0.4
-                   + Math.sin(x*freq*0.5 + phase*0.7)*amp*0.2;
-    }
-
-    function frame(){
-      t+=0.012;
-      const W=cv.width, H=cv.height;
-      ctx.clearRect(0,0,W,H);
-      // Sfondo piatto scuro — niente sfumatura
-      ctx.fillStyle='#050810';ctx.fillRect(0,0,W,H);
-
-      // Stelle lontane (puntini fissi in alto)
-      ctx.save();
-      for(let i=0;i<40;i++){
-        const sx=((i*137.5)%W);
-        const sy=((i*73.1)%H*0.4);
-        const flicker=0.3+0.2*Math.sin(t*2+i);
-        ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);
-        ctx.fillStyle=`rgba(200,215,240,${flicker})`;ctx.fill();
-      }
-      ctx.restore();
-
-      // Onde del fiume — 9 strati sovrapposti, partono a metà schermo
-      const layers=[
-        {yBase:H*0.38,amp:12,freq:0.009,phase:t*1.1, color:[10, 35,130], op:0.5},
-        {yBase:H*0.44,amp:16,freq:0.007,phase:t*0.9, color:[12, 45,150], op:0.65},
-        {yBase:H*0.50,amp:18,freq:0.008,phase:t,      color:[15, 55,165], op:0.80},
-        {yBase:H*0.56,amp:22,freq:0.006,phase:t*0.8, color:[20, 80,200], op:0.75},
-        {yBase:H*0.62,amp:16,freq:0.010,phase:t*1.2, color:[30,110,220], op:0.65},
-        {yBase:H*0.68,amp:20,freq:0.007,phase:t*0.6, color:[45,135,232], op:0.55},
-        {yBase:H*0.75,amp:18,freq:0.009,phase:t*1.3, color:[55,155,238], op:0.48},
-        {yBase:H*0.82,amp:14,freq:0.012,phase:t*1.4, color:[70,178,245], op:0.42},
-        {yBase:H*0.90,amp:10,freq:0.014,phase:t*1.6, color:[79,195,247], op:0.35},
-      ];
-
-      layers.forEach(l=>{
-        ctx.beginPath();
-        ctx.moveTo(0,H);
-        for(let x=0;x<=W;x+=4){
-          ctx.lineTo(x, wave(x,l.amp,l.freq,l.phase,l.yBase));
-        }
-        ctx.lineTo(W,H);ctx.closePath();
-        const [r,g,b]=l.color;
-        const grad=ctx.createLinearGradient(0,l.yBase-l.amp,0,H);
-        grad.addColorStop(0,  `rgba(${r},${g},${b},${l.op})`);
-        grad.addColorStop(0.4,`rgba(${r},${g},${b},${l.op*0.7})`);
-        grad.addColorStop(1,  `rgba(${r+20},${g+40},${b+40},${l.op*0.3})`);
-        ctx.fillStyle=grad;ctx.fill();
-      });
-
-      // Riflesso luminoso sulla superficie (luce della luna)
-      const ry=wave(W/2,18,0.008,t,H*0.52);
-      const refGrad=ctx.createRadialGradient(W*0.6,ry,0,W*0.6,ry,W*0.35);
-      refGrad.addColorStop(0,'rgba(79,195,247,0.18)');
-      refGrad.addColorStop(0.4,'rgba(79,195,247,0.06)');
-      refGrad.addColorStop(1,'rgba(79,195,247,0)');
-      ctx.fillStyle=refGrad;ctx.fillRect(0,H*0.4,W,H*0.6);
-
-      // Particelle/riflessi sull'acqua
-      sparkles.forEach(p=>{
-        p.x+=p.vx;p.y+=p.vy;p.life+=0.008;
-        if(p.y<H*0.35||p.life>1){
-          p.x=Math.random()*W;p.y=H*0.5+Math.random()*H*0.5;
-          p.life=0;p.op=Math.random()*0.5+0.1;
-        }
-        const fade=Math.sin(p.life*Math.PI);
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(140,210,255,${fade*p.op})`;ctx.fill();
-      });
-
-      // Orizzonte — linea luminosa tra cielo e acqua
-      const horizY=wave(W/2,18,0.008,t,H*0.52);
-      const hg=ctx.createLinearGradient(0,horizY-3,0,horizY+3);
-      hg.addColorStop(0,'rgba(79,195,247,0)');
-      hg.addColorStop(0.5,'rgba(79,195,247,0.35)');
-      hg.addColorStop(1,'rgba(79,195,247,0)');
-      ctx.fillStyle=hg;
-      ctx.beginPath();
-      for(let x=0;x<=W;x+=4) ctx.lineTo(x,wave(x,18,0.008,t,H*0.52)-2);
-      for(let x=W;x>=0;x-=4) ctx.lineTo(x,wave(x,18,0.008,t,H*0.52)+2);
-      ctx.closePath();ctx.fill();
-
-      requestAnimationFrame(frame);
-    }
+  const pts=Array.from({length:70},()=>({
+    x:Math.random()*cv.width,
+    y:Math.random()*cv.height,
+    r:Math.random()*3+0.8,
+    vy:-(0.3+Math.random()*0.55),
+    op:0.25+Math.random()*0.45,
+  }));
+  function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pts.forEach(p=>{
+      p.y+=p.vy;
+      if(p.y<-6){p.y=cv.height+6;p.x=Math.random()*cv.width;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,200,225,${p.op})`;ctx.fill();
+    });
     requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// Posiziona i pulsanti sopra la O del SVG
+function positionOBtns(){
+  const wrap=document.getElementById('home-row-wrap');
+  const svg=document.getElementById('home-svg');
+  const btns=document.getElementById('home-o-btns');
+  if(!wrap||!svg||!btns) return;
+  const svgRect=svg.getBoundingClientRect();
+  const wrapRect=wrap.getBoundingClientRect();
+  // La O occupa circa 1/3 del viewBox (da x=93 a x=186 su 300) → 31% della larghezza SVG
+  const svgW=svgRect.width;
+  const oLeft=svgRect.left - wrapRect.left + svgW*(93/300);
+  const oWidth=svgW*(93/300);
+  const oHeight=svgRect.height;
+  btns.style.left=(oLeft + oWidth/2)+'px';
+  btns.style.top=(svgRect.top - wrapRect.top + oHeight/2)+'px';
+  btns.style.transform='translate(-50%,-50%)';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1694,6 +1632,8 @@ document.addEventListener('click',function fs(){reqFS();document.removeEventList
 // ═══════════════════════════════════════════════════════
 openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
 initHomeCanvas();
+// Posiziona i pulsanti sulla O dopo che il DOM è renderizzato
+requestAnimationFrame(()=>requestAnimationFrame(positionOBtns));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
 
 // Forza landscape — tutti i metodi disponibili
