@@ -91,16 +91,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .hdr-clock{font-family:'Roboto',sans-serif;font-size:1.05rem;font-weight:400;letter-spacing:3px;color:var(--dim);}
 
 /* ── Calorie — sotto i watt ── */
-#calories-block{margin-top:16px;}
-.cal-row{display:flex;align-items:center;gap:8px;}
-.cal-icon{color:var(--dim2);opacity:0.7;}
-.cal-num{font-family:'Roboto',sans-serif;font-size:2.2rem;font-weight:700;color:var(--dim);line-height:1;}
-.cal-label{font-size:0.52rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:4px;}
+#calories-block{margin-top:26px;}
+.cal-row{display:flex;align-items:center;gap:10px;}
+.cal-icon{color:var(--dim2);opacity:0.8;}
+.cal-num{font-family:'Roboto',sans-serif;font-size:3.3rem;font-weight:700;color:var(--dim);line-height:1;}
+.cal-label{font-size:0.78rem;letter-spacing:5px;color:var(--dim2);text-transform:uppercase;margin-top:6px;}
 
 /* ── Meteo — sotto i metri ── */
-#weather-block{margin-top:16px;text-align:right;}
+#weather-block{margin-top:26px;text-align:right;}
 .hdr-weather-icon{line-height:1;display:block;text-align:right;}
-.hdr-weather-temps{font-family:'Roboto',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--dim);display:block;text-align:right;margin-top:4px;}
+.hdr-weather-temps{font-family:'Roboto',sans-serif;font-size:2.4rem;letter-spacing:2px;color:var(--dim);display:block;text-align:right;margin-top:6px;}
 
 /* ── Watt sx — +70% font, margine 26px ── */
 #watt-block{position:absolute;top:108px;left:26px;z-index:100;pointer-events:none;}
@@ -293,7 +293,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     <!-- Calorie sotto i watt -->
     <div id="calories-block">
       <div class="cal-row">
-        <span class="cal-icon"><svg viewBox="0 0 24 24" width="1.6rem" height="1.6rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 4.5-5 9a5 5 0 0 0 10 0c0-4.5-5-9-5-9z"/><path d="M9 14s1 1 3 1 3-1 3-1"/></svg></span>
+        <span class="cal-icon"><svg viewBox="0 0 24 24" width="2.4rem" height="2.4rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 4.5-5 9a5 5 0 0 0 10 0c0-4.5-5-9-5-9z"/><path d="M9 14s1 1 3 1 3-1 3-1"/></svg></span>
         <span class="cal-num" id="cal-val">0</span>
       </div>
       <div class="cal-label">kcal</div>
@@ -307,7 +307,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     <!-- Meteo sotto i metri -->
     <div id="weather-block">
       <div class="hdr-weather-icon" id="weather-icon">
-        <svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </div>
       <div class="hdr-weather-temps" id="weather-temps">— / —</div>
     </div>
@@ -371,7 +371,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
       <div class="stat-sm">
         <!-- remo stilizzato -->
         <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="4" y1="20" x2="20" y2="4"/><path d="M20 4 Q22 2 20 6 Q18 10 16 8 Q14 6 20 4Z" fill="currentColor" stroke="none"/></svg></div>
-        <span class="stat-sm-val" id="v-val">0</span>
+        <span class="stat-sm-val" id="v-val" style="color:var(--accent)">0</span>
         <span class="stat-sm-lbl">strokes</span>
       </div>
     </div>
@@ -459,6 +459,7 @@ function showDbStatus(msg){const el=document.getElementById('db-status');el.text
 //  TEVERE GPS
 // ═══════════════════════════════════════════════════════
 const TEVERE=[
+  // Ponte Milvio → Testaccio (originale ~6.7km)
   [41.9337,12.4669],[41.9318,12.4685],[41.9295,12.4706],[41.9272,12.4718],
   [41.9250,12.4712],[41.9228,12.4700],[41.9208,12.4690],[41.9188,12.4660],
   [41.9168,12.4640],[41.9148,12.4628],[41.9128,12.4620],[41.9108,12.4614],
@@ -466,7 +467,21 @@ const TEVERE=[
   [41.9025,12.4702],[41.9008,12.4712],[41.8992,12.4720],[41.8975,12.4724],
   [41.8958,12.4722],[41.8942,12.4716],[41.8925,12.4706],[41.8908,12.4698],
   [41.8895,12.4702],[41.8880,12.4710],[41.8862,12.4716],[41.8845,12.4712],
-  [41.8828,12.4704],[41.8812,12.4695]
+  [41.8828,12.4704],[41.8812,12.4695],
+  // Testaccio → Magliana → Ostiense (~4km)
+  [41.8795,12.4680],[41.8778,12.4662],[41.8760,12.4648],[41.8742,12.4638],
+  [41.8722,12.4630],[41.8702,12.4622],[41.8682,12.4612],[41.8660,12.4600],
+  [41.8638,12.4588],[41.8615,12.4578],[41.8592,12.4570],[41.8568,12.4562],
+  // Magliana → Marconi (~3km)
+  [41.8544,12.4555],[41.8520,12.4548],[41.8496,12.4542],[41.8472,12.4536],
+  [41.8448,12.4528],[41.8424,12.4518],[41.8400,12.4506],[41.8376,12.4492],
+  // Verso EUR / Vitinia (~3km)
+  [41.8352,12.4478],[41.8328,12.4465],[41.8304,12.4452],[41.8280,12.4440],
+  [41.8256,12.4428],[41.8232,12.4418],[41.8208,12.4408],[41.8184,12.4398],
+  [41.8160,12.4388],[41.8136,12.4378],[41.8112,12.4368],[41.8088,12.4358],
+  // Verso Acilia / Dragona (completa a ~17km)
+  [41.8064,12.4348],[41.8040,12.4338],[41.8016,12.4328],[41.7992,12.4318],
+  [41.7968,12.4308],[41.7944,12.4298],
 ];
 const PONTI=[[41.9337,12.4669,'Milvio'],[41.9272,12.4718,'Flaminio'],[41.9188,12.4660,'Risorgimento'],[41.9108,12.4614,'Cavour'],[41.9072,12.4654,"Sant'Angelo"],[41.8992,12.4720,'V.Emanuele II'],[41.8942,12.4716,'Sisto'],[41.8880,12.4710,'Palatino'],[41.8812,12.4695,'Testaccio']];
 const POI=[[41.9090,12.4615,"Castel\nSant'Angelo"],[41.8900,12.4700,'Isola\nTiberina']];
@@ -530,9 +545,18 @@ function drawTrack(meters){
   ctx.clearRect(0,0,W,H); // sfondo trasparente — mostra gradiente CSS della pagina
   const allPts=TEVERE.map(p=>toScreen(p[0],p[1]));
   ctx.lineCap='round';ctx.lineJoin='round';
-  ctx.strokeStyle='rgba(180,195,220,0.06)';ctx.lineWidth=38;drawSmoothPath(ctx,allPts);ctx.stroke();
-  ctx.strokeStyle='rgba(180,195,220,0.10)';ctx.lineWidth=24;drawSmoothPath(ctx,allPts);ctx.stroke();
-  ctx.strokeStyle='rgba(200,212,230,0.55)';ctx.lineWidth=10;drawSmoothPath(ctx,allPts);ctx.stroke();
+
+  // Percorso +300% più largo con gradiente blu→azzurro
+  // Alone esterno (azzurro sfumato)
+  ctx.strokeStyle='rgba(41,121,255,0.06)';ctx.lineWidth=160;drawSmoothPath(ctx,allPts);ctx.stroke();
+  ctx.strokeStyle='rgba(41,121,255,0.09)';ctx.lineWidth=110;drawSmoothPath(ctx,allPts);ctx.stroke();
+  ctx.strokeStyle='rgba(41,150,255,0.13)';ctx.lineWidth=75;drawSmoothPath(ctx,allPts);ctx.stroke();
+  // Corpo azzurro medio
+  ctx.strokeStyle='rgba(79,195,247,0.22)';ctx.lineWidth=48;drawSmoothPath(ctx,allPts);ctx.stroke();
+  // Centro blu più saturo
+  ctx.strokeStyle='rgba(30,100,220,0.55)';ctx.lineWidth=22;drawSmoothPath(ctx,allPts);ctx.stroke();
+  // Linea centrale brillante
+  ctx.strokeStyle='rgba(100,200,255,0.75)';ctx.lineWidth=6;drawSmoothPath(ctx,allPts);ctx.stroke();
 
   // ── Segnalini ogni 5m ai lati del percorso ──
   // Solo quelli visibili (entro ~600px dal centro)
@@ -552,29 +576,31 @@ function drawTrack(meters){
     }
   });
 
-  // ── POI — pallino + nome che appare entro 300m ──
+  // ── POI — pallino grande + nome affiancato a destra ──
   TEVERE_POI_DATA.forEach(([km,plat,plon,pname,ptype])=>{
     const[px,py]=toScreen(plat,plon);
     const dist=Math.hypot(px-W/2,py-H*0.52);
     if(dist>visRadius) return;
     const col=POI_COLORS[ptype]||'rgba(180,195,220,0.85)';
-    // Pallino
-    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    // Alone esterno
+    ctx.beginPath();ctx.arc(px,py,16,0,Math.PI*2);
+    ctx.strokeStyle=col.replace('0.85','0.2');ctx.lineWidth=2;ctx.stroke();
+    // Pallino doppio (r=10)
+    ctx.beginPath();ctx.arc(px,py,10,0,Math.PI*2);
     ctx.fillStyle=col;ctx.fill();
-    ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
-    ctx.strokeStyle=col.replace('0.85','0.3');ctx.lineWidth=1.5;ctx.stroke();
-    // Nome — appare solo entro 300px dal centro (vicino alla freccia)
+    // Nome affiancato a destra — appare entro 300px
     if(dist<300){
       const opacity=Math.max(0,1-(dist/300));
       ctx.save();
       ctx.globalAlpha=opacity;
-      ctx.font='500 11px Roboto,sans-serif';
-      ctx.textAlign='center';
+      ctx.font='700 22px Roboto,sans-serif';
+      ctx.textAlign='left';
       ctx.fillStyle=col;
-      // Ombra per leggibilità
-      ctx.shadowColor='rgba(5,8,16,0.9)';ctx.shadowBlur=6;
+      ctx.shadowColor='rgba(5,8,16,0.95)';ctx.shadowBlur=8;
       const lines=pname.split('\n');
-      lines.forEach((line,i)=>ctx.fillText(line,px,py-14-(lines.length-1-i)*14));
+      const lineH=24;
+      const totalH=(lines.length-1)*lineH;
+      lines.forEach((line,i)=>ctx.fillText(line, px+18, py - totalH/2 + i*lineH + 7));
       ctx.restore();
     }
   });
@@ -694,6 +720,14 @@ const TEVERE_POI_DATA=[
   [7.8,  41.8845,12.4712,'Ponte Palatino',      'ponte'],
   [8.3,  41.8820,12.4680,'Piramide Cestia',     'monumento'],
   [8.8,  41.8812,12.4695,'Ponte Testaccio',     'ponte'],
+  // Tratto esteso
+  [9.5,  41.8760,12.4648,'Ponte\nIndustriale',  'ponte'],
+  [10.4, 41.8680,12.4612,'Centrale\nMontemartini','architettura'],
+  [11.2, 41.8568,12.4562,'Ponte\nMarconi',      'ponte'],
+  [12.0, 41.8472,12.4536,'Magliana',            'quartiere'],
+  [13.0, 41.8376,12.4492,'Ponte\ndella Magliana','ponte'],
+  [14.0, 41.8256,12.4428,'Decima',              'quartiere'],
+  [15.0, 41.8136,12.4378,'Ponte\ndi Mezzocammino','ponte'],
 ];
 
 // Colori per tipo
@@ -820,66 +854,116 @@ function buildMilestones(){
 }
 
 // ═══════════════════════════════════════════════════════
-//  SFIDE INTERVALLO
+//  SFIDE — solo potenza e velocità, distanza random 100-400m
+//  Attivate ogni ~1km in posizione leggermente variabile
 // ═══════════════════════════════════════════════════════
-const CHALLENGE_DEFS=Object.freeze([
-  {id:'sprint',  km:1,  title:'SPRINT',   desc:'100 metri · massima potenza',    type:'max_watt',   dist:100},
-  {id:'cadenza', km:2,  title:'CADENZA',  desc:'200 metri · più voghe possibili',type:'max_strokes',dist:200},
-  {id:'ritmo',   km:3,  title:'RITMO',    desc:'500 metri · mantieni il passo',  type:'best_pace',  dist:500},
-  {id:'potenza', km:4,  title:'POTENZA',  desc:'300 metri · non scendere mai',   type:'hold_watt',  dist:300},
-  {id:'burst',   km:6,  title:'BURST',    desc:'100 metri · massima potenza',    type:'max_watt',   dist:100},
-  {id:'endurance',km:7.5,title:'ENDURANCE',desc:'500 metri · ritmo costante',   type:'best_pace',  dist:500},
-]);
-let challengeActive=false,currentChallenge=null,nextChallenge=null,challengeIdx=0;
-let challengeStartM=0,challengeStartStr=0,challengeStartTime=0,challengeWatts=[],challengeResults=[];
-function getChallengeStartAt(ch){return ch.km*1000;}
-function setupChallenges(){challengeActive=false;currentChallenge=null;challengeIdx=0;challengeResults=[];nextChallenge=CHALLENGE_DEFS[0];}
-function checkChallengeStart(meters){if(challengeActive||!nextChallenge)return;if(meters>=getChallengeStartAt(nextChallenge))startChallenge(nextChallenge,meters);}
-function startChallenge(ch,meters){
-  challengeActive=true;currentChallenge=ch;challengeStartM=meters;challengeStartStr=session.strokes;challengeStartTime=Date.now();challengeWatts=[];
-  document.getElementById('ch-eyebrow').textContent='Sfida al km '+(ch.km%1===0?ch.km:ch.km.toFixed(1));
-  document.getElementById('ch-title').textContent=ch.title;document.getElementById('ch-desc').textContent=ch.desc;
-  document.getElementById('ch-progress').textContent=ch.dist+'m';document.getElementById('ch-bar-fill').style.width='0%';
+
+// Due tipi: POTENZA (max watt medi) e VELOCITÀ (miglior passo)
+const CHALLENGE_TYPES = [
+  { type:'max_watt',  title:'POTENZA', color:'var(--gold)' },
+  { type:'best_pace', title:'VELOCITÀ', color:'var(--accent)' },
+];
+
+let challengeActive=false, currentChallenge=null, nextChallenge=null;
+let challengeStartM=0, challengeStartTime=0, challengeWatts=[];
+let challengeResults=[];
+// Prossima distanza trigger (km, con offset random ±200m)
+let nextChallengeAt=0;
+
+function randomDist(){ return 100+Math.floor(Math.random()*7)*50; } // 100,150,200...400m
+function randomOffset(){ return (Math.random()-0.5)*400; } // ±200m
+
+function setupChallenges(){
+  challengeActive=false; currentChallenge=null; challengeResults=[];
+  // Prima sfida tra 800m e 1200m
+  nextChallengeAt=800+Math.floor(Math.random()*400);
+  nextChallenge=makeNextChallenge(nextChallengeAt);
+}
+
+function makeNextChallenge(startAt){
+  const t=CHALLENGE_TYPES[Math.floor(Math.random()*CHALLENGE_TYPES.length)];
+  const dist=randomDist();
+  return {
+    ...t,
+    dist,
+    startAt,
+    id: t.type+'_'+startAt,
+    desc: dist+'m · '+(t.type==='max_watt'?'massima potenza':'massima velocità'),
+  };
+}
+
+function getChallengeStartAt(ch){ return ch.startAt; }
+
+function checkChallengeStart(meters){
+  if(challengeActive||!nextChallenge) return;
+  if(meters>=nextChallenge.startAt) startChallenge(nextChallenge, meters);
+}
+
+function startChallenge(ch, meters){
+  challengeActive=true; currentChallenge=ch;
+  challengeStartM=meters; challengeStartTime=Date.now(); challengeWatts=[];
+  const km=(ch.startAt/1000).toFixed(1);
+  document.getElementById('ch-eyebrow').textContent='Sfida al km '+km;
+  document.getElementById('ch-title').textContent=ch.title;
+  document.getElementById('ch-desc').textContent=ch.desc;
+  document.getElementById('ch-progress').textContent=ch.dist+'m';
+  document.getElementById('ch-bar-fill').style.width='0%';
   document.getElementById('challenge-banner').style.display='flex';
 }
-function updateChallenge(meters,watt,strokes){
-  if(!challengeActive||!currentChallenge)return;
+
+function updateChallenge(meters, watt){
+  if(!challengeActive||!currentChallenge) return;
   const elapsed=meters-challengeStartM;
   document.getElementById('ch-bar-fill').style.width=Math.min((elapsed/currentChallenge.dist)*100,100)+'%';
   const rem=Math.max(0,Math.round(currentChallenge.dist-elapsed));
   document.getElementById('ch-progress').textContent=rem>0?rem+'m':'✓';
-  if(watt>0)challengeWatts.push(watt);
-  if(elapsed>=currentChallenge.dist)endChallenge(meters,strokes);
+  if(watt>0) challengeWatts.push(watt);
+  if(elapsed>=currentChallenge.dist) endChallenge(meters);
 }
-function endChallenge(meters,strokes){
-  challengeActive=false;document.getElementById('challenge-banner').style.display='none';
+
+function endChallenge(meters){
+  challengeActive=false;
+  document.getElementById('challenge-banner').style.display='none';
   const ch=currentChallenge;
-  const elapsed=Math.max(1,meters-challengeStartM);
+  const elapsed=Math.max(1, meters-challengeStartM);
   const timeSec=Math.max(0.001,(Date.now()-challengeStartTime)/1000);
-  const strokesDone=strokes-challengeStartStr;
   const avgWatt=challengeWatts.length?Math.round(challengeWatts.reduce((a,b)=>a+b)/challengeWatts.length):0;
-  let score,scoreLabel,recordKey;
-  if(ch.type==='max_watt'||ch.type==='hold_watt'){score=avgWatt;scoreLabel=avgWatt+' W';recordKey='rec_'+ch.id+'_watt';}
-  else if(ch.type==='max_strokes'){score=strokesDone;scoreLabel=strokesDone+' voghe';recordKey='rec_'+ch.id+'_str';}
-  else{const paceSec=timeSec/(elapsed/500);score=Math.round(paceSec);const pm=Math.floor(paceSec/60),ps=Math.floor(paceSec%60);scoreLabel=pm+':'+ps.toString().padStart(2,'0')+'/500m';recordKey='rec_'+ch.id+'_pace';}
-  dbGet('records',recordKey).then(rec=>{
+
+  let score, scoreLabel, recordKey;
+  if(ch.type==='max_watt'){
+    score=avgWatt; scoreLabel=avgWatt+' W medi'; recordKey='rec_pow_'+ch.dist;
+  } else {
+    const paceSec=timeSec/(elapsed/500);
+    score=Math.round(paceSec);
+    const pm=Math.floor(paceSec/60),ps=Math.floor(paceSec%60);
+    scoreLabel=pm+':'+ps.toString().padStart(2,'0')+'/500m';
+    recordKey='rec_spd_'+ch.dist;
+  }
+
+  dbGet('records', recordKey).then(rec=>{
     const prev=rec?rec.value:0;
     const isNew=ch.type==='best_pace'?(prev===0||score<prev):(score>prev);
-    if(isNew)dbPut('records',{key:recordKey,value:score});
+    if(isNew) dbPut('records',{key:recordKey,value:score});
     const record=isNew?score:prev;
+    let recVal= ch.type==='max_watt'? record+' W' :
+      (()=>{const rpm=Math.floor(record/60),rps=record%60;return rpm+':'+rps.toString().padStart(2,'0')+'/500m';})();
     document.getElementById('cr-score').textContent=scoreLabel;
-    document.getElementById('cr-score').style.color=isNew?'var(--gold)':'var(--text)';
-    let recVal='';
-    if(ch.type==='max_watt'||ch.type==='hold_watt')recVal=record+' W';
-    else if(ch.type==='max_strokes')recVal=record+' voghe';
-    else{const rpm=Math.floor(record/60),rps=record%60;recVal=rpm+':'+rps.toString().padStart(2,'0')+'/500m';}
-    document.getElementById('cr-vs').textContent='Record personale';document.getElementById('cr-record').textContent=recVal;
-    const badge=document.getElementById('cr-badge');badge.textContent=isNew?'🏆 NUOVO RECORD':'· · ·';badge.className='cr-badge '+(isNew?'isnew':'nope');
-    const resEl=document.getElementById('challenge-result');resEl.style.display='flex';
-    setTimeout(()=>{resEl.style.display='none';},3500);
-    challengeResults.push({id:ch.id,title:ch.title,score:scoreLabel,isNew});
-  }).catch(()=>{challengeResults.push({id:ch.id,title:ch.title,score:scoreLabel,isNew:false});});
-  challengeIdx++;nextChallenge=challengeIdx<CHALLENGE_DEFS.length?CHALLENGE_DEFS[challengeIdx]:null;
+    document.getElementById('cr-score').style.color=isNew?'var(--gold)':ch.color;
+    document.getElementById('cr-vs').textContent='Record personale '+ch.dist+'m';
+    document.getElementById('cr-record').textContent=recVal;
+    const badge=document.getElementById('cr-badge');
+    badge.textContent=isNew?'🏆 NUOVO RECORD':'· · ·';
+    badge.className='cr-badge '+(isNew?'isnew':'nope');
+    const resEl=document.getElementById('challenge-result');
+    resEl.style.display='flex';
+    setTimeout(()=>{ resEl.style.display='none'; },3500);
+    challengeResults.push({id:ch.id,title:ch.title+' '+ch.dist+'m',score:scoreLabel,isNew});
+  }).catch(()=>{ challengeResults.push({id:ch.id,title:ch.title,score:scoreLabel,isNew:false}); });
+
+  // Prossima sfida: ~1km dopo con offset random
+  nextChallengeAt=meters+800+Math.floor(Math.random()*400)+randomOffset();
+  nextChallengeAt=Math.max(nextChallengeAt, meters+600); // min 600m di pausa
+  nextChallenge=makeNextChallenge(nextChallengeAt);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -938,12 +1022,12 @@ function updateGoalBar(meters,elapsedSec){
 //  METEO MILANO (Open-Meteo, no API key)
 // ═══════════════════════════════════════════════════════
 const WEATHER_SVGS={
-  sun:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-  cloud:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
-  rain:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>`,
-  storm:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`,
-  snow:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>`,
-  fog:`<svg viewBox="0 0 24 24" width="2.8rem" height="2.8rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  cloud:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
+  rain:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>`,
+  storm:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`,
+  snow:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>`,
+  fog:`<svg viewBox="0 0 24 24" width="4.2rem" height="4.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--dim)"><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
 };
 function weatherCodeToSvg(c){const n=Number(c);if(n<=1)return WEATHER_SVGS.sun;if(n<=3)return WEATHER_SVGS.cloud;if(n<=48)return WEATHER_SVGS.fog;if(n<=67)return WEATHER_SVGS.rain;if(n<=77)return WEATHER_SVGS.snow;return WEATHER_SVGS.storm;}
 
@@ -992,6 +1076,7 @@ function updateUI(d){
     timerInterval=setInterval(tickTimer,1000);
     if(paceInterval)clearInterval(paceInterval);
     paceInterval=setInterval(tickPace,10000);
+    requestWakeLock();
     document.getElementById('ghost-arrow').style.display=ghostSamples.length?'block':'none';
   }
   session.meters=d.getUint16(6,true);session.strokes=strokes;
@@ -1010,7 +1095,7 @@ function updateUI(d){
   updateGhostDelta(session.meters,getElapsedSec());
   checkChallengeStart(session.meters);
   const watt=d.byteLength>=12?d.getUint8(11):0;
-  updateChallenge(session.meters,watt,strokes);
+  updateChallenge(session.meters, watt);
   updateGoalBar(session.meters,getElapsedSec());
 
   if(d.byteLength>=12){
@@ -1144,6 +1229,7 @@ function resumeWorkout(e){if(e)e.stopPropagation();isPaused=false;startTime=Date
 async function saveAndFinish(e){
   if(e)e.stopPropagation();
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  releaseWakeLock();
   const dur=document.getElementById('app-timer').textContent;
   const avgW=session.watts.length?Math.round(session.watts.reduce((a,b)=>a+b)/session.watts.length):0;
   const avgS=session.spms.length?Math.round(session.spms.reduce((a,b)=>a+b)/session.spms.length):0;
@@ -1186,7 +1272,24 @@ async function showHistory(){
 function parseTime(t){const p=t.split(':');return(+p[0])*3600+(+p[1])*60+(+p[2]);}
 
 // ═══════════════════════════════════════════════════════
-//  FULLSCREEN
+//  WAKE LOCK — schermo sempre acceso durante l'allenamento
+// ═══════════════════════════════════════════════════════
+let wakeLock=null;
+async function requestWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      wakeLock=await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release',()=>{wakeLock=null;});
+    }
+  }catch(e){console.warn('WakeLock non disponibile:',e);}
+}
+function releaseWakeLock(){
+  if(wakeLock){wakeLock.release();wakeLock=null;}
+}
+// Riacquisisce il wake lock se la pagina torna in foreground
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&isStarted&&!isPaused) requestWakeLock();
+});
 // ═══════════════════════════════════════════════════════
 function reqFS(){const el=document.documentElement;const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;if(fn)fn.call(el).catch(()=>{});}
 document.addEventListener('click',function fs(){reqFS();document.removeEventListener('click',fs);},{once:true,capture:true});
