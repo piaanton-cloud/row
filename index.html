@@ -542,65 +542,93 @@ function drawTrack(meters){
   const b=currentBearing*Math.PI/180,refLat=pos[0],refLon=pos[1];
   function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
 
-  ctx.clearRect(0,0,W,H); // sfondo trasparente — mostra gradiente CSS della pagina
+  ctx.clearRect(0,0,W,H);
   const allPts=TEVERE.map(p=>toScreen(p[0],p[1]));
   ctx.lineCap='round';ctx.lineJoin='round';
 
-  // Percorso +300% più largo con gradiente blu→azzurro
-  // Alone esterno (azzurro sfumato)
-  ctx.strokeStyle='rgba(41,121,255,0.06)';ctx.lineWidth=160;drawSmoothPath(ctx,allPts);ctx.stroke();
-  ctx.strokeStyle='rgba(41,121,255,0.09)';ctx.lineWidth=110;drawSmoothPath(ctx,allPts);ctx.stroke();
-  ctx.strokeStyle='rgba(41,150,255,0.13)';ctx.lineWidth=75;drawSmoothPath(ctx,allPts);ctx.stroke();
-  // Corpo azzurro medio
-  ctx.strokeStyle='rgba(79,195,247,0.22)';ctx.lineWidth=48;drawSmoothPath(ctx,allPts);ctx.stroke();
-  // Centro blu più saturo
-  ctx.strokeStyle='rgba(30,100,220,0.55)';ctx.lineWidth=22;drawSmoothPath(ctx,allPts);ctx.stroke();
-  // Linea centrale brillante
-  ctx.strokeStyle='rgba(100,200,255,0.75)';ctx.lineWidth=6;drawSmoothPath(ctx,allPts);ctx.stroke();
+  // ── FIUME — gradiente verticale blu scuro (alto) → azzurro (basso) ──
+  // Tecnica: disegna il path nel clip, poi riempi con gradiente verticale
+  // Alone esterno
+  ctx.strokeStyle='rgba(30,80,200,0.07)';ctx.lineWidth=200;drawSmoothPath(ctx,allPts);ctx.stroke();
+  ctx.strokeStyle='rgba(30,100,220,0.10)';ctx.lineWidth=140;drawSmoothPath(ctx,allPts);ctx.stroke();
+  ctx.strokeStyle='rgba(40,130,240,0.15)';ctx.lineWidth=90;drawSmoothPath(ctx,allPts);ctx.stroke();
 
-  // ── Segnalini ogni 5m ai lati del percorso ──
-  // Solo quelli visibili (entro ~600px dal centro)
+  // Corpo principale con gradiente verticale (clip + fillRect gradiente)
+  ctx.save();
+  ctx.beginPath();
+  // Crea clip path largo come il corpo del fiume
+  drawSmoothPath(ctx,allPts);
+  ctx.lineWidth=52;
+  ctx.stroke(); // stroke fittizio per avere il path
+  ctx.restore();
+
+  // Gradiente verticale: blu scuro in alto, azzurro in basso
+  const riverGrad=ctx.createLinearGradient(0,0,0,H);
+  riverGrad.addColorStop(0,  'rgba(20, 60,180,0.65)');
+  riverGrad.addColorStop(0.4,'rgba(30,100,220,0.60)');
+  riverGrad.addColorStop(0.7,'rgba(60,160,240,0.55)');
+  riverGrad.addColorStop(1,  'rgba(79,195,247,0.50)');
+
+  // Corpo fiume con gradiente
+  ctx.strokeStyle=riverGrad;ctx.lineWidth=52;drawSmoothPath(ctx,allPts);ctx.stroke();
+
+  // Linea centrale brillante (azzurro chiaro)
+  const centerGrad=ctx.createLinearGradient(0,0,0,H);
+  centerGrad.addColorStop(0,  'rgba(100,160,255,0.80)');
+  centerGrad.addColorStop(1,  'rgba(130,220,255,0.80)');
+  ctx.strokeStyle=centerGrad;ctx.lineWidth=8;drawSmoothPath(ctx,allPts);ctx.stroke();
+
+  // ── Segnalini ai lati ──
   const visRadius=Math.min(W,H)*0.52;
   LANE_MARKERS.forEach(mk=>{
     const[lx,ly]=toScreen(mk.L[0],mk.L[1]);
     const[rx,ry]=toScreen(mk.R[0],mk.R[1]);
-    const distL=Math.hypot(lx-W/2,ly-H*0.52);
-    const distR=Math.hypot(rx-W/2,ry-H*0.52);
-    if(distL<visRadius){
+    if(Math.hypot(lx-W/2,ly-H*0.52)<visRadius){
       ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);
       ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
     }
-    if(distR<visRadius){
+    if(Math.hypot(rx-W/2,ry-H*0.52)<visRadius){
       ctx.beginPath();ctx.arc(rx,ry,3,0,Math.PI*2);
       ctx.fillStyle='rgba(180,195,220,0.28)';ctx.fill();
     }
   });
 
-  // ── POI — pallino grande + nome affiancato a destra ──
+  // ── POI +200% — pallino sul percorso, nome a destra del fiume ──
   TEVERE_POI_DATA.forEach(([km,plat,plon,pname,ptype])=>{
     const[px,py]=toScreen(plat,plon);
     const dist=Math.hypot(px-W/2,py-H*0.52);
     if(dist>visRadius) return;
     const col=POI_COLORS[ptype]||'rgba(180,195,220,0.85)';
-    // Alone esterno
-    ctx.beginPath();ctx.arc(px,py,16,0,Math.PI*2);
-    ctx.strokeStyle=col.replace('0.85','0.2');ctx.lineWidth=2;ctx.stroke();
-    // Pallino doppio (r=10)
+
+    // Alone esterno (+200%: r=30)
+    ctx.beginPath();ctx.arc(px,py,30,0,Math.PI*2);
+    ctx.strokeStyle=col.replace('0.85','0.15');ctx.lineWidth=2;ctx.stroke();
+    // Pallino (+200%: r=20)
+    ctx.beginPath();ctx.arc(px,py,20,0,Math.PI*2);
+    ctx.fillStyle=col.replace('0.85','0.25');ctx.fill();
     ctx.beginPath();ctx.arc(px,py,10,0,Math.PI*2);
     ctx.fillStyle=col;ctx.fill();
-    // Nome affiancato a destra — appare entro 300px
-    if(dist<300){
-      const opacity=Math.max(0,1-(dist/300));
+
+    // Nome a destra del percorso — offset fisso +80px a destra del punto
+    if(dist<350){
+      const opacity=Math.max(0,1-(dist/350));
       ctx.save();
       ctx.globalAlpha=opacity;
-      ctx.font='700 22px Roboto,sans-serif';
+      // Linea di connessione dal punto al testo
+      const textX=px+85;
+      ctx.strokeStyle=col.replace('0.85','0.4');ctx.lineWidth=1.5;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(px+22,py);ctx.lineTo(textX-4,py);ctx.stroke();
+      ctx.setLineDash([]);
+      // Testo (+200%: 44px → ma tenuto a 28px per leggibilità mobile, bold)
+      ctx.font='700 28px Roboto,sans-serif';
       ctx.textAlign='left';
       ctx.fillStyle=col;
-      ctx.shadowColor='rgba(5,8,16,0.95)';ctx.shadowBlur=8;
+      ctx.shadowColor='rgba(5,8,16,0.98)';ctx.shadowBlur=10;
       const lines=pname.split('\n');
-      const lineH=24;
+      const lineH=32;
       const totalH=(lines.length-1)*lineH;
-      lines.forEach((line,i)=>ctx.fillText(line, px+18, py - totalH/2 + i*lineH + 7));
+      lines.forEach((line,i)=>ctx.fillText(line, textX, py - totalH/2 + i*lineH + 10));
       ctx.restore();
     }
   });
