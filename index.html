@@ -12,6 +12,16 @@
 <title>ROW</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
+/* ── LANDSCAPE LOCK ── */
+#rotate-msg{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#050810;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  color:rgba(255,255,255,0.55);font-family:'Inter',sans-serif;font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;
+}
+#rotate-msg svg{animation:spin-hint 1.8s ease-in-out infinite;}
+@keyframes spin-hint{0%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}100%{transform:rotate(-20deg)}}
+@media(orientation:portrait){#rotate-msg{display:flex;}}
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --bg:#050810;
@@ -26,19 +36,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
-#page-home{background:none;justify-content:flex-end;}
+#page-home{background:none;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
-.home-bg canvas{width:100%;height:100%;display:block;}
+.home-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 
-/* Contenuto home — in basso */
+/* Contenuto home — sovrapposto in basso a sinistra */
 .home-content{
-  position:relative;z-index:10;
-  width:100%;
+  position:absolute;
+  bottom:0;left:0;
+  z-index:10;
   display:flex;flex-direction:column;align-items:flex-start;
   padding:0 44px 64px;
-  gap:0;
+  pointer-events:none;
 }
-/* ROW — enorme, a sinistra, sfumato */
+.home-content button{pointer-events:auto;}
+
+/* ROW — enorme, gradiente bianco→azzurro→blu */
 .home-logo{
   font-family:'Inter',sans-serif;
   font-size:9rem;font-weight:900;
@@ -49,16 +62,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:
   margin-bottom:32px;
   user-select:none;
 }
-/* Sottotitolo */
-.home-sub{
-  font-family:'Inter',sans-serif;
-  font-size:0.62rem;font-weight:500;
-  letter-spacing:8px;color:rgba(255,255,255,0.28);
-  text-transform:uppercase;
-  margin-bottom:52px;
-}
 .home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
-/* Pulsanti — tutti uguale, bold, niente bordo */
+/* Pulsanti */
 .btn-main{
   background:none;border:none;
   color:rgba(255,255,255,0.75);
@@ -253,6 +258,14 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 </style>
 </head>
 <body>
+<!-- Ruota il tablet -->
+<div id="rotate-msg">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="2" width="16" height="20" rx="2"/>
+    <path d="M12 18h.01"/>
+  </svg>
+  <span>Ruota il tablet</span>
+</div>
 
 <!-- HOME -->
 <div id="page-home" class="page active">
@@ -923,11 +936,13 @@ function drawTrack(meters){
 // ═══════════════════════════════════════════════════════
 function initHomeCanvas(){
   const cv=document.getElementById('home-canvas');
-  requestAnimationFrame(()=>{
-    const W=cv.width=cv.offsetWidth||window.innerWidth;
-    const H=cv.height=cv.offsetHeight||window.innerHeight;
-    const ctx=cv.getContext('2d');
-    let t=0;
+  const W=cv.width=window.innerWidth;
+  const H=cv.height=window.innerHeight;
+  const ctx=cv.getContext('2d');
+  window.addEventListener('resize',()=>{
+    cv.width=window.innerWidth;cv.height=window.innerHeight;
+  });
+  let t=0;
 
     // Particelle / riflessi luce sull'acqua
     const sparkles=Array.from({length:80},()=>({
@@ -947,6 +962,7 @@ function initHomeCanvas(){
 
     function frame(){
       t+=0.012;
+      const W=cv.width, H=cv.height;
       ctx.clearRect(0,0,W,H);
 
       // Sfondo gradiente cielo/acqua
@@ -1036,7 +1052,6 @@ function initHomeCanvas(){
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-  });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1692,17 +1707,23 @@ openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbSt
 initHomeCanvas();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
 
-// Blocca orientamento in landscape
-if(screen.orientation&&screen.orientation.lock){
-  screen.orientation.lock('landscape').catch(()=>{});
-}
-document.addEventListener('click',function fs(){
-  const el=document.documentElement;
-  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen;
-  if(fn)fn.call(el).then(()=>{
+// Forza landscape — tutti i metodi disponibili
+function lockLandscape(){
+  try{
     if(screen.orientation&&screen.orientation.lock)
       screen.orientation.lock('landscape').catch(()=>{});
-  }).catch(()=>{});
+    if(screen.lockOrientation) screen.lockOrientation('landscape');
+    if(screen.mozLockOrientation) screen.mozLockOrientation('landscape');
+    if(screen.msLockOrientation) screen.msLockOrientation('landscape');
+  }catch(e){}
+}
+lockLandscape();
+
+document.addEventListener('click',function fs(){
+  const el=document.documentElement;
+  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
+  if(fn)fn.call(el).then(()=>lockLandscape()).catch(()=>{});
+  lockLandscape();
   document.removeEventListener('click',fs);
 },{once:true,capture:true});
 </script>
