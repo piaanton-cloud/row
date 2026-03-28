@@ -2,11 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0b0e">
+<meta name="theme-color" content="#050810">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <title>ROW</title>
@@ -32,18 +32,21 @@
   --accent:#4fc3f7; --gold:#ffd54f; --red:#ef5350; --green:#66bb6a;
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:var(--text);font-family:'Inter',sans-serif;}
+/* Copre l'intera finestra compresa la safe area */
+html{height:100dvh;}
+body{min-height:100dvh;}
 .page{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bot) 100%);}
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
 #page-home{background:#050810;}
 
-/* Immagine di sfondo — unsplash fiume/lago scuro */
+/* Immagine di sfondo — fiume nella nebbia mattutina */
 .home-bg{
   position:absolute;inset:0;
-  background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80');
-  background-size:cover;background-position:center;
-  filter:grayscale(60%) brightness(0.35);
+  background-image:url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1920&q=80');
+  background-size:cover;background-position:center 40%;
+  filter:grayscale(40%) brightness(0.32) contrast(1.1);
 }
 /* Overlay scuro per leggibilità */
 .home-bg::after{content:'';position:absolute;inset:0;background:rgba(5,8,16,0.55);}
@@ -427,17 +430,17 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     <div class="stats-div"></div>
     <div class="stats-row">
       <div class="stat-sm">
-        <!-- timer/orologio -->
-        <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
-        <span class="stat-sm-val" id="p-val" style="color:var(--gold)">–:––</span>
-        <span class="stat-sm-lbl">min/500m</span>
-      </div>
-      <div class="stat-sep"></div>
-      <div class="stat-sm">
         <!-- cuore bpm -->
         <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
         <span class="stat-sm-val" id="h-val" style="color:var(--red)">––</span>
         <span class="stat-sm-lbl">bpm</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-sm">
+        <!-- timer/orologio -->
+        <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        <span class="stat-sm-val" id="p-val" style="color:var(--gold)">–:––</span>
+        <span class="stat-sm-lbl">min/500m</span>
       </div>
       <div class="stat-sep"></div>
       <div class="stat-sm">
@@ -562,28 +565,29 @@ const RIVERS = {
       [41.7968,12.4308],[41.7944,12.4298],
     ],
     poi:[
-      [41.9337,12.4669,'Ponte Milvio','ponte'],
-      [41.9285,12.4680,'Foro Italico','monumento'],
-      [41.9272,12.4718,'Ponte Flaminio','ponte'],
-      [41.9220,12.4720,'Auditorium\nParco Musica','architettura'],
-      [41.9188,12.4660,'Ponte\ndella Musica','ponte'],
-      [41.9108,12.4614,'Palazzo\ndi Giustizia','architettura'],
-      [41.9090,12.4606,"Castel\nSant'Angelo",'monumento'],
-      [41.9072,12.4654,"Ponte\nSant'Angelo",'ponte'],
-      [41.8992,12.4720,"Ponte V.\nEmanuele II",'ponte'],
-      [41.8960,12.4680,'Trastevere','quartiere'],
-      [41.8900,12.4700,'Isola Tiberina','isola'],
-      [41.8880,12.4710,'Ponte Garibaldi','ponte'],
-      [41.8860,12.4700,"Tempio di Ercole\nVincitore",'monumento'],
-      [41.8845,12.4712,'Ponte Palatino','ponte'],
-      [41.8820,12.4680,'Piramide Cestia','monumento'],
-      [41.8812,12.4695,'Ponte Testaccio','ponte'],
-      [41.8760,12.4648,"Ponte\nIndustriale",'ponte'],
-      [41.8682,12.4612,"Centrale\nMontemartini",'architettura'],
-      [41.8568,12.4562,"Ponte\nMarconi",'ponte'],
-      [41.8472,12.4536,'Magliana','quartiere'],
-      [41.8376,12.4492,"Ponte\ndella Magliana",'ponte'],
-      [41.8136,12.4378,"Ponte\nMezzocammino",'ponte'],
+      [0.0,'Ponte Milvio','ponte'],
+      [0.6,'Foro Italico','monumento'],
+      [1.2,'Ponte Flaminio','ponte'],
+      [2.0,'Auditorium\nParco Musica','architettura'],
+      [2.8,'Ponte\ndella Musica','ponte'],
+      [3.5,'Palazzo\ndi Giustizia','architettura'],
+      [4.0,"Castel\nSant'Angelo",'monumento'],
+      [4.5,"Ponte\nSant'Angelo",'ponte'],
+      [5.0,'Piazza\ndel Popolo','monumento'],
+      [5.5,"Ponte V.\nEmanuele II",'ponte'],
+      [6.0,'Trastevere','quartiere'],
+      [6.5,'Isola Tiberina','isola'],
+      [7.0,'Ponte Garibaldi','ponte'],
+      [7.5,"Tempio\ndi Ercole",'monumento'],
+      [8.0,'Ponte Palatino','ponte'],
+      [8.5,'Piramide Cestia','monumento'],
+      [9.0,'Ponte Testaccio','ponte'],
+      [9.8,"Ponte\nIndustriale",'ponte'],
+      [10.5,"Centrale\nMontemartini",'architettura'],
+      [11.5,"Ponte\nMarconi",'ponte'],
+      [12.5,'Magliana','quartiere'],
+      [13.5,"Ponte\ndella Magliana",'ponte'],
+      [15.0,"Ponte\nMezzocammino",'ponte'],
     ],
   },
   arno: {
@@ -605,19 +609,21 @@ const RIVERS = {
       [43.7612,11.3542],[43.7602,11.3565],[43.7592,11.3588],[43.7582,11.3610],
     ],
     poi:[
-      [43.7896,11.2462,'Parco\ndelle Cascine','quartiere'],
-      [43.7854,11.2810,"Ponte\nalla Vittoria",'ponte'],
-      [43.7828,11.2940,"Ponte\nAm. Vespucci",'ponte'],
-      [43.7816,11.3000,"Ponte\nalla Carraia",'ponte'],
-      [43.7808,11.3042,"Ponte\nSanta Trinita",'ponte'],
-      [43.7800,11.3080,'Ponte Vecchio','monumento'],
-      [43.7792,11.3110,"Palazzo\nPitti",'architettura'],
-      [43.7788,11.3130,"Giardino\ndi Boboli",'quartiere'],
-      [43.7780,11.3168,"Ponte\ndelle Grazie",'ponte'],
-      [43.7762,11.3220,"Ponte\nSan Niccolò",'ponte'],
-      [43.7740,11.3260,"Basilica\nSan Miniato",'monumento'],
-      [43.7700,11.3360,"Ponte\na Rubaconte",'ponte'],
-      [43.7652,11.3460,"Ponte\nda Verrazzano",'ponte'],
+      [0.0,'Parco\ndelle Cascine','quartiere'],
+      [1.5,"Ponte\nalla Vittoria",'ponte'],
+      [2.5,"Ponte\nAm. Vespucci",'ponte'],
+      [3.2,"Ponte\nalla Carraia",'ponte'],
+      [4.0,"Ponte\nSanta Trinita",'ponte'],
+      [4.6,'Ponte Vecchio','monumento'],
+      [5.0,"Palazzo\nPitti",'architettura'],
+      [5.3,"Giardino\ndi Boboli",'quartiere'],
+      [5.8,"Ponte\ndelle Grazie",'ponte'],
+      [6.5,"Uffizi\n(sponda)",'monumento'],
+      [7.2,"Ponte\nSan Niccolò",'ponte'],
+      [8.0,"Basilica\nSan Miniato",'monumento'],
+      [9.0,"Ponte\na Rubaconte",'ponte'],
+      [10.5,"Ponte\nda Verrazzano",'ponte'],
+      [12.0,"Parco\ndi Rovezzano",'quartiere'],
     ],
   },
   po: {
@@ -639,19 +645,20 @@ const RIVERS = {
       [44.9920,7.8200],[44.9906,7.8228],[44.9892,7.8256],[44.9878,7.8284],
     ],
     poi:[
-      [45.0580,7.6950,"Parco\nMichelotti",'quartiere'],
-      [45.0560,7.7010,"Villa\ndella Regina",'architettura'],
-      [45.0535,7.7068,"Ponte\nUmberto I",'ponte'],
-      [45.0508,7.7122,"Gran\nMadre di Dio",'monumento'],
-      [45.0480,7.7174,"Ponte\nVittorio\nEmanuele I",'ponte'],
-      [45.0452,7.7226,"Parco\ndel Valentino",'quartiere'],
-      [45.0424,7.7278,"Castello\ndel Valentino",'architettura'],
-      [45.0396,7.7332,"Borgo\nMedievale",'monumento'],
-      [45.0368,7.7382,"Ponte\nIsabella",'ponte'],
-      [45.0298,7.7500,"Borgo\nPo",'quartiere'],
-      [45.0200,7.7675,"Ponte\nPrinc. Oddone",'ponte'],
-      [45.0060,7.7926,"Ponte\ndi Moncalieri",'ponte'],
-      [44.9920,7.8200,"Reggia\ndi Moncalieri",'architettura'],
+      [0.0,"Parco\nMichelotti",'quartiere'],
+      [0.8,"Villa\ndella Regina",'architettura'],
+      [1.5,"Ponte\nUmberto I",'ponte'],
+      [2.0,"Gran Madre\ndi Dio",'monumento'],
+      [2.8,"Ponte\nVittorio Em. I",'ponte'],
+      [3.5,"Parco\ndel Valentino",'quartiere'],
+      [4.2,"Castello\ndel Valentino",'architettura'],
+      [5.0,"Borgo\nMedievale",'monumento'],
+      [5.8,"Ponte\nIsabella",'ponte'],
+      [7.0,"Borgo\nPo",'quartiere'],
+      [8.5,"Ponte\nPrinc. Oddone",'ponte'],
+      [10.0,"Ponte\ndi Moncalieri",'ponte'],
+      [12.0,"Reggia\ndi Moncalieri",'architettura'],
+      [14.0,"Confluenza\nChisola",'quartiere'],
     ],
   },
   senna: {
@@ -673,21 +680,23 @@ const RIVERS = {
       [48.8396,2.2096],[48.8389,2.2068],[48.8382,2.2040],[48.8375,2.2012],
     ],
     poi:[
-      [48.8534,2.3490,'Notre-Dame','monumento'],
-      [48.8545,2.3220,"Île\nde la Cité",'isola'],
-      [48.8542,2.3130,"Sainte-\nChapelle",'architettura'],
-      [48.8540,2.3070,'Pont Neuf','ponte'],
-      [48.8535,2.2980,"Musée\ndu Louvre",'monumento'],
-      [48.8527,2.2890,"Pont\ndes Arts",'ponte'],
-      [48.8521,2.2830,"Institut\nde France",'architettura'],
-      [48.8514,2.2770,"Pont de\nla Concorde",'ponte'],
-      [48.8506,2.2712,"Musée\nd'Orsay",'monumento'],
-      [48.8490,2.2600,"Place de\nla Concorde",'monumento'],
-      [48.8474,2.2488,"Grand\nPalais",'architettura'],
-      [48.8460,2.2404,"Pont\nde l'Alma",'ponte'],
-      [48.8440,2.2292,"Champ\nde Mars",'quartiere'],
-      [48.8396,2.2096,'Tour Eiffel','monumento'],
-      [48.8375,2.2012,"Pont\nde Grenelle",'ponte'],
+      [0.0,'Notre-Dame','monumento'],
+      [0.8,"Île\nde la Cité",'isola'],
+      [1.3,"Sainte-\nChapelle",'architettura'],
+      [1.8,'Pont Neuf','ponte'],
+      [2.5,"Musée\ndu Louvre",'monumento'],
+      [3.0,"Pont\ndes Arts",'ponte'],
+      [3.5,"Institut\nde France",'architettura'],
+      [4.2,"Pont de\nla Concorde",'ponte'],
+      [4.8,"Musée\nd'Orsay",'monumento'],
+      [5.5,"Place de\nla Concorde",'monumento'],
+      [6.2,"Grand\nPalais",'architettura'],
+      [7.0,"Pont\nde l'Alma",'ponte'],
+      [8.0,"Champ\nde Mars",'quartiere'],
+      [8.8,'Tour Eiffel','monumento'],
+      [9.5,"Pont\nde Grenelle",'ponte'],
+      [11.0,"Île\ndes Cygnes",'isola'],
+      [12.5,"Pont\nde Sèvres",'ponte'],
     ],
   },
   tamigi: {
@@ -709,20 +718,21 @@ const RIVERS = {
       [51.4726,-0.0720],[51.4728,-0.0690],[51.4730,-0.0660],[51.4732,-0.0630],
     ],
     poi:[
-      [51.4680,-0.2160,"Putney\nBridge",'ponte'],
-      [51.4664,-0.2010,"Fulham\nPalace",'architettura'],
-      [51.4656,-0.1860,"Hammersmith\nBridge",'ponte'],
-      [51.4662,-0.1680,"Chiswick\nHouse",'architettura'],
-      [51.4666,-0.1620,"Chiswick\nBridge",'ponte'],
-      [51.4676,-0.1470,"Kew\nBridge",'ponte'],
-      [51.4678,-0.1440,"Kew\nGardens",'quartiere'],
-      [51.4690,-0.1260,"Richmond\nBridge",'ponte'],
-      [51.4692,-0.1230,"Richmond\nPark",'quartiere'],
-      [51.4700,-0.1110,"Richmond\nHill",'architettura'],
-      [51.4706,-0.1020,"Twickenham\nBridge",'ponte'],
-      [51.4712,-0.0930,"Ham\nHouse",'architettura'],
-      [51.4720,-0.0810,"Kingston\nBridge",'ponte'],
-      [51.4726,-0.0720,"Hampton\nCourt",'monumento'],
+      [0.0,"Putney\nBridge",'ponte'],
+      [1.0,"Fulham\nPalace",'architettura'],
+      [2.0,"Hammersmith\nBridge",'ponte'],
+      [3.0,"Chiswick\nHouse",'architettura'],
+      [3.8,"Chiswick\nBridge",'ponte'],
+      [5.0,"Kew\nBridge",'ponte'],
+      [5.5,"Kew\nGardens",'quartiere'],
+      [7.0,"Richmond\nBridge",'ponte'],
+      [7.5,"Richmond\nPark",'quartiere'],
+      [8.5,"Richmond\nHill",'architettura'],
+      [9.5,"Twickenham\nBridge",'ponte'],
+      [10.5,"Ham\nHouse",'architettura'],
+      [11.5,"Teddington\nLock",'monumento'],
+      [12.5,"Kingston\nBridge",'ponte'],
+      [14.0,"Hampton\nCourt",'monumento'],
     ],
   },
 };
@@ -835,7 +845,7 @@ function drawTrack(meters){
   drawSmoothPath(ctx,allPts); ctx.stroke();
 
   // ── Segnalini ai lati ──
-  const visRadius=Math.min(W,H)*0.52;
+  const visRadius=Math.min(W,H)*0.68; // più largo — i POI erano invisibili
   LANE_MARKERS.forEach(mk=>{
     const[lx,ly]=toScreen(mk.L[0],mk.L[1]);
     const[rx,ry]=toScreen(mk.R[0],mk.R[1]);
@@ -849,34 +859,34 @@ function drawTrack(meters){
     }
   });
 
-  // ── POI +200% — pallino sul percorso, nome a destra del fiume ──
-  ACTIVE_POI.forEach(([km,plat,plon,pname,ptype])=>{
-    const[px,py]=toScreen(plat,plon);
+  // ── POI — posizionati sul tracciato tramite distanza progressiva ──
+  ACTIVE_POI.forEach(([poiKm,pname,ptype])=>{
+    // Posiziona il POI interpolando sul tracciato alla distanza indicata
+    const poiPos=posAtMeters(poiKm*1000);
+    const[px,py]=toScreen(poiPos[0],poiPos[1]);
     const dist=Math.hypot(px-W/2,py-H*0.52);
     if(dist>visRadius) return;
     const col=POI_COLORS[ptype]||'rgba(180,195,220,0.85)';
 
-    // Alone esterno (+200%: r=30)
+    // Alone esterno
     ctx.beginPath();ctx.arc(px,py,30,0,Math.PI*2);
     ctx.strokeStyle=col.replace('0.85','0.15');ctx.lineWidth=2;ctx.stroke();
-    // Pallino (+200%: r=20)
+    // Pallino
     ctx.beginPath();ctx.arc(px,py,20,0,Math.PI*2);
     ctx.fillStyle=col.replace('0.85','0.25');ctx.fill();
     ctx.beginPath();ctx.arc(px,py,10,0,Math.PI*2);
     ctx.fillStyle=col;ctx.fill();
 
-    // Nome a destra del percorso — offset fisso +80px a destra del punto
-    if(dist<350){
-      const opacity=Math.max(0,1-(dist/350));
+    // Nome a destra — appare entro 280px dalla freccia
+    if(dist<280){
+      const opacity=Math.max(0,1-(dist/280));
       ctx.save();
       ctx.globalAlpha=opacity;
-      // Linea di connessione dal punto al testo
       const textX=px+85;
       ctx.strokeStyle=col.replace('0.85','0.4');ctx.lineWidth=1.5;
       ctx.setLineDash([4,4]);
       ctx.beginPath();ctx.moveTo(px+22,py);ctx.lineTo(textX-4,py);ctx.stroke();
       ctx.setLineDash([]);
-      // Testo (+200%: 44px → ma tenuto a 28px per leggibilità mobile, bold)
       ctx.font='700 28px Inter,sans-serif';
       ctx.textAlign='left';
       ctx.fillStyle=col;
@@ -1199,7 +1209,7 @@ let challengeResults=[];
 // Prossima distanza trigger (km, con offset random ±200m)
 let nextChallengeAt=0;
 
-function randomDist(){ return 100+Math.floor(Math.random()*7)*50; } // 100,150,200...400m
+function randomDist(){ return 100+Math.floor(Math.random()*5)*50; } // 100,150,200,250,300m max
 function randomOffset(){ return (Math.random()-0.5)*400; } // ±200m
 
 function setupChallenges(){
@@ -1436,9 +1446,9 @@ function updateUI(d){
     // Barra rossa (precedente)
     document.getElementById('watt-bar-prev').style.width=Math.min((prevWatt/350)*100,100)+'%';
     prevWatt=watt;
-    // Calorie: formula METs-based kcal = W_avg * elapsed * 0.00024
+    // Calorie — formula fisiologica (efficienza metabolica canottaggio ~23%):
     const avgWattNow=session.watts.length?Math.round(session.watts.reduce((a,b)=>a+b)/session.watts.length):0;
-    const kcal=Math.round(avgWattNow*getElapsedSec()*0.00024);
+    const kcal=Math.round(avgWattNow*getElapsedSec()*0.00104);
     document.getElementById('cal-val').textContent=kcal;
   }
   // ── Pace — aggiornata ogni 10s tramite tickPace, qui solo raccolta dati ──
