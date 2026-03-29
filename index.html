@@ -46,8 +46,6 @@ body{min-height:100dvh;}
 #page-home{background:#e0d4c4;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{position:absolute;inset:0;width:100%;height:100%;}
-
-/* Contenuto home — centrato verticalmente, a sinistra */
 .home-content{
   position:absolute;inset:0;z-index:10;
   display:flex;flex-direction:column;
@@ -56,88 +54,142 @@ body{min-height:100dvh;}
   pointer-events:none;
 }
 .home-content>*{pointer-events:auto;}
-
-/* ROW — Playfair Display, grande, colore terra scuro */
 .home-logo{
-  font-family:'Playfair Display',serif;
+  font-family:'Inter',sans-serif;
   font-size:10rem;font-weight:900;
-  letter-spacing:-2px;line-height:0.9;
+  letter-spacing:-6px;line-height:0.85;
   color:rgba(42,28,14,0.88);
   margin-bottom:8px;
   user-select:none;
 }
-/* Sottotitolo fiume */
 .home-sub{
   font-family:'Inter',sans-serif;
-  font-size:0.62rem;font-weight:500;
-  letter-spacing:7px;text-transform:uppercase;
-  color:rgba(105,90,73,0.55);
+  font-size:0.58rem;font-weight:500;
+  letter-spacing:8px;text-transform:uppercase;
+  color:rgba(105,90,73,0.50);
   margin-bottom:52px;
 }
 .home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
 .btn-main{
   background:none;border:none;
-  color:rgba(42,28,14,0.70);
-  font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;
+  color:rgba(42,28,14,0.65);
+  font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;
   letter-spacing:7px;text-transform:uppercase;
   padding:16px 0;cursor:pointer;transition:color .15s;
 }
 .btn-main:active{opacity:0.4;}
 .btn-ghost{
   background:none;border:none;
-  color:rgba(105,90,73,0.40);
-  font-family:'Inter',sans-serif;font-size:0.68rem;font-weight:400;
+  color:rgba(105,90,73,0.38);
+  font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:400;
   letter-spacing:7px;text-transform:uppercase;
   padding:11px 0;cursor:pointer;transition:color .15s;
 }
 .btn-ghost:active{opacity:0.3;}
 
-/* ═══ GOAL SCREEN ═══ */
-#page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;}
-.goal-header{padding:calc(env(safe-area-inset-top,0px)+36px) 28px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.goal-header-title{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;letter-spacing:1px;color:var(--text);}
+/* ═══ GOAL SCREEN — stesso tema sabbia della pagina allenamento ═══ */
+#page-goal{
+  flex-direction:column;justify-content:stretch;align-items:stretch;
+  padding:0;overflow:hidden;
+  background:#e0d4c4 !important;
+}
+.goal-header{
+  padding:calc(env(safe-area-inset-top,0px)+36px) 28px 0;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.goal-header-title{
+  font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:700;
+  letter-spacing:8px;text-transform:uppercase;
+  color:rgba(105,90,73,0.55);
+}
+.btn-back{
+  background:none;border:none;
+  color:rgba(105,90,73,0.45);
+  font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:500;
+  letter-spacing:4px;text-transform:uppercase;
+  cursor:pointer;padding:8px 0;
+}
 
-/* ── Sezione fiumi (metà superiore) ── */
+/* Sezione fiumi */
 .goal-rivers-section{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:16px 16px 8px;gap:10px;}
-.goal-rivers-label{font-size:0.52rem;letter-spacing:7px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;text-align:center;}
-.river-cards{display:flex;gap:0;justify-content:space-evenly;align-items:center;padding:0;}
-.river-card{flex:1;max-width:19%;border-radius:14px;padding:12px 6px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;text-align:center;}
-.river-card.selected{border-color:rgba(255,255,255,0.7);transform:scale(1.06);}
+.goal-rivers-label{
+  font-size:0.48rem;letter-spacing:7px;
+  color:rgba(105,90,73,0.45);
+  text-transform:uppercase;margin-bottom:4px;text-align:center;
+}
+.river-cards{display:flex;gap:8px;justify-content:space-evenly;align-items:center;padding:0;}
+.river-card{
+  flex:1;max-width:19%;border-radius:12px;padding:14px 6px;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  border:1.5px solid rgba(105,90,73,0.18);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:rgba(224,212,196,0.6);
+}
+.river-card.selected{
+  border-color:rgba(42,28,14,0.45);
+  background:rgba(205,192,175,0.8);
+  transform:scale(1.04);
+}
 .river-card:active{transform:scale(0.96);}
 .river-card-flag{font-size:1.5rem;line-height:1;margin-bottom:5px;}
-.river-card-name{font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:700;color:#fff;line-height:1.1;}
-.river-card-city{font-family:'Inter',sans-serif;font-size:0.52rem;font-weight:400;color:rgba(255,255,255,0.7);margin-top:2px;letter-spacing:0.3px;}
-.river-card-km{font-family:'Inter',sans-serif;font-size:0.48rem;font-weight:500;color:rgba(255,255,255,0.5);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
+.river-card-name{
+  font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:700;
+  color:rgba(42,28,14,0.80);line-height:1.1;
+}
+.river-card-city{
+  font-family:'Inter',sans-serif;font-size:0.50rem;font-weight:400;
+  color:rgba(105,90,73,0.60);margin-top:2px;letter-spacing:0.3px;
+}
+.river-card-km{
+  font-family:'Inter',sans-serif;font-size:0.46rem;font-weight:500;
+  color:rgba(105,90,73,0.45);margin-top:5px;letter-spacing:1px;text-transform:uppercase;
+}
 
 /* Divisore */
-.goal-divider-h{height:1px;background:var(--border);margin:0 20px;flex-shrink:0;}
+.goal-divider-h{height:1px;background:rgba(105,90,73,0.15);margin:0 20px;flex-shrink:0;}
 
-/* ── Sezione obiettivo (metà inferiore) ── */
+/* Sezione obiettivo */
 .goal-obj-section{flex:1;display:flex;flex-direction:column;padding:8px 20px 0;}
-.goal-obj-tabs{display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);}
-.goal-obj-tab{flex:1;padding:10px;text-align:center;font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--dim2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
-.goal-obj-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.goal-obj-tabs{display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid rgba(105,90,73,0.15);}
+.goal-obj-tab{
+  flex:1;padding:10px;text-align:center;
+  font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:600;
+  letter-spacing:5px;text-transform:uppercase;
+  color:rgba(105,90,73,0.40);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;
+}
+.goal-obj-tab.active{color:rgba(42,28,14,0.80);border-bottom-color:rgba(42,28,14,0.40);}
 .goal-obj-content{flex:1;display:flex;align-items:center;justify-content:center;}
 .goal-carousel-wrap{position:relative;height:160px;width:100%;overflow:hidden;}
-.goal-carousel-wrap::before,.goal-carousel-wrap::after{content:'';position:absolute;left:0;right:0;height:50px;z-index:10;pointer-events:none;}
-.goal-carousel-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg-top),transparent);}
-.goal-carousel-wrap::after{bottom:0;background:linear-gradient(to top,var(--bg-top),transparent);}
+.goal-carousel-wrap::before,.goal-carousel-wrap::after{
+  content:'';position:absolute;left:0;right:0;height:50px;z-index:10;pointer-events:none;
+}
+.goal-carousel-wrap::before{top:0;background:linear-gradient(to bottom,rgba(224,212,196,1),rgba(224,212,196,0));}
+.goal-carousel-wrap::after{bottom:0;background:linear-gradient(to top,rgba(224,212,196,1),rgba(224,212,196,0));}
 .goal-carousel{overflow-y:scroll;height:100%;width:100%;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;flex-direction:column;align-items:center;}
 .goal-carousel::-webkit-scrollbar{display:none;}
 .goal-item{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;cursor:pointer;width:100%;}
-.goal-item-val{font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:700;color:var(--dim2);transition:all .15s;letter-spacing:-1px;}
-.goal-item.selected .goal-item-val{font-size:3.2rem;color:var(--text);font-weight:900;}
-.goal-item-unit{font-size:0.62rem;letter-spacing:3px;color:var(--dim2);margin-left:6px;text-transform:uppercase;}
-.goal-item.selected .goal-item-unit{color:var(--dim);}
+.goal-item-val{
+  font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:700;
+  color:rgba(105,90,73,0.35);transition:all .15s;letter-spacing:-1px;
+}
+.goal-item.selected .goal-item-val{font-size:3.2rem;color:rgba(42,28,14,0.85);font-weight:900;}
+.goal-item-unit{font-size:0.62rem;letter-spacing:3px;color:rgba(105,90,73,0.40);margin-left:6px;text-transform:uppercase;}
+.goal-item.selected .goal-item-unit{color:rgba(105,90,73,0.60);}
 .goal-selector-lines{position:absolute;left:0;right:0;pointer-events:none;z-index:5;}
-.goal-selector-line{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,0.07);}
+.goal-selector-line{position:absolute;left:0;right:0;height:1px;background:rgba(105,90,73,0.18);}
 .goal-selector-line.top{top:calc(50% - 28px);}
 .goal-selector-line.bot{top:calc(50% + 28px);}
 
 /* Pulsante avvia */
 .goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
-.btn-start{width:100%;padding:20px;border-radius:0;background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
-.btn-start.ready{color:#c0d0e0;}
+.btn-start{
+  width:100%;padding:20px;border-radius:0;background:none;border:none;
+  color:rgba(105,90,73,0.35);
+  font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;
+}
+.btn-start.ready{color:rgba(42,28,14,0.75);}
 .btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
@@ -150,6 +202,9 @@ body{min-height:100dvh;}
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
 .hdr-timer{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:3px;color:var(--app-dim);}
 .hdr-clock{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:2px;color:var(--app-dim);}
+.hdr-center{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.hdr-river-name{font-family:'Inter',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(42,28,14,0.55);}
+.hdr-river-km{font-family:'Inter',sans-serif;font-size:0.55rem;font-weight:400;letter-spacing:3px;color:rgba(105,90,73,0.40);}
 
 /* ── Calorie ── */
 #calories-block{margin-top:26px;}
@@ -360,6 +415,10 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
   <!-- Header -->
   <div id="app-header">
     <span class="hdr-timer" id="app-timer">00:00:00</span>
+    <div class="hdr-center">
+      <span class="hdr-river-name" id="hdr-river-name">—</span>
+      <span class="hdr-river-km" id="hdr-river-km">0 km</span>
+    </div>
     <span class="hdr-clock" id="app-clock">--:--</span>
   </div>
 
@@ -836,9 +895,27 @@ function renderLoop(ts){
   drawTrack(renderMeters);
 }
 
-const SCALE=6.5;
+const SCALE=14; // era 6.5 — raddoppiato per più movimento visivo
 
 function latLonToLocal(lat,lon,refLat,refLon){const x=(lon-refLon)*111320*Math.cos(refLat*Math.PI/180);const y=-(lat-refLat)*111320;return[x,y];}
+
+// Amplifica il punto lateralmente rispetto al centro del percorso
+// Questo esagera i meandri del fiume senza cambiare la direzione di avanzamento
+function amplifyLateral(pts, factor){
+  if(pts.length<3) return pts;
+  return pts.map(([x,y],i)=>{
+    const prev=pts[Math.max(i-1,0)];
+    const next=pts[Math.min(i+1,pts.length-1)];
+    // Tangente locale
+    const tx=next[0]-prev[0], ty=next[1]-prev[1];
+    const len=Math.sqrt(tx*tx+ty*ty)+0.001;
+    // Componente laterale (normale) del punto rispetto alla tangente
+    const mx=(x-(prev[0]+next[0])/2);
+    const my=(y-(prev[1]+next[1])/2);
+    // Amplifica solo la componente perpendicolare all'avanzamento
+    return[x + mx*factor, y + my*factor];
+  });
+}
 
 function drawSmoothPath(ctx,pts){
   if(pts.length<2)return;
@@ -866,7 +943,9 @@ function drawTrack(meters){
   const b=currentBearing*Math.PI/180,refLat=pos[0],refLon=pos[1];
   function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
 
-  const allPts=ACTIVE_PTS.map(p=>toScreen(p[0],p[1]));
+  const rawPts=ACTIVE_PTS.map(p=>toScreen(p[0],p[1]));
+  // Amplifica i meandri del 300% — rende visibili le curve del fiume
+  const allPts=amplifyLateral(rawPts, 3.0);
 
   // ── SFONDO con colore BG del fiume ──
   const bg=topo.bg;
@@ -884,7 +963,7 @@ function drawTrack(meters){
       const len=Math.sqrt(tx*tx+ty*ty)+0.001;
       const nx=-ty/len,ny=tx/len;
       const t=i/pts.length;
-      const na=Math.max(2,dist*0.18);
+      const na=Math.max(4,dist*0.22); // noise più generoso
       const noise=
         Math.sin(t*Math.PI*22+seed*1.5)*na*0.42
        +Math.sin(t*Math.PI*36+seed*2.8)*na*0.26
@@ -939,18 +1018,19 @@ function drawTrack(meters){
 
   ctx.lineCap='butt';ctx.lineJoin='miter';ctx.miterLimit=8;
 
-  // Disegna dal più esterno al più interno
+  // Disegna dal più esterno al più interno — strati con movimento asimmetrico
   for(let i=topo.layers.length-1;i>=0;i--){
     const l=topo.layers[i];
-    const nm=Math.max(2,l.d*0.18);
-    const lw=l.w===999?W*3:l.w*2+nm*2+6;
+    const nm=Math.max(4,l.d*0.28); // noise più generoso
+    const lw=l.w===999?W*3:(l.w*4)+nm*2+8;
     ctx.lineWidth=lw;
     ctx.strokeStyle=patterns[i];
     if(i===0){
       drawSharpLine(allPts);ctx.stroke();
     } else {
-      drawSharpLine(offsetPath(allPts,l.d,i*3.8+0.7));ctx.stroke();
-      drawSharpLine(offsetPath(allPts,-l.d,i*3.8+5.3));ctx.stroke();
+      // Seeds molto diversi tra dx e sx per asimmetria organica
+      drawSharpLine(offsetPath(allPts, l.d*2, i*3.8+0.7+meters*0.00002));ctx.stroke();
+      drawSharpLine(offsetPath(allPts,-l.d*2, i*3.8+5.3+meters*0.00003));ctx.stroke();
     }
   }
 
@@ -1017,11 +1097,72 @@ function drawTrack(meters){
     }
   }
 
-  // ── Freccia barca ──
-  const boatPos=posAtMeters(meters);
-  const boatPos2=posAtMeters(Math.min(meters+30,TOTAL_M));
-  const[bx,by]=toScreen(boatPos[0],boatPos[1]);
-  const[bx2,by2]=toScreen(boatPos2[0],boatPos2[1]);
+  // ── ROCCE — isole ovoidali sparse lungo il percorso ──
+  // Alcune dentro il canale (più piccole), alcune sulle rive (più grandi)
+  const river=RIVERS[ACTIVE_RIVER_ID]||RIVERS.tevere;
+  const topo=river.topo;
+  const rockColor=patterns[1]||patterns[0]; // colore strato interno per le rocce
+  const shoreColor=patterns[2]; // colore riva per rocce esterne
+
+  // Rocce generate deterministicamente dalla posizione sul percorso
+  const rockSeed=meters*0.001;
+  const nRocks=14;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  for(let r=0;r<nRocks;r++){
+    const t=((r*0.618+rockSeed*0.1)%1); // distribuzione aurea
+    const idx=Math.floor(t*(allPts.length-1));
+    if(idx<1||idx>=allPts.length-1) continue;
+    const[rx,ry]=allPts[idx];
+    // Skip rocce fuori dallo schermo
+    if(rx<-50||rx>W+50||ry<-50||ry>H+50) continue;
+
+    // Decide: roccia interna (dentro fiume) o esterna (riva)
+    const isInner=(r%3!==0);
+    const distFromCenter=isInner
+      ? (20+r*8) * (r%2===0?1:-1)   // inside — offset piccolo
+      : (topo.layers[3].d*2 + 30 + r*15) * (r%2===0?1:-1); // outside — sulle rive
+
+    // Normale al percorso
+    const prev=allPts[Math.max(idx-1,0)],next=allPts[Math.min(idx+1,allPts.length-1)];
+    const tx2=next[0]-prev[0],ty2=next[1]-prev[1];
+    const tlen=Math.sqrt(tx2*tx2+ty2*ty2)+0.001;
+    const nx2=-ty2/tlen,ny2=tx2/tlen;
+
+    const cx=rx+nx2*distFromCenter;
+    const cy=ry+ny2*distFromCenter;
+
+    const rw=isInner?(8+r%4*4):(18+r%5*8);
+    const rh=rw*(0.4+r%3*0.2);
+    const angle=Math.atan2(ty2,tx2);
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(angle);
+    // Strati concentrici della roccia (mini-topografia)
+    for(let s=2;s>=0;s--){
+      const scale=1-s*0.28;
+      ctx.beginPath();
+      ctx.ellipse(0,0,rw*scale,rh*scale,0,0,Math.PI*2);
+      ctx.fillStyle=isInner?patterns[s]:patterns[s+2>5?5:s+2];
+      ctx.fill();
+    }
+    // Bordo sottile
+    ctx.beginPath();
+    ctx.ellipse(0,0,rw,rh,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(105,90,73,0.20)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── Freccia barca — usa posizione amplificata ──
+  const boatRaw=toScreen(posAtMeters(meters)[0],posAtMeters(meters)[1]);
+  const boat2Raw=toScreen(posAtMeters(Math.min(meters+30,TOTAL_M))[0],posAtMeters(Math.min(meters+30,TOTAL_M))[1]);
+  // Trova il punto corrispondente in allPts
+  let bi=0,bd=Infinity;
+  allPts.forEach(([x,y],i)=>{const d=Math.hypot(x-W/2,y-H*0.52);if(d<bd){bd=d;bi=i;}});
+  const[bx,by]=allPts[bi];
+  const[bx2,by2]=allPts[Math.min(bi+3,allPts.length-1)];
   const ba=Math.atan2(by2-by,bx2-bx)-Math.PI/2;
   ctx.save();ctx.translate(bx,by);ctx.rotate(ba);
   ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
@@ -1627,6 +1768,9 @@ function updateUI(d){
   if(sec>lastSampleSec){lastSampleSec=sec;pendingSamples.push({t:sec,m:session.meters});if(pendingSamples.length>=10&&currentSessionId!==null)flushSamples();}
 
   document.getElementById('m-val').textContent=session.meters;
+  // Aggiorna km nell'header
+  const rkEl2=document.getElementById('hdr-river-km');
+  if(rkEl2) rkEl2.textContent=(session.meters/1000).toFixed(2)+' km';
   updateGhostDelta(session.meters,getElapsedSec());
   checkChallengeStart(session.meters);
   const watt=d.byteLength>=12?d.getUint8(11):0;
@@ -1742,8 +1886,13 @@ async function startWorkout(){
   // Imposta colore sfondo schermata allenamento dal fiume selezionato
   const riverBg=RIVERS[selectedRiverId].topo.bg;
   document.getElementById('page-app').style.background=riverBg;
-  // Aggiorna colori testo per leggibilità su sfondo chiaro
   document.getElementById('page-app').style.color='rgba(55,40,25,0.85)';
+  // Aggiorna nome fiume nell'header
+  const riv=RIVERS[selectedRiverId];
+  const rnEl=document.getElementById('hdr-river-name');
+  if(rnEl) rnEl.textContent=riv.name+' · '+riv.city.split('·')[0].trim();
+  const rkEl=document.getElementById('hdr-river-km');
+  if(rkEl) rkEl.textContent='0 km';
   initTrackCanvas();
   fetchWeather();
   switchPage('page-app');
