@@ -316,7 +316,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 .res-ch-score{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);}
 
 /* DB status */
-#db-status{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:0.52rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .4s;}
+#db-status{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:3px;color:rgba(105,90,73,0.80);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .4s;background:rgba(224,212,196,0.92);padding:8px 20px;border-radius:20px;white-space:nowrap;}
 #db-status.show{opacity:1;}
 </style>
 </head>
@@ -593,7 +593,7 @@ function dbAdd(store,obj){return new Promise((res,rej)=>{const tx=db.transaction
 function dbGetAll(store){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).getAll();req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
 function dbGetByIndex(store,index,value){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).index(index).getAll(value);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
 function dbGet(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).get(key);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
-function showDbStatus(msg){const el=document.getElementById('db-status');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
+function showDbStatus(msg,dur=3000){const el=document.getElementById('db-status');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),dur);}
 
 // ═══════════════════════════════════════════════════════
 //  DATABASE FIUMI
@@ -1849,15 +1849,39 @@ setInterval(tickClock,1000);tickClock();
 //  BLUETOOTH
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
+  // Verifica disponibilità Bluetooth
+  if(!navigator.bluetooth){
+    showDbStatus('Bluetooth non supportato — apri in Chrome');
+    return;
+  }
+  showDbStatus('Ricerca Domyos...');
   try{
-    const dev=await navigator.bluetooth.requestDevice({filters:[{services:[0x1826]}]});
+    const dev=await navigator.bluetooth.requestDevice({
+      filters:[{services:[0x1826]}],
+      optionalServices:[0x1826]
+    });
+    showDbStatus('Connessione...');
     const srv=await dev.gatt.connect();
     const svc=await srv.getPrimaryService(0x1826);
     const ch=await svc.getCharacteristic(0x2AD1);
     await ch.startNotifications();
-    showGoalScreen();
+    showDbStatus('Connesso ✓');
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-  }catch(e){console.error('BT:',e);switchPage('page-home');}
+    // Disconnessione gestita
+    dev.addEventListener('gattserverdisconnected',()=>{
+      showDbStatus('Disconnesso');
+      switchPage('page-home');
+    });
+    showGoalScreen();
+  }catch(e){
+    const msg=e.message||String(e);
+    if(msg.includes('cancelled')||msg.includes('User cancelled')){
+      showDbStatus('Ricerca annullata',2000);
+    } else {
+      showDbStatus('Errore: '+msg.substring(0,40),5000);
+    }
+    console.error('BT:',e);
+  }
 }
 
 // ═══════════════════════════════════════════════════════
