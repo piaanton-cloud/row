@@ -1415,13 +1415,15 @@ let distIdx=4, timeIdx=19;
 let currentObjTab='dist';
 
 function buildGoalScreen(){
+  // Inizializza goalType subito — non aspettare il timeout
+  if(!goalType){goalType='dist';goalValue=(distIdx+1)*1000;}
   buildRiverCards();
   buildCarousel('dist-carousel',1,15,'km','dist');
   buildCarousel('time-carousel',1,120,'min','time');
+  checkStartReady();
   setTimeout(()=>{
     scrollCarouselTo('dist-carousel',distIdx);
-    if(!goalType){goalType='dist';goalValue=(distIdx+1)*1000;}
-    checkStartReady();
+    scrollCarouselTo('time-carousel',timeIdx);
   },80);
 }
 
@@ -1892,7 +1894,10 @@ function showGoalScreen(){
 }
 
 async function startWorkout(){
-  if(!goalType||!selectedRiverId)return;
+  if(!goalType||!selectedRiverId){
+    showDbStatus('Seleziona fiume e obiettivo',2000);
+    return;
+  }
   // Attiva il fiume selezionato
   const river=RIVERS[selectedRiverId];
   ACTIVE_PTS=river.pts;
