@@ -936,12 +936,9 @@ function drawTrack(meters){
   const topo=river.topo;
   const bg=topo.bg;
   const bgRgb=hexToRgb(bg);
+  const CX=W*0.50;
 
-  // SFONDO
-  ctx.fillStyle=bg;
-  ctx.fillRect(0,0,W,H);
-
-  // ── NOISE PATTERNS (cache per fiume) ──
+  // ── NOISE PATTERNS (texture granulosa, cache per fiume) ──
   if(!trackCanvas._noisePatterns||trackCanvas._noiseRiver!==ACTIVE_RIVER_ID){
     trackCanvas._noisePatterns=topo.layers.map((l,i)=>{
       const sz=256,oc=document.createElement('canvas');
@@ -965,174 +962,103 @@ function drawTrack(meters){
   }
   const pats=trackCanvas._noisePatterns;
 
-  // ── GEOMETRIA FIUME ──
-  // Il fiume scorre verso il basso. La barca è fissa a metà schermo.
-  // scroll aumenta con i metri — i bordi si spostano verso il basso.
-  const SCROLL_SPEED=2.5; // px per metro — velocità scorrimento
+  // Sfondo = pattern dello strato più esterno
+  ctx.fillStyle=pats[pats.length-1];
+  ctx.fillRect(0,0,W,H);
+
+  // ── SCORRIMENTO ──
+  // Il pattern scende (scroll aumenta con i metri)
+  const SCROLL_SPEED=2.5;
   const scroll=meters*SCROLL_SPEED;
 
-  // Centro X del fiume in ogni riga Y dello schermo.
-  // Il fiume meandra sinistra-destra mentre scorre.
-  // Usiamo (Y+scroll) come parametro così il disegno si sposta verso il basso.
-  function cxAt(y){
-    const t=(y+scroll)/800; // ciclo ogni 800px — meandri frequenti e visibili
-    return W*0.50
-      + Math.sin(t*2.1+0.3)*W*0.13
-      + Math.sin(t*3.8+1.7)*W*0.07
-      + Math.sin(t*6.5+0.9)*W*0.035
-      + Math.sin(t*10.8+2.4)*W*0.018;
+  // ── BORDI FRASTAGLIATI ──
+  // Offset del bordo di ogni strato — alte frequenze, bassa ampiezza
+  // Il pattern scende: usiamo (y - scroll) così scende verso il basso
+  function edgeOffset(y, seed){
+    const t=(y - scroll)/40;
+    return Math.sin(t*1.0+seed)*7
+         + Math.sin(t*2.1+seed*1.3)*5
+         + Math.sin(t*3.8+seed*2.4)*3.5
+         + Math.sin(t*6.5+seed*3.8)*2.2
+         + Math.sin(t*11.2+seed*5.6)*1.4
+         + Math.sin(t*18.7+seed*7.9)*0.8
+         + Math.sin(t*30.1+seed*11.2)*0.4;
   }
 
-  // Larghezza del canale centrale (zona più scura) in px
-  const CANAL_W=36;
+  // Distanze dal centro per ogni strato (pixel)
+  const DISTS=[0,22,38,58,84,118];
 
-  // Per ogni strato: distanza laterale dal centro e larghezza
-  // Gli strati si allargano dal centro verso la riva
-  const LAYERS=topo.layers;
+  // Disegna ogni strato dall'esterno verso il centro
+  // Ogni strato è un poligono che riempie dal suo bordo al margine dello schermo
+  for(let i=DISTS.length-1;i>=0;i--){
+    const d=DISTS[i];
+    const seedR=i*4.1+1.3;
+    const seedL=i*4.1+7.2;
 
-  // Genera i bordi sinistro e destro di ogni strato
-  // con noise frastagliato diverso per ogni strato
-  // Noise: frequenze alte per bordi mossi come nell'immagine
-  function borderNoise(y, seed, amp){
-    const t=(y+scroll*0.7)/120; // frequenza più alta del meandro principale
-    return Math.sin(t*4.1+seed)*amp*0.40
-         + Math.sin(t*7.3+seed*1.7)*amp*0.28
-         + Math.sin(t*12.1+seed*2.9)*amp*0.18
-         + Math.sin(t*19.4+seed*4.5)*amp*0.10
-         + Math.sin(t*28.7+seed*6.8)*amp*0.06;
-  }
-
-  // Per ogni strato disegno un poligono che riempie lo schermo
-  // dall'esterno verso l'interno — così il centro copre tutto
-  ctx.lineCap='butt';ctx.lineJoin='miter';
-
-  // Costruisce il percorso del bordo destro o sinistro di uno strato
-  // side: +1=destra, -1=sinistra
-  // dist: distanza dal centro
-  // seed: seme del noise
-  function drawLayer(layerIdx, distR, distL){
-    const noiseSeedR=layerIdx*3.7+1.1;
-    const noiseSeedL=layerIdx*3.7+5.8;
-    const noiseAmp=Math.max(4, distR*0.22);
-
-    // Percorso: scendi lungo il bordo destro, risali lungo il sinistro
+    // Destra
     ctx.beginPath();
-
-    // Bordo destro — dall'alto verso il basso
-    ctx.moveTo(cxAt(-10)+distR+borderNoise(-10,noiseSeedR,noiseAmp), -10);
-    for(let y=0;y<=H+10;y+=6){
-      const cx2=cxAt(y);
-      const bx=cx2+distR+borderNoise(y,noiseSeedR,noiseAmp);
-      ctx.lineTo(bx,y);
+    ctx.moveTo(CX+d+edgeOffset(-10,seedR),-10);
+    for(let y=0;y<=H+10;y+=3){
+      ctx.lineTo(CX+d+edgeOffset(y,seedR),y);
     }
-
-    // Chiudi a destra fuori schermo
-    ctx.lineTo(W+50,H+10);
-    ctx.lineTo(W+50,-10);
+    ctx.lineTo(W+10,H+10);ctx.lineTo(W+10,-10);
     ctx.closePath();
-    ctx.fillStyle=pats[layerIdx];
+    ctx.fillStyle=pats[i];
     ctx.fill();
 
-    // Specchio: bordo sinistro
+    // Sinistra
     ctx.beginPath();
-    ctx.moveTo(cxAt(-10)-distL-borderNoise(-10,noiseSeedL,noiseAmp), -10);
-    for(let y=0;y<=H+10;y+=6){
-      const cx2=cxAt(y);
-      const bx=cx2-distL-borderNoise(y,noiseSeedL,noiseAmp);
-      ctx.lineTo(bx,y);
+    ctx.moveTo(CX-d-edgeOffset(-10,seedL),-10);
+    for(let y=0;y<=H+10;y+=3){
+      ctx.lineTo(CX-d-edgeOffset(y,seedL),y);
     }
-    ctx.lineTo(-50,H+10);
-    ctx.lineTo(-50,-10);
+    ctx.lineTo(-10,H+10);ctx.lineTo(-10,-10);
     ctx.closePath();
-    ctx.fillStyle=pats[layerIdx];
+    ctx.fillStyle=pats[i];
     ctx.fill();
-  }
-
-  // Distanze cumulative degli strati dal centro
-  const dists=[0,18,31,43,62,999];
-
-  // Disegna dall'esterno al centro
-  for(let i=LAYERS.length-1;i>=1;i--){
-    drawLayer(i, dists[i]*2, dists[i]*2);
-  }
-
-  // Canale centrale — striscia scura
-  ctx.beginPath();
-  ctx.moveTo(cxAt(-10)-CANAL_W,-10);
-  for(let y=0;y<=H+10;y+=6){
-    ctx.lineTo(cxAt(y)-CANAL_W,y);
-  }
-  for(let y=H+10;y>=-10;y-=6){
-    ctx.lineTo(cxAt(y)+CANAL_W,y);
-  }
-  ctx.closePath();
-  ctx.fillStyle=pats[0];
-  ctx.fill();
-
-  // ── SASSI sulle rive ──
-  ctx.lineCap='round';
-  for(let r=0;r<16;r++){
-    // Posizione Y fissa + scroll (scorrono con il fiume)
-    const yBase=((r*2654+scroll)%(H+100))-50;
-    const yR=yBase;
-    if(yR<-60||yR>H+60) continue;
-    const cx2=cxAt(yR);
-    const isInner=(r%5===0);
-    const side=(r%2===0)?1:-1;
-    const baseDist=isInner?(CANAL_W*0.6):(dists[3]*2+15+r%4*20);
-    const rx=cx2+side*(baseDist+borderNoise(yR,r*2.3,8));
-    if(rx<0||rx>W) continue;
-    const rw=isInner?(8+r%3*5):(18+r%4*10);
-    const rh=rw*(0.3+r%3*0.15);
-    const angle=Math.atan2(cxAt(yR+10)-cxAt(yR-10),20)*0.5;
-    ctx.save();ctx.translate(rx,yR);ctx.rotate(angle);
-    for(let s=2;s>=0;s--){
-      const sc=1-s*0.28;
-      const li=isInner?s:Math.min(s+2,LAYERS.length-1);
-      ctx.beginPath();ctx.ellipse(0,0,rw*sc,rh*sc,0,0,Math.PI*2);
-      ctx.fillStyle=pats[li];ctx.fill();
-    }
-    ctx.beginPath();ctx.ellipse(0,0,rw,rh,0,0,Math.PI*2);
-    ctx.strokeStyle='rgba(105,90,73,0.15)';ctx.lineWidth=1;ctx.stroke();
-    ctx.restore();
   }
 
   // ── POI ──
   const boatY=H*0.52;
+  const SCROLL_SPEED_M=SCROLL_SPEED;
   const visR=H*0.45;
   ACTIVE_POI.forEach(([poiKm,pname])=>{
-    // Il POI compare quando i metri percorsi si avvicinano alla sua posizione
-    const poiM=poiKm*1000;
-    const deltaM=poiM-meters; // metri ancora da percorrere
-    if(deltaM<-500||deltaM>1500) return; // solo quelli vicini
-    // Converti delta metri in delta pixel (verso l'alto = non ancora raggiunti)
-    const py=boatY-deltaM*SCROLL_SPEED;
+    const deltaM=poiKm*1000-meters;
+    if(deltaM<-400||deltaM>1200) return;
+    const py=boatY-deltaM*SCROLL_SPEED_M;
     if(py<0||py>H) return;
-    const px=cxAt(py-boatY+scroll*0)+CANAL_W+40;
-    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);
+    ctx.beginPath();ctx.arc(CX,py,7,0,Math.PI*2);
     ctx.fillStyle='rgba(105,90,73,0.80)';ctx.fill();
     if(deltaM>0&&deltaM<800){
       ctx.font='600 22px Inter,sans-serif';ctx.textAlign='left';
       ctx.fillStyle='rgba(55,40,25,0.80)';ctx.shadowColor=bg;ctx.shadowBlur=4;
-      pname.split('\n').forEach((l,li)=>ctx.fillText(l,px+16,py+li*24-4));
+      pname.split('\n').forEach((l,li)=>ctx.fillText(l,CX+18,py+li*24-4));
       ctx.shadowBlur=0;
     }
   });
 
-  // ── BARCA — fissa al centro, sempre nel canale scuro ──
-  const bx=cxAt(boatY); // X del fiume all'altezza della barca
-  // Orienta la barca nella direzione del meandro
-  const dx=cxAt(boatY+15)-cxAt(boatY-15);
-  const ba=Math.atan2(dx,30); // angolo rispetto al basso
-  ctx.save();ctx.translate(bx,boatY);ctx.rotate(ba);
-  // Forma barca più leggibile — ellisse con prua
-  ctx.beginPath();
-  ctx.ellipse(0,0,9,22,0,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.90)';ctx.fill();
-  ctx.strokeStyle='rgba(180,40,20,0.85)';ctx.lineWidth=2.5;ctx.stroke();
-  // Linea centrale (asse barca)
-  ctx.beginPath();ctx.moveTo(0,-18);ctx.lineTo(0,18);
-  ctx.strokeStyle='rgba(180,40,20,0.60)';ctx.lineWidth=1.5;ctx.stroke();
+  // ── Sfida ──
+  if(nextChallenge&&!challengeActive){
+    const deltaM=nextChallenge.startAt-meters;
+    if(Math.abs(deltaM)<600){
+      const py=boatY-deltaM*SCROLL_SPEED;
+      ctx.beginPath();ctx.arc(CX,py,10,0,Math.PI*2);
+      ctx.fillStyle='rgba(105,90,73,0.15)';ctx.fill();
+      ctx.strokeStyle='rgba(105,90,73,0.65)';ctx.lineWidth=2;ctx.stroke();
+      ctx.font='bold 13px Inter';ctx.fillStyle='rgba(105,90,73,0.8)';ctx.textAlign='center';
+      ctx.fillText('\u26A1',CX,py+5);
+      const mToCh=Math.round(deltaM);
+      if(mToCh>0&&mToCh<800){
+        ctx.font='600 11px Inter';ctx.fillStyle='rgba(105,90,73,0.6)';
+        ctx.fillText(mToCh+'m',CX,py-18);
+      }
+    }
+  }
+
+  // ── BARCA — fissa al centro ──
+  ctx.save();ctx.translate(CX,boatY);
+  ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,9);ctx.lineTo(0,5);ctx.lineTo(-8,9);
+  ctx.closePath();ctx.fillStyle='rgba(200,50,30,0.95)';ctx.fill();
   ctx.restore();
 
   // ── VIGNETTE ──
