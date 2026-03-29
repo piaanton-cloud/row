@@ -1849,38 +1849,40 @@ setInterval(tickClock,1000);tickClock();
 //  BLUETOOTH
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
-  // Verifica disponibilità Bluetooth
+  // Debug visibile — rimuovere dopo fix
+  const dbg=document.getElementById('db-status');
+  function log(msg){
+    if(dbg){dbg.textContent=msg;dbg.style.opacity='1';dbg.classList.add('show');}
+  }
+  log('connectBT avviata...');
+  await new Promise(r=>setTimeout(r,100)); // lascia render
+  
   if(!navigator.bluetooth){
-    showDbStatus('Bluetooth non supportato — apri in Chrome');
+    log('No Bluetooth API — usa Chrome');
     return;
   }
-  showDbStatus('Ricerca Domyos...');
+  log('Ricerca Domyos...');
   try{
     const dev=await navigator.bluetooth.requestDevice({
       filters:[{services:[0x1826]}],
       optionalServices:[0x1826]
     });
-    showDbStatus('Connessione...');
+    log('Dispositivo trovato, connessione...');
     const srv=await dev.gatt.connect();
     const svc=await srv.getPrimaryService(0x1826);
     const ch=await svc.getCharacteristic(0x2AD1);
     await ch.startNotifications();
-    showDbStatus('Connesso ✓');
+    log('Connesso ✓');
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-    // Disconnessione gestita
     dev.addEventListener('gattserverdisconnected',()=>{
-      showDbStatus('Disconnesso');
+      log('Disconnesso');
       switchPage('page-home');
     });
-    showGoalScreen();
+    setTimeout(()=>showGoalScreen(), 800);
   }catch(e){
-    const msg=e.message||String(e);
-    if(msg.includes('cancelled')||msg.includes('User cancelled')){
-      showDbStatus('Ricerca annullata',2000);
-    } else {
-      showDbStatus('Errore: '+msg.substring(0,40),5000);
-    }
-    console.error('BT:',e);
+    const msg=String(e.message||e).substring(0,60);
+    log('ERR: '+msg);
+    console.error('BT error:',e);
   }
 }
 
@@ -2015,6 +2017,13 @@ document.addEventListener('visibilitychange',()=>{
 // ═══════════════════════════════════════════════════════
 openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
+
+// Mostra errori JS non catturati sullo schermo
+window.onerror=function(msg,src,line){
+  const el=document.getElementById('db-status');
+  if(el){el.textContent='JS ERR: '+String(msg).substring(0,50);el.style.opacity='1';}
+  return false;
+};
 
 // Forza landscape — tutti i metodi disponibili
 function lockLandscape(){
