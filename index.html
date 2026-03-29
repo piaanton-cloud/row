@@ -817,22 +817,32 @@ function calcBearing(a,b){const dLon=(b[1]-a[1])*Math.PI/180;const lat1=a[0]*Mat
 //  CANVAS TRACCIATO
 // ═══════════════════════════════════════════════════════
 let trackCanvas=null,trackCtx=null,currentBearing=0,rafId=null;
-let renderMeters=0;      // metri interpolati (smooth)
+let renderMeters=0;      // metri visualizzati (smooth, continuo)
 let targetMeters=0;      // metri reali dall'ergometro
-let lastRenderTs=0;      // timestamp ultimo frame per delta-time
-let metersPerSec=0;      // velocità stimata m/s per interpolazione
+let lastRenderTs=0;      // timestamp ultimo frame
+let metersPerSec=0;      // velocità stimata m/s (calcolata tra aggiornamenti BT)
 let lastBtMs=0;          // timestamp ultima notifica BT
 
 function renderLoop(ts){
   rafId=requestAnimationFrame(renderLoop);
   if(!lastRenderTs) lastRenderTs=ts;
-  const dt=Math.min((ts-lastRenderTs)/1000, 0.1); // cap a 100ms per evitare salti
+  const dt=Math.min((ts-lastRenderTs)/1000, 0.05); // max 50ms per frame
   lastRenderTs=ts;
-  // Avanza renderMeters verso targetMeters alla velocità stimata
-  if(targetMeters>renderMeters){
-    const step=Math.max(metersPerSec*dt, 0.02);
-    renderMeters=Math.min(targetMeters, renderMeters+step);
+
+  if(metersPerSec>0){
+    // Avanza sempre alla velocità stimata — fluido come una barca reale
+    // Se siamo indietro rispetto al target recupera gradualmente (x1.5)
+    // Se siamo avanti rallenta gradualmente (x0.8)
+    const diff=targetMeters-renderMeters;
+    const correction=diff>0 ? Math.min(diff*0.15, metersPerSec*0.5)
+                            : Math.max(diff*0.15, -metersPerSec*0.3);
+    renderMeters+=metersPerSec*dt + correction*dt;
+    renderMeters=Math.max(0, renderMeters);
+  } else if(targetMeters>renderMeters){
+    // Prima vogata: parte da 0 con accelerazione morbida
+    renderMeters+=(targetMeters-renderMeters)*0.08;
   }
+
   drawTrack(renderMeters);
 }
 
@@ -887,13 +897,14 @@ function drawTrack(meters){
       const tx=next[0]-prev[0], ty=next[1]-prev[1];
       const len=Math.sqrt(tx*tx+ty*ty)+0.001;
       const nx=-ty/len, ny=tx/len;
-      // (y - SCROLL_PX): coordinata nel mondo fissa, scorre con i metri
       const w=(y - SCROLL_PX)/120;
       const noise=
-        Math.sin(w*2.1+seed)      *dist*0.18
-       +Math.sin(w*4.3+seed*1.7)  *dist*0.10
-       +Math.sin(w*8.1+seed*3.1)  *dist*0.06
-       +Math.sin(w*14.7+seed*5.3) *dist*0.03;
+        Math.sin(w*2.1+seed)      *dist*0.55
+       +Math.sin(w*4.3+seed*1.7)  *dist*0.35
+       +Math.sin(w*8.1+seed*3.1)  *dist*0.22
+       +Math.sin(w*14.7+seed*5.3) *dist*0.14
+       +Math.sin(w*26.3+seed*8.9) *dist*0.08
+       +Math.sin(w*44.1+seed*13.2)*dist*0.04;
       return[x+nx*(dist+noise), y+ny*(dist+noise)];
     });
   }
@@ -1625,11 +1636,17 @@ function updateUI(d){
     document.getElementById('ghost-arrow').style.display=ghostSamples.length?'block':'none';
   }
   session.meters=d.getUint16(6,true);session.strokes=strokes;
-  // Interpolazione fluida: calcola velocità reale tra due notifiche BT
+  // Calcola velocità tra due notifiche BT con smoothing esponenziale
+  // α=0.25: risponde ai cambi ma non sobbalza su picchi singoli
   const nowForInterp=Date.now();
   if(targetMeters>0&&session.meters>targetMeters&&lastBtMs>0){
     const dtBt=(nowForInterp-lastBtMs)/1000;
-    if(dtBt>0) metersPerSec=(session.meters-targetMeters)/dtBt;
+    if(dtBt>0){
+      const rawSpeed=(session.meters-targetMeters)/dtBt;
+      metersPerSec = metersPerSec>0
+        ? metersPerSec*0.75 + rawSpeed*0.25  // smoothing: non sobbalza
+        : rawSpeed;
+    }
   }
   targetMeters=session.meters;
   lastBtMs=nowForInterp;
