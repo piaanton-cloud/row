@@ -45,7 +45,7 @@ body{min-height:100dvh;}
 /* ═══ HOME ═══ */
 #page-home{background:#e0d4c4;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
-.home-bg canvas{position:absolute;inset:0;width:100%;height:100%;}
+.home-bg canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
 .home-content{
   position:absolute;inset:0;z-index:10;
   display:flex;flex-direction:column;
@@ -1987,10 +1987,6 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&isStarted&&!isPaused) requestWakeLock();
 });
 // ═══════════════════════════════════════════════════════
-function reqFS(){const el=document.documentElement;const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;if(fn)fn.call(el).catch(()=>{});}
-document.addEventListener('click',function fs(){reqFS();document.removeEventListener('click',fs);},{once:true,capture:true});
-
-// ═══════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════
 openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
@@ -2008,13 +2004,24 @@ function lockLandscape(){
 }
 lockLandscape();
 
-document.addEventListener('click',function fs(){
+function reqFS(){const el=document.documentElement;const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;if(fn)fn.call(el).catch(()=>{});}
+
+// Fullscreen al primo click — ma NON intercettare click su pulsanti
+document.addEventListener('click',function fs(e){
+  // Lascia passare click su pulsanti e loro figli
+  if(e.target.tagName==='BUTTON'||e.target.closest('button')) return;
+  reqFS();
+  document.removeEventListener('click',fs);
+},{capture:true});
+
+document.addEventListener('click',function fs(e){
+  if(e.target.tagName==='BUTTON'||e.target.closest('button')) return;
   const el=document.documentElement;
   const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
   if(fn)fn.call(el).then(()=>lockLandscape()).catch(()=>{});
   lockLandscape();
   document.removeEventListener('click',fs);
-},{once:true,capture:true});
+},{capture:true});
 </script>
 </body>
 </html>
