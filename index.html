@@ -285,35 +285,35 @@ body{min-height:100dvh;}
 .stat-sep{width:1px;background:rgba(105,90,73,0.15);align-self:stretch;margin:4px 0;}
 
 /* ═══ PAUSA ═══ */
-#pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
-.pause-title{font-family:'Inter',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
+#pause-overlay{position:fixed;inset:0;background:rgba(224,212,196,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
+.pause-title{font-family:'Inter',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:rgba(42,28,14,0.55);}
 .pause-btns{display:flex;gap:48px;}
-.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
+.btn-pause-action{background:none;border:none;color:rgba(105,90,73,0.65);font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
 .btn-pause-action:active{opacity:0.5;}
 
 /* ═══ HISTORY ═══ */
-#page-history{background:var(--bg);flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
+#page-history{background:#e0d4c4;flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
 .hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
-.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;}
+.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(42,28,14,0.85);}
 .hist-scroll{flex:1;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
-th{color:var(--dim);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:0.52rem;font-weight:600;}
-td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:center;font-weight:400;color:rgba(255,255,255,0.55);}
-.td-m{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;color:var(--text);}
-.td-date{font-family:'Inter',sans-serif;font-size:1rem;color:var(--text);}
+th{color:rgba(105,90,73,0.55);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid rgba(105,90,73,0.15);text-align:center;font-size:0.52rem;font-weight:600;}
+td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:center;font-weight:400;color:rgba(105,90,73,0.65);}
+.td-m{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;color:rgba(42,28,14,0.85);}
+.td-date{font-family:'Inter',sans-serif;font-size:1rem;color:rgba(42,28,14,0.75);}
 .best-v{color:var(--gold)!important;font-weight:700;}
 
 /* ═══ RESUME ═══ */
-#page-resume{background:var(--bg);}
-.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
-.res-hero{font-family:'Inter',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:var(--text);}
-.res-unit{font-size:0.6rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:28px;}
+#page-resume{background:#e0d4c4;}
+.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:12px;}
+.res-hero{font-family:'Inter',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
+.res-unit{font-size:0.6rem;letter-spacing:6px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:28px;}
 .res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:92%;max-width:900px;margin-bottom:24px;}
 .res-item{background:var(--surface);border:1px solid var(--border);padding:14px 8px;border-radius:6px;text-align:center;}
-.res-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:var(--text);}
-.res-lab{font-size:0.42rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:3px;display:block;}
+.res-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:rgba(42,28,14,0.80);}
+.res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(105,90,73,0.50);text-transform:uppercase;margin-top:3px;display:block;}
 .res-ch-wrap{width:92%;max-width:900px;margin-bottom:24px;}
-.res-ch-title{font-size:0.52rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
+.res-ch-title{font-size:0.52rem;letter-spacing:6px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:8px;}
 .res-ch-list{display:flex;flex-direction:column;gap:5px;}
 .res-ch-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;}
 .res-ch-name{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;}
@@ -938,7 +938,7 @@ function drawTrack(meters){
   const bgRgb=hexToRgb(bg);
   const CX=W*0.50;
 
-  // ── NOISE PATTERNS (texture granulosa, cache per fiume) ──
+  // Noise patterns con texture granulosa (cache per fiume)
   if(!trackCanvas._noisePatterns||trackCanvas._noiseRiver!==ACTIVE_RIVER_ID){
     trackCanvas._noisePatterns=topo.layers.map((l,i)=>{
       const sz=256,oc=document.createElement('canvas');
@@ -962,20 +962,19 @@ function drawTrack(meters){
   }
   const pats=trackCanvas._noisePatterns;
 
-  // Sfondo = pattern dello strato più esterno
+  // Sfondo = texture strato più esterno
   ctx.fillStyle=pats[pats.length-1];
   ctx.fillRect(0,0,W,H);
 
-  // ── SCORRIMENTO ──
-  // Il pattern scende (scroll aumenta con i metri)
+  // Il fiume scorre dall'alto verso il basso
+  // scroll aumenta con i metri → il pattern si sposta verso il basso
   const SCROLL_SPEED=2.5;
   const scroll=meters*SCROLL_SPEED;
 
-  // ── BORDI FRASTAGLIATI ──
-  // Offset del bordo di ogni strato — alte frequenze, bassa ampiezza
-  // Il pattern scende: usiamo (y - scroll) così scende verso il basso
-  function edgeOffset(y, seed){
-    const t=(y - scroll)/40;
+  // Bordo frastagliato di ogni strato
+  // (y - scroll): scende verso il basso all'aumentare dello scroll
+  function edgeOffset(y,seed){
+    const t=(y-scroll)/40;
     return Math.sin(t*1.0+seed)*7
          + Math.sin(t*2.1+seed*1.3)*5
          + Math.sin(t*3.8+seed*2.4)*3.5
@@ -985,47 +984,35 @@ function drawTrack(meters){
          + Math.sin(t*30.1+seed*11.2)*0.4;
   }
 
-  // Distanze dal centro per ogni strato (pixel)
+  // Distanze dal centro per i 6 strati (px)
   const DISTS=[0,22,38,58,84,118];
 
-  // Disegna ogni strato dall'esterno verso il centro
-  // Ogni strato è un poligono che riempie dal suo bordo al margine dello schermo
+  // Disegna dall'esterno verso il centro
   for(let i=DISTS.length-1;i>=0;i--){
     const d=DISTS[i];
-    const seedR=i*4.1+1.3;
-    const seedL=i*4.1+7.2;
+    const sR=i*4.1+1.3, sL=i*4.1+7.2;
 
-    // Destra
+    // Destra: riempie da bordo destro a margine schermo
     ctx.beginPath();
-    ctx.moveTo(CX+d+edgeOffset(-10,seedR),-10);
-    for(let y=0;y<=H+10;y+=3){
-      ctx.lineTo(CX+d+edgeOffset(y,seedR),y);
-    }
+    ctx.moveTo(CX+d+edgeOffset(-10,sR),-10);
+    for(let y=0;y<=H+10;y+=3) ctx.lineTo(CX+d+edgeOffset(y,sR),y);
     ctx.lineTo(W+10,H+10);ctx.lineTo(W+10,-10);
-    ctx.closePath();
-    ctx.fillStyle=pats[i];
-    ctx.fill();
+    ctx.closePath();ctx.fillStyle=pats[i];ctx.fill();
 
-    // Sinistra
+    // Sinistra: riempie da bordo sinistro a margine schermo
     ctx.beginPath();
-    ctx.moveTo(CX-d-edgeOffset(-10,seedL),-10);
-    for(let y=0;y<=H+10;y+=3){
-      ctx.lineTo(CX-d-edgeOffset(y,seedL),y);
-    }
+    ctx.moveTo(CX-d-edgeOffset(-10,sL),-10);
+    for(let y=0;y<=H+10;y+=3) ctx.lineTo(CX-d-edgeOffset(y,sL),y);
     ctx.lineTo(-10,H+10);ctx.lineTo(-10,-10);
-    ctx.closePath();
-    ctx.fillStyle=pats[i];
-    ctx.fill();
+    ctx.closePath();ctx.fillStyle=pats[i];ctx.fill();
   }
 
-  // ── POI ──
+  // POI — compaiono sopra la barca e scendono verso di essa
   const boatY=H*0.52;
-  const SCROLL_SPEED_M=SCROLL_SPEED;
-  const visR=H*0.45;
   ACTIVE_POI.forEach(([poiKm,pname])=>{
     const deltaM=poiKm*1000-meters;
     if(deltaM<-400||deltaM>1200) return;
-    const py=boatY-deltaM*SCROLL_SPEED_M;
+    const py=boatY-deltaM*SCROLL_SPEED;
     if(py<0||py>H) return;
     ctx.beginPath();ctx.arc(CX,py,7,0,Math.PI*2);
     ctx.fillStyle='rgba(105,90,73,0.80)';ctx.fill();
@@ -1037,31 +1024,30 @@ function drawTrack(meters){
     }
   });
 
-  // ── Sfida ──
+  // Sfida
   if(nextChallenge&&!challengeActive){
     const deltaM=nextChallenge.startAt-meters;
     if(Math.abs(deltaM)<600){
       const py=boatY-deltaM*SCROLL_SPEED;
       ctx.beginPath();ctx.arc(CX,py,10,0,Math.PI*2);
-      ctx.fillStyle='rgba(105,90,73,0.15)';ctx.fill();
-      ctx.strokeStyle='rgba(105,90,73,0.65)';ctx.lineWidth=2;ctx.stroke();
-      ctx.font='bold 13px Inter';ctx.fillStyle='rgba(105,90,73,0.8)';ctx.textAlign='center';
+      ctx.fillStyle='rgba(105,90,73,0.12)';ctx.fill();
+      ctx.strokeStyle='rgba(105,90,73,0.60)';ctx.lineWidth=2;ctx.stroke();
+      ctx.font='bold 13px Inter';ctx.fillStyle='rgba(105,90,73,0.75)';ctx.textAlign='center';
       ctx.fillText('\u26A1',CX,py+5);
-      const mToCh=Math.round(deltaM);
-      if(mToCh>0&&mToCh<800){
-        ctx.font='600 11px Inter';ctx.fillStyle='rgba(105,90,73,0.6)';
-        ctx.fillText(mToCh+'m',CX,py-18);
+      if(deltaM>0&&deltaM<800){
+        ctx.font='600 11px Inter';ctx.fillStyle='rgba(105,90,73,0.55)';
+        ctx.fillText(Math.round(deltaM)+'m',CX,py-18);
       }
     }
   }
 
-  // ── BARCA — fissa al centro ──
+  // Barca — freccia rossa fissa al centro
   ctx.save();ctx.translate(CX,boatY);
   ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,9);ctx.lineTo(0,5);ctx.lineTo(-8,9);
   ctx.closePath();ctx.fillStyle='rgba(200,50,30,0.95)';ctx.fill();
   ctx.restore();
 
-  // ── VIGNETTE ──
+  // Vignette top/bottom
   const vr=bgRgb;
   const vt=ctx.createLinearGradient(0,0,0,H*0.38);
   vt.addColorStop(0,`rgba(${vr},1)`);vt.addColorStop(1,`rgba(${vr},0)`);
@@ -1737,36 +1723,30 @@ setInterval(tickClock,1000);tickClock();
 //  BLUETOOTH
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
-  // Debug visibile — rimuovere dopo fix
-  const dbg=document.getElementById('db-status');
-  function log(msg){
-    if(dbg){dbg.textContent=msg;dbg.style.opacity='1';dbg.classList.add('show');}
-  }
-  log('connectBT avviata...');
-  await new Promise(r=>setTimeout(r,100)); // lascia render
-  
   if(!navigator.bluetooth){
-    log('No Bluetooth API — usa Chrome');
+    showDbStatus('Bluetooth non disponibile — apri in Chrome',3000);
     return;
   }
-  log('Ricerca Domyos...');
+  showDbStatus('Ricerca Domyos...',5000);
   try{
     const dev=await navigator.bluetooth.requestDevice({
       filters:[{services:[0x1826]}],
       optionalServices:[0x1826]
     });
-    log('Dispositivo trovato, connessione...');
+    showDbStatus('Connessione...',5000);
     const srv=await dev.gatt.connect();
     const svc=await srv.getPrimaryService(0x1826);
     const ch=await svc.getCharacteristic(0x2AD1);
     await ch.startNotifications();
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
     dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso',2000);switchPage('page-home');});
+    showDbStatus('',0);
     showGoalScreen();
   }catch(e){
-    const msg=String(e.message||e).substring(0,60);
-    log('ERR: '+msg);
-    console.error('BT error:',e);
+    const msg=String(e.message||e);
+    if(msg.includes('cancel')||msg.includes('Cancel'))showDbStatus('Annullato',2000);
+    else showDbStatus('Errore: '+msg.substring(0,40),4000);
+    console.error('BT:',e);
   }
 }
 
