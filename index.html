@@ -184,22 +184,18 @@ body{min-height:100dvh;}
 /* Pulsante avvia */
 .goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
 .btn-start{
-  width:100%;padding:22px;border-radius:0;background:none;
-  border-top:1px solid rgba(105,90,73,0.18);
-  color:rgba(105,90,73,0.30);
+  width:100%;padding:20px;border-radius:0;background:none;border:none;
+  color:rgba(105,90,73,0.35);
   font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;
-  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;
 }
-.btn-start.ready{
-  color:rgba(42,28,14,0.82);
-  border-top-color:rgba(42,28,14,0.20);
-}
+.btn-start.ready{color:rgba(42,28,14,0.75);}
 .btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
 #page-app{overflow:hidden;}
 #track-canvas{position:absolute;inset:0;width:100%;height:100%;}
-
+#boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
 #ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
 
 /* ── Header ── */
@@ -285,35 +281,35 @@ body{min-height:100dvh;}
 .stat-sep{width:1px;background:rgba(105,90,73,0.15);align-self:stretch;margin:4px 0;}
 
 /* ═══ PAUSA ═══ */
-#pause-overlay{position:fixed;inset:0;background:rgba(224,212,196,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
-.pause-title{font-family:'Inter',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:rgba(42,28,14,0.55);}
+#pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
+.pause-title{font-family:'Inter',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
 .pause-btns{display:flex;gap:48px;}
-.btn-pause-action{background:none;border:none;color:rgba(105,90,73,0.65);font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
+.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
 .btn-pause-action:active{opacity:0.5;}
 
 /* ═══ HISTORY ═══ */
-#page-history{background:#e0d4c4;flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
+#page-history{background:var(--bg);flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
 .hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
-.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(42,28,14,0.85);}
+.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;}
 .hist-scroll{flex:1;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
-th{color:rgba(105,90,73,0.55);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid rgba(105,90,73,0.15);text-align:center;font-size:0.52rem;font-weight:600;}
-td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:center;font-weight:400;color:rgba(105,90,73,0.65);}
-.td-m{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;color:rgba(42,28,14,0.85);}
-.td-date{font-family:'Inter',sans-serif;font-size:1rem;color:rgba(42,28,14,0.75);}
+th{color:var(--dim);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:0.52rem;font-weight:600;}
+td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:center;font-weight:400;color:rgba(255,255,255,0.55);}
+.td-m{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;color:var(--text);}
+.td-date{font-family:'Inter',sans-serif;font-size:1rem;color:var(--text);}
 .best-v{color:var(--gold)!important;font-weight:700;}
 
 /* ═══ RESUME ═══ */
-#page-resume{background:#e0d4c4;}
-.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:12px;}
-.res-hero{font-family:'Inter',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
-.res-unit{font-size:0.6rem;letter-spacing:6px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:28px;}
+#page-resume{background:var(--bg);}
+.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+.res-hero{font-family:'Inter',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:var(--text);}
+.res-unit{font-size:0.6rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:28px;}
 .res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:92%;max-width:900px;margin-bottom:24px;}
 .res-item{background:var(--surface);border:1px solid var(--border);padding:14px 8px;border-radius:6px;text-align:center;}
-.res-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:rgba(42,28,14,0.80);}
-.res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(105,90,73,0.50);text-transform:uppercase;margin-top:3px;display:block;}
+.res-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:var(--text);}
+.res-lab{font-size:0.42rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:3px;display:block;}
 .res-ch-wrap{width:92%;max-width:900px;margin-bottom:24px;}
-.res-ch-title{font-size:0.52rem;letter-spacing:6px;color:rgba(105,90,73,0.55);text-transform:uppercase;margin-bottom:8px;}
+.res-ch-title{font-size:0.52rem;letter-spacing:6px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
 .res-ch-list{display:flex;flex-direction:column;gap:5px;}
 .res-ch-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;}
 .res-ch-name{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;}
@@ -364,13 +360,6 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
 
   <div class="goal-divider-h"></div>
 
-  <!-- AVVIA — visibile al centro tra fiumi e obiettivo -->
-  <div class="goal-start-wrap" style="padding:8px 20px;">
-    <button class="btn-start" id="btn-start-workout" onclick="startWorkout()">AVVIA</button>
-  </div>
-
-  <div class="goal-divider-h"></div>
-
   <!-- OBIETTIVO -->
   <div class="goal-obj-section">
     <div class="goal-obj-tabs">
@@ -401,12 +390,23 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
     </div>
   </div>
 
+  <div class="goal-start-wrap">
+    <button class="btn-start" id="btn-start-workout" onclick="startWorkout()">AVVIA</button>
+  </div>
 </div>
 
 <!-- APP -->
 <div id="page-app" class="page">
   <canvas id="track-canvas"></canvas>
-<div id="ghost-arrow">
+
+  <div id="boat-arrow">
+    <svg width="28" height="36" viewBox="0 0 28 36">
+      <ellipse cx="14" cy="33" rx="8" ry="3" fill="rgba(0,0,0,0.4)"/>
+      <polygon points="14,2 26,30 14,24 2,30" fill="#ef5350" stroke="#ff8a80" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="14,2 20,18 14,14" fill="rgba(255,255,255,0.25)"/>
+    </svg>
+  </div>
+  <div id="ghost-arrow">
     <svg width="24" height="30" viewBox="0 0 28 36" opacity="0.45">
       <polygon points="14,2 26,30 14,24 2,30" fill="#90caf9" stroke="#bbdefb" stroke-width="1.5" stroke-linejoin="round"/>
     </svg>
@@ -554,7 +554,6 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
     <div class="res-ch-list" id="res-ch-list"></div>
   </div>
   <button class="btn-main" onclick="resetSession()">Fine</button>
-  <button class="btn-back" onclick="resetSession();switchPage('page-home')" style="display:block;margin-top:8px">← Home</button>
 </div>
 
 <!-- PAUSA -->
@@ -934,23 +933,78 @@ function drawTrack(meters){
   const W=trackCanvas.width,H=trackCanvas.height,ctx=trackCtx;
   const river=RIVERS[ACTIVE_RIVER_ID]||RIVERS.tevere;
   const topo=river.topo;
+
+  const pos=posAtMeters(meters);
+  const pos2=posAtMeters(Math.min(meters+80,TOTAL_M));
+  const tb=calcBearing(pos,pos2);
+  let delta=tb-currentBearing;
+  if(delta>180)delta-=360;if(delta<-180)delta+=360;
+  currentBearing=(currentBearing+delta*0.1+360)%360;
+  const b=currentBearing*Math.PI/180,refLat=pos[0],refLon=pos[1];
+  function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
+
+  const rawPts=ACTIVE_PTS.map(p=>toScreen(p[0],p[1]));
+  // Amplifica i meandri del 300% — rende visibili le curve del fiume
+  const allPts=amplifyLateral(rawPts, 3.0);
+
+  // ── SFONDO con colore BG del fiume ──
   const bg=topo.bg;
   const bgRgb=hexToRgb(bg);
-  const CX=W*0.50;
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
 
-  // Noise patterns con texture granulosa (cache per fiume)
+  // ── SISTEMA TOPOGRAFICO ──
+  // Offset perpendicolare da ogni punto del tracciato
+  function offsetPath(pts,dist,seed){
+    return pts.map(([x,y],i)=>{
+      const prev=pts[Math.max(i-1,0)];
+      const next=pts[Math.min(i+1,pts.length-1)];
+      const tx=next[0]-prev[0],ty=next[1]-prev[1];
+      const len=Math.sqrt(tx*tx+ty*ty)+0.001;
+      const nx=-ty/len,ny=tx/len;
+      const t=i/pts.length;
+      const na=Math.max(4,dist*0.22); // noise più generoso
+      const noise=
+        Math.sin(t*Math.PI*22+seed*1.5)*na*0.42
+       +Math.sin(t*Math.PI*36+seed*2.8)*na*0.26
+       +Math.sin(t*Math.PI*52+seed*4.4)*na*0.17
+       +Math.sin(t*Math.PI*71+seed*6.3)*na*0.10
+       +Math.sin(t*Math.PI*94+seed*8.7)*na*0.05;
+      return[x+nx*(dist+noise),y+ny*(dist+noise)];
+    });
+  }
+
+  function drawSharpLine(pts){
+    if(pts.length<2)return;
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length-1;i++){
+      const p=pts[i-1],c=pts[i],n=pts[i+1];
+      const dx1=c[0]-p[0],dy1=c[1]-p[1],dx2=n[0]-c[0],dy2=n[1]-c[1];
+      const l1=Math.sqrt(dx1*dx1+dy1*dy1)+0.001,l2=Math.sqrt(dx2*dx2+dy2*dy2)+0.001;
+      const dot=(dx1*dx2+dy1*dy2)/(l1*l2);
+      if(dot<-0.20){
+        const r=Math.min(l1,l2)*0.18;
+        ctx.lineTo(c[0]-dx1/l1*r,c[1]-dy1/l1*r);
+        ctx.quadraticCurveTo(c[0],c[1],c[0]+dx2/l2*r,c[1]+dy2/l2*r);
+      } else ctx.lineTo(c[0],c[1]);
+    }
+    ctx.lineTo(pts[pts.length-1][0],pts[pts.length-1][1]);
+  }
+
+  // Pre-genera noise patterns per ogni strato (cache su ACTIVE_RIVER_ID)
   if(!trackCanvas._noisePatterns||trackCanvas._noiseRiver!==ACTIVE_RIVER_ID){
     trackCanvas._noisePatterns=topo.layers.map((l,i)=>{
-      const sz=256,oc=document.createElement('canvas');
-      oc.width=sz;oc.height=sz;
+      const sz=256;
+      const oc=document.createElement('canvas');oc.width=sz;oc.height=sz;
       const octx=oc.getContext('2d');
       const img=octx.createImageData(sz,sz);const d=img.data;
       let s=(i*1337+42)*9301+49297;
       const rnd=()=>{s=(s*9301+49297)%233280;return s/233280;};
       const[r,g,bl]=l.c;
       for(let j=0;j<sz*sz;j++){
-        const v=(rnd()-0.5)*28;const idx=j*4;
-        d[idx]=Math.max(0,Math.min(255,r+v));
+        const v=(rnd()-0.5)*28;
+        const idx=j*4;
+        d[idx  ]=Math.max(0,Math.min(255,r+v));
         d[idx+1]=Math.max(0,Math.min(255,g+v));
         d[idx+2]=Math.max(0,Math.min(255,bl+v));
         d[idx+3]=255;
@@ -960,101 +1014,172 @@ function drawTrack(meters){
     });
     trackCanvas._noiseRiver=ACTIVE_RIVER_ID;
   }
-  const pats=trackCanvas._noisePatterns;
+  const patterns=trackCanvas._noisePatterns;
 
-  // Sfondo = texture strato più esterno
-  ctx.fillStyle=pats[pats.length-1];
-  ctx.fillRect(0,0,W,H);
+  ctx.lineCap='butt';ctx.lineJoin='miter';ctx.miterLimit=8;
 
-  // Il fiume scorre dall'alto verso il basso
-  // scroll aumenta con i metri → il pattern si sposta verso il basso
-  const SCROLL_SPEED=2.5;
-  const scroll=meters*SCROLL_SPEED;
-
-  // Bordo frastagliato di ogni strato
-  // (y - scroll): scende verso il basso all'aumentare dello scroll
-  function edgeOffset(y,seed){
-    const t=(y-scroll)/40;
-    return Math.sin(t*1.0+seed)*7
-         + Math.sin(t*2.1+seed*1.3)*5
-         + Math.sin(t*3.8+seed*2.4)*3.5
-         + Math.sin(t*6.5+seed*3.8)*2.2
-         + Math.sin(t*11.2+seed*5.6)*1.4
-         + Math.sin(t*18.7+seed*7.9)*0.8
-         + Math.sin(t*30.1+seed*11.2)*0.4;
+  // Disegna dal più esterno al più interno — strati con movimento asimmetrico
+  for(let i=topo.layers.length-1;i>=0;i--){
+    const l=topo.layers[i];
+    const nm=Math.max(4,l.d*0.28); // noise più generoso
+    const lw=l.w===999?W*3:(l.w*4)+nm*2+8;
+    ctx.lineWidth=lw;
+    ctx.strokeStyle=patterns[i];
+    if(i===0){
+      drawSharpLine(allPts);ctx.stroke();
+    } else {
+      // Seeds molto diversi tra dx e sx per asimmetria organica
+      drawSharpLine(offsetPath(allPts, l.d*2, i*3.8+0.7+meters*0.00002));ctx.stroke();
+      drawSharpLine(offsetPath(allPts,-l.d*2, i*3.8+5.3+meters*0.00003));ctx.stroke();
+    }
   }
 
-  // Distanze dal centro per i 6 strati (px)
-  const DISTS=[0,22,38,58,84,118];
-
-  // Disegna dall'esterno verso il centro
-  for(let i=DISTS.length-1;i>=0;i--){
-    const d=DISTS[i];
-    const sR=i*4.1+1.3, sL=i*4.1+7.2;
-
-    // Destra: riempie da bordo destro a margine schermo
-    ctx.beginPath();
-    ctx.moveTo(CX+d+edgeOffset(-10,sR),-10);
-    for(let y=0;y<=H+10;y+=3) ctx.lineTo(CX+d+edgeOffset(y,sR),y);
-    ctx.lineTo(W+10,H+10);ctx.lineTo(W+10,-10);
-    ctx.closePath();ctx.fillStyle=pats[i];ctx.fill();
-
-    // Sinistra: riempie da bordo sinistro a margine schermo
-    ctx.beginPath();
-    ctx.moveTo(CX-d-edgeOffset(-10,sL),-10);
-    for(let y=0;y<=H+10;y+=3) ctx.lineTo(CX-d-edgeOffset(y,sL),y);
-    ctx.lineTo(-10,H+10);ctx.lineTo(-10,-10);
-    ctx.closePath();ctx.fillStyle=pats[i];ctx.fill();
-  }
-
-  // POI — compaiono sopra la barca e scendono verso di essa
-  const boatY=H*0.52;
-  ACTIVE_POI.forEach(([poiKm,pname])=>{
-    const deltaM=poiKm*1000-meters;
-    if(deltaM<-400||deltaM>1200) return;
-    const py=boatY-deltaM*SCROLL_SPEED;
-    if(py<0||py>H) return;
-    ctx.beginPath();ctx.arc(CX,py,7,0,Math.PI*2);
-    ctx.fillStyle='rgba(105,90,73,0.80)';ctx.fill();
-    if(deltaM>0&&deltaM<800){
-      ctx.font='600 22px Inter,sans-serif';ctx.textAlign='left';
-      ctx.fillStyle='rgba(55,40,25,0.80)';ctx.shadowColor=bg;ctx.shadowBlur=4;
-      pname.split('\n').forEach((l,li)=>ctx.fillText(l,CX+18,py+li*24-4));
-      ctx.shadowBlur=0;
+  // ── POI ──
+  const visRadius=Math.min(W,H)*0.68;
+  ACTIVE_POI.forEach(([poiKm,pname,ptype])=>{
+    const poiPos=posAtMeters(poiKm*1000);
+    const[px,py]=toScreen(poiPos[0],poiPos[1]);
+    const dist=Math.hypot(px-W/2,py-H*0.52);
+    if(dist>visRadius)return;
+    const col='rgba(105,90,73,0.90)';
+    ctx.beginPath();ctx.arc(px,py,22,0,Math.PI*2);
+    ctx.strokeStyle='rgba(105,90,73,0.20)';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
+    ctx.fillStyle='rgba(105,90,73,0.30)';ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+    if(dist<280){
+      const opacity=Math.max(0,1-(dist/280));
+      ctx.save();ctx.globalAlpha=opacity;
+      const textX=px+70;
+      ctx.strokeStyle='rgba(105,90,73,0.4)';ctx.lineWidth=1.5;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(px+18,py);ctx.lineTo(textX-4,py);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font='700 26px Inter,sans-serif';
+      ctx.textAlign='left';ctx.fillStyle='rgba(55,40,25,0.85)';
+      ctx.shadowColor='rgba(224,212,196,0.8)';ctx.shadowBlur=8;
+      const lines=pname.split('\n');
+      const lineH=30;const totalH=(lines.length-1)*lineH;
+      lines.forEach((line,li)=>ctx.fillText(line,textX,py-totalH/2+li*lineH+9));
+      ctx.restore();
     }
   });
 
-  // Sfida
+  // ── Sfida ──
   if(nextChallenge&&!challengeActive){
-    const deltaM=nextChallenge.startAt-meters;
-    if(Math.abs(deltaM)<600){
-      const py=boatY-deltaM*SCROLL_SPEED;
-      ctx.beginPath();ctx.arc(CX,py,10,0,Math.PI*2);
-      ctx.fillStyle='rgba(105,90,73,0.12)';ctx.fill();
-      ctx.strokeStyle='rgba(105,90,73,0.60)';ctx.lineWidth=2;ctx.stroke();
-      ctx.font='bold 13px Inter';ctx.fillStyle='rgba(105,90,73,0.75)';ctx.textAlign='center';
-      ctx.fillText('\u26A1',CX,py+5);
-      if(deltaM>0&&deltaM<800){
-        ctx.font='600 11px Inter';ctx.fillStyle='rgba(105,90,73,0.55)';
-        ctx.fillText(Math.round(deltaM)+'m',CX,py-18);
+    const cPos=posAtMeters(nextChallenge.startAt);
+    const[cx,cy]=toScreen(cPos[0],cPos[1]);
+    if(Math.hypot(cx-W/2,cy-H*0.52)<H*0.48){
+      ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);
+      ctx.fillStyle='rgba(105,90,73,0.15)';ctx.fill();
+      ctx.strokeStyle='rgba(105,90,73,0.7)';ctx.lineWidth=2;ctx.stroke();
+      ctx.font='bold 11px Inter,sans-serif';
+      ctx.fillStyle='rgba(105,90,73,0.8)';ctx.textAlign='center';
+      ctx.fillText('⚡',cx,cy+4);
+      const mToCh=Math.round(nextChallenge.startAt-meters);
+      if(mToCh>0&&mToCh<800){
+        ctx.font='600 10px Inter,sans-serif';
+        ctx.fillStyle='rgba(105,90,73,0.6)';
+        ctx.fillText(mToCh+'m',cx,cy-16);
       }
     }
   }
 
-  // Barca — freccia rossa fissa al centro
-  ctx.save();ctx.translate(CX,boatY);
-  ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(8,9);ctx.lineTo(0,5);ctx.lineTo(-8,9);
-  ctx.closePath();ctx.fillStyle='rgba(200,50,30,0.95)';ctx.fill();
+  // ── Ghost ──
+  if(ghostSamples.length>0){
+    const gm=getGhostMeters(getElapsedSec());
+    if(gm!==null){
+      const gPos=posAtMeters(gm);
+      const[gx,gy]=toScreen(gPos[0],gPos[1]);
+      const ga=document.getElementById('ghost-arrow');
+      ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';
+    }
+  }
+
+  // ── ROCCE — isole ovoidali sparse lungo il percorso ──
+  // Alcune dentro il canale (più piccole), alcune sulle rive (più grandi)
+  const rockColor=patterns[1]||patterns[0];
+  const shoreColor=patterns[2];
+
+  const rockSeed=meters*0.001;
+  const nRocks=14;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  for(let r=0;r<nRocks;r++){
+    const t=((r*0.618+rockSeed*0.1)%1); // distribuzione aurea
+    const idx=Math.floor(t*(allPts.length-1));
+    if(idx<1||idx>=allPts.length-1) continue;
+    const[rx,ry]=allPts[idx];
+    // Skip rocce fuori dallo schermo
+    if(rx<-50||rx>W+50||ry<-50||ry>H+50) continue;
+
+    // Decide: roccia interna (dentro fiume) o esterna (riva)
+    const isInner=(r%3!==0);
+    const distFromCenter=isInner
+      ? (20+r*8) * (r%2===0?1:-1)   // inside — offset piccolo
+      : (topo.layers[3].d*2 + 30 + r*15) * (r%2===0?1:-1); // outside — sulle rive
+
+    // Normale al percorso
+    const prev=allPts[Math.max(idx-1,0)],next=allPts[Math.min(idx+1,allPts.length-1)];
+    const tx2=next[0]-prev[0],ty2=next[1]-prev[1];
+    const tlen=Math.sqrt(tx2*tx2+ty2*ty2)+0.001;
+    const nx2=-ty2/tlen,ny2=tx2/tlen;
+
+    const cx=rx+nx2*distFromCenter;
+    const cy=ry+ny2*distFromCenter;
+
+    const rw=isInner?(8+r%4*4):(18+r%5*8);
+    const rh=rw*(0.4+r%3*0.2);
+    const angle=Math.atan2(ty2,tx2);
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(angle);
+    // Strati concentrici della roccia (mini-topografia)
+    for(let s=2;s>=0;s--){
+      const scale=1-s*0.28;
+      ctx.beginPath();
+      ctx.ellipse(0,0,rw*scale,rh*scale,0,0,Math.PI*2);
+      ctx.fillStyle=isInner?patterns[s]:patterns[s+2>5?5:s+2];
+      ctx.fill();
+    }
+    // Bordo sottile
+    ctx.beginPath();
+    ctx.ellipse(0,0,rw,rh,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(105,90,73,0.20)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── Freccia barca — usa posizione amplificata ──
+  const boatRaw=toScreen(posAtMeters(meters)[0],posAtMeters(meters)[1]);
+  const boat2Raw=toScreen(posAtMeters(Math.min(meters+30,TOTAL_M))[0],posAtMeters(Math.min(meters+30,TOTAL_M))[1]);
+  // Trova il punto corrispondente in allPts
+  let bi=0,bd=Infinity;
+  allPts.forEach(([x,y],i)=>{const d=Math.hypot(x-W/2,y-H*0.52);if(d<bd){bd=d;bi=i;}});
+  const[bx,by]=allPts[bi];
+  const[bx2,by2]=allPts[Math.min(bi+3,allPts.length-1)];
+  const ba=Math.atan2(by2-by,bx2-bx)-Math.PI/2;
+  ctx.save();ctx.translate(bx,by);ctx.rotate(ba);
+  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
+  ctx.closePath();ctx.fillStyle='rgba(180,40,20,0.95)';ctx.fill();
   ctx.restore();
 
-  // Vignette top/bottom
+  // ── Vignette ai bordi (usa il colore BG del fiume) ──
   const vr=bgRgb;
-  const vt=ctx.createLinearGradient(0,0,0,H*0.38);
-  vt.addColorStop(0,`rgba(${vr},1)`);vt.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=vt;ctx.fillRect(0,0,W,H*0.42);
-  const vb=ctx.createLinearGradient(0,H,0,H*0.70);
-  vb.addColorStop(0,`rgba(${vr},1)`);vb.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=vb;ctx.fillRect(0,H*0.66,W,H*0.34);
+  const gt=ctx.createLinearGradient(0,0,0,H*0.44);
+  gt.addColorStop(0,`rgba(${vr},1)`);gt.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.48);
+  const gb2=ctx.createLinearGradient(0,H,0,H*0.72);
+  gb2.addColorStop(0,`rgba(${vr},1)`);gb2.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=gb2;ctx.fillRect(0,H*0.68,W,H*0.32);
+  const gl=ctx.createLinearGradient(0,0,W*0.18,0);
+  gl.addColorStop(0,`rgba(${vr},1)`);gl.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W*0.22,H);
+  const gr=ctx.createLinearGradient(W,0,W*0.82,0);
+  gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=gr;ctx.fillRect(W*0.78,0,W*0.22,H);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1723,30 +1848,40 @@ setInterval(tickClock,1000);tickClock();
 //  BLUETOOTH
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
+  // Debug visibile — rimuovere dopo fix
+  const dbg=document.getElementById('db-status');
+  function log(msg){
+    if(dbg){dbg.textContent=msg;dbg.style.opacity='1';dbg.classList.add('show');}
+  }
+  log('connectBT avviata...');
+  await new Promise(r=>setTimeout(r,100)); // lascia render
+  
   if(!navigator.bluetooth){
-    showDbStatus('Bluetooth non disponibile — apri in Chrome',3000);
+    log('No Bluetooth API — usa Chrome');
     return;
   }
-  showDbStatus('Ricerca Domyos...',5000);
+  log('Ricerca Domyos...');
   try{
     const dev=await navigator.bluetooth.requestDevice({
       filters:[{services:[0x1826]}],
       optionalServices:[0x1826]
     });
-    showDbStatus('Connessione...',5000);
+    log('Dispositivo trovato, connessione...');
     const srv=await dev.gatt.connect();
     const svc=await srv.getPrimaryService(0x1826);
     const ch=await svc.getCharacteristic(0x2AD1);
     await ch.startNotifications();
+    log('Connesso ✓');
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-    dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso',2000);switchPage('page-home');});
-    showDbStatus('',0);
-    showGoalScreen();
+    dev.addEventListener('gattserverdisconnected',()=>{
+      log('Disconnesso');
+      switchPage('page-home');
+    });
+    setTimeout(()=>showGoalScreen(), 800);
   }catch(e){
-    const msg=String(e.message||e);
-    if(msg.includes('cancel')||msg.includes('Cancel'))showDbStatus('Annullato',2000);
-    else showDbStatus('Errore: '+msg.substring(0,40),4000);
-    console.error('BT:',e);
+    const msg=String(e.message||e).substring(0,60);
+    log('ERR: '+msg);
+    console.error('BT error:',e);
   }
 }
 
