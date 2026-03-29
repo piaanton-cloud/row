@@ -1099,12 +1099,9 @@ function drawTrack(meters){
 
   // ── ROCCE — isole ovoidali sparse lungo il percorso ──
   // Alcune dentro il canale (più piccole), alcune sulle rive (più grandi)
-  const river=RIVERS[ACTIVE_RIVER_ID]||RIVERS.tevere;
-  const topo=river.topo;
-  const rockColor=patterns[1]||patterns[0]; // colore strato interno per le rocce
-  const shoreColor=patterns[2]; // colore riva per rocce esterne
+  const rockColor=patterns[1]||patterns[0];
+  const shoreColor=patterns[2];
 
-  // Rocce generate deterministicamente dalla posizione sul percorso
   const rockSeed=meters*0.001;
   const nRocks=14;
   ctx.lineCap='round';ctx.lineJoin='round';
