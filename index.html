@@ -875,56 +875,27 @@ function drawTrack(meters){
   ctx.fillRect(0,0,W,H);
 
   // ── SISTEMA TOPOGRAFICO ──
-  // SCROLL_PX: metri → pixel, usato per far scorrere il pattern
+  // SCROLL_PX: usato come fase del noise → il pattern scorre con i metri
   const SCROLL_PX = meters * 4.0;
 
-  // Offset del bordo: usa la coordinata Y assoluta del punto (non i/N)
-  // Così il pattern è fisso nello spazio e scorre semplicemente con SCROLL_PX
-  function edgeOffset(y, dist, seed){
-    const w = (y - SCROLL_PX) / 120;
-    return dist
-      + Math.sin(w*2.1 + seed)      * dist*0.18
-      + Math.sin(w*4.3 + seed*1.7)  * dist*0.10
-      + Math.sin(w*8.1 + seed*3.1)  * dist*0.06
-      + Math.sin(w*14.7+ seed*5.3)  * dist*0.03;
-  }
-
-  // Costruisce i punti del bordo (dx o sx) lungo tutto il percorso
-  function buildEdge(pts, dist, seed, side){
+  // Offset perpendicolare: usa Y assoluta del punto (non i/N)
+  // Così il pattern è fisso nello spazio e scorre senza ridisegnarsi
+  function offsetPath(pts, dist, seed){
     return pts.map(([x,y],i)=>{
       const prev=pts[Math.max(i-1,0)];
       const next=pts[Math.min(i+1,pts.length-1)];
       const tx=next[0]-prev[0], ty=next[1]-prev[1];
       const len=Math.sqrt(tx*tx+ty*ty)+0.001;
       const nx=-ty/len, ny=tx/len;
-      const off=edgeOffset(y, dist, seed);
-      return [x + nx*off*side, y + ny*off*side];
+      // (y - SCROLL_PX): coordinata nel mondo fissa, scorre con i metri
+      const w=(y - SCROLL_PX)/120;
+      const noise=
+        Math.sin(w*2.1+seed)      *dist*0.18
+       +Math.sin(w*4.3+seed*1.7)  *dist*0.10
+       +Math.sin(w*8.1+seed*3.1)  *dist*0.06
+       +Math.sin(w*14.7+seed*5.3) *dist*0.03;
+      return[x+nx*(dist+noise), y+ny*(dist+noise)];
     });
-  }
-
-  // Disegna uno strato come POLIGONO RIEMPITO
-  // → niente stroke → niente beige tra i livelli
-  function drawLayerFill(pts, dist, seedR, seedL, pat){
-    const edgeR=buildEdge(pts, dist, seedR, +1);
-    const edgeL=buildEdge(pts, dist, seedL, -1);
-
-    // Destra: poligono dal bordo destro fino al margine schermo
-    ctx.beginPath();
-    ctx.moveTo(edgeR[0][0], edgeR[0][1]);
-    for(const[x,y] of edgeR) ctx.lineTo(x,y);
-    ctx.lineTo(W+50, edgeR[edgeR.length-1][1]);
-    ctx.lineTo(W+50, edgeR[0][1]);
-    ctx.closePath();
-    ctx.fillStyle=pat; ctx.fill();
-
-    // Sinistra: poligono dal bordo sinistro fino al margine schermo
-    ctx.beginPath();
-    ctx.moveTo(edgeL[0][0], edgeL[0][1]);
-    for(const[x,y] of edgeL) ctx.lineTo(x,y);
-    ctx.lineTo(-50, edgeL[edgeL.length-1][1]);
-    ctx.lineTo(-50, edgeL[0][1]);
-    ctx.closePath();
-    ctx.fillStyle=pat; ctx.fill();
   }
 
   function drawSharpLine(pts){
@@ -970,20 +941,27 @@ function drawTrack(meters){
   const patterns=trackCanvas._noisePatterns;
 
   ctx.lineCap='butt';ctx.lineJoin='miter';ctx.miterLimit=8;
+
+  // Texture patterns scorrono verticalmente con i metri — loop seamless su 256px
   const patOffsetY = SCROLL_PX % 256;
 
-  // Disegna sfondo con pattern strato più esterno
-  const bgPat=patterns[patterns.length-1];
-  if(bgPat&&bgPat.setTransform) bgPat.setTransform(new DOMMatrix().translateSelf(0,patOffsetY));
-  ctx.fillStyle=bgPat;
-  ctx.fillRect(0,0,W,H);
-
-  // Disegna dall'esterno verso il centro — poligoni riempiti, niente beige tra strati
-  for(let i=topo.layers.length-2;i>=0;i--){
+  // Disegna dal più esterno al più interno
+  for(let i=topo.layers.length-1;i>=0;i--){
     const l=topo.layers[i];
+    const nm=Math.max(3,l.d*0.35);
+    const lw=l.w===999?W*3:l.w*2+nm*2+6;
+    ctx.lineWidth=lw;
     const pat=patterns[i];
-    if(pat&&pat.setTransform) pat.setTransform(new DOMMatrix().translateSelf(0,patOffsetY));
-    drawLayerFill(allPts, l.d, i*4.1+1.3, i*4.1+6.8, pat);
+    if(pat&&pat.setTransform){
+      pat.setTransform(new DOMMatrix().translateSelf(0,patOffsetY));
+    }
+    ctx.strokeStyle=pat;
+    if(i===0){
+      drawSharpLine(allPts);ctx.stroke();
+    } else {
+      drawSharpLine(offsetPath(allPts, l.d, i*3.8+0.7));ctx.stroke();
+      drawSharpLine(offsetPath(allPts,-l.d, i*3.8+5.3));ctx.stroke();
+    }
   }
 
   // ── POI ──
