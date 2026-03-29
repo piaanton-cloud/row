@@ -184,12 +184,16 @@ body{min-height:100dvh;}
 /* Pulsante avvia */
 .goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
 .btn-start{
-  width:100%;padding:20px;border-radius:0;background:none;border:none;
-  color:rgba(105,90,73,0.35);
+  width:100%;padding:22px;border-radius:0;background:none;
+  border-top:1px solid rgba(105,90,73,0.18);
+  color:rgba(105,90,73,0.30);
   font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;
-  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;
 }
-.btn-start.ready{color:rgba(42,28,14,0.75);}
+.btn-start.ready{
+  color:rgba(42,28,14,0.82);
+  border-top-color:rgba(42,28,14,0.20);
+}
 .btn-start:active{opacity:0.5;}
 
 /* ═══ APP ═══ */
@@ -554,6 +558,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     <div class="res-ch-list" id="res-ch-list"></div>
   </div>
   <button class="btn-main" onclick="resetSession()">Fine</button>
+  <button class="btn-back" onclick="resetSession();switchPage('page-home')" style="display:block;margin-top:8px">← Home</button>
 </div>
 
 <!-- PAUSA -->
@@ -940,28 +945,28 @@ function drawTrack(meters){
   ctx.fillRect(0,0,W,H);
 
   // Percorso procedurale — barca fissa al centro, fiume scorre sotto
-  const PX_PER_M=0.9;
+  const PX_PER_M=1.8; // più scroll per metro = movimento più percepibile
   const scroll=meters*PX_PER_M;
   const boatY=H*0.52;
   const yWorldBoat=scroll;
-  const N=120;
+  const N=140; // più punti per curve più definite
 
   function riverX(yWorld){
-    const t=yWorld/15000;
+    const t=yWorld/2000; // era /15000 — ora curva ogni ~400m invece di 5km
     return W*0.50
-      +Math.sin(t*Math.PI*3.1+0.5)*W*0.14
-      +Math.sin(t*Math.PI*5.7+1.8)*W*0.07
-      +Math.sin(t*Math.PI*9.2+3.1)*W*0.035
-      +Math.sin(t*Math.PI*14.6+0.9)*W*0.018
-      +Math.sin(t*Math.PI*22.0+2.4)*W*0.009;
+      +Math.sin(t*Math.PI*2.0+0.5)*W*0.18   // onda lenta ampia
+      +Math.sin(t*Math.PI*3.7+1.8)*W*0.10   // onda media
+      +Math.sin(t*Math.PI*6.3+3.1)*W*0.055  // onda più rapida
+      +Math.sin(t*Math.PI*10.1+0.9)*W*0.028 // dettaglio
+      +Math.sin(t*Math.PI*16.4+2.4)*W*0.014; // micro-dettaglio
   }
 
   function worldToScreen(yWorld){
     return[riverX(yWorld), boatY+(yWorld-yWorldBoat)];
   }
 
-  const yStart=yWorldBoat-H*0.8;
-  const yEnd=yWorldBoat+H*0.8;
+  const yStart=yWorldBoat-H*1.2;
+  const yEnd=yWorldBoat+H*1.2;
   const step=(yEnd-yStart)/N;
   const centerPts=[];
   for(let i=0;i<=N;i++){
@@ -1830,13 +1835,9 @@ async function connectBT(){
     const svc=await srv.getPrimaryService(0x1826);
     const ch=await svc.getCharacteristic(0x2AD1);
     await ch.startNotifications();
-    log('Connesso ✓');
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-    dev.addEventListener('gattserverdisconnected',()=>{
-      log('Disconnesso');
-      switchPage('page-home');
-    });
-    setTimeout(()=>showGoalScreen(), 800);
+    dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso',2000);switchPage('page-home');});
+    showGoalScreen();
   }catch(e){
     const msg=String(e.message||e).substring(0,60);
     log('ERR: '+msg);
