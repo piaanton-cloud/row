@@ -199,7 +199,7 @@ body{min-height:100dvh;}
 /* ═══ APP ═══ */
 #page-app{overflow:hidden;}
 #track-canvas{position:absolute;inset:0;width:100%;height:100%;}
-#boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
+
 #ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
 
 /* ── Header ── */
@@ -364,6 +364,13 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
 
   <div class="goal-divider-h"></div>
 
+  <!-- AVVIA — visibile al centro tra fiumi e obiettivo -->
+  <div class="goal-start-wrap" style="padding:8px 20px;">
+    <button class="btn-start" id="btn-start-workout" onclick="startWorkout()">AVVIA</button>
+  </div>
+
+  <div class="goal-divider-h"></div>
+
   <!-- OBIETTIVO -->
   <div class="goal-obj-section">
     <div class="goal-obj-tabs">
@@ -394,23 +401,12 @@ td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:ce
     </div>
   </div>
 
-  <div class="goal-start-wrap">
-    <button class="btn-start" id="btn-start-workout" onclick="startWorkout()">AVVIA</button>
-  </div>
 </div>
 
 <!-- APP -->
 <div id="page-app" class="page">
   <canvas id="track-canvas"></canvas>
-
-  <div id="boat-arrow">
-    <svg width="28" height="36" viewBox="0 0 28 36">
-      <ellipse cx="14" cy="33" rx="8" ry="3" fill="rgba(0,0,0,0.4)"/>
-      <polygon points="14,2 26,30 14,24 2,30" fill="#ef5350" stroke="#ff8a80" stroke-width="1.5" stroke-linejoin="round"/>
-      <polygon points="14,2 20,18 14,14" fill="rgba(255,255,255,0.25)"/>
-    </svg>
-  </div>
-  <div id="ghost-arrow">
+<div id="ghost-arrow">
     <svg width="24" height="30" viewBox="0 0 28 36" opacity="0.45">
       <polygon points="14,2 26,30 14,24 2,30" fill="#90caf9" stroke="#bbdefb" stroke-width="1.5" stroke-linejoin="round"/>
     </svg>
@@ -941,50 +937,22 @@ function drawTrack(meters){
   const bg=topo.bg;
   const bgRgb=hexToRgb(bg);
 
+  // SFONDO
   ctx.fillStyle=bg;
   ctx.fillRect(0,0,W,H);
 
-  // Percorso procedurale — barca fissa al centro, fiume scorre sotto
-  const PX_PER_M=1.8; // più scroll per metro = movimento più percepibile
-  const scroll=meters*PX_PER_M;
-  const boatY=H*0.52;
-  const yWorldBoat=scroll;
-  const N=140; // più punti per curve più definite
-
-  function riverX(yWorld){
-    const t=yWorld/2000; // era /15000 — ora curva ogni ~400m invece di 5km
-    return W*0.50
-      +Math.sin(t*Math.PI*2.0+0.5)*W*0.18   // onda lenta ampia
-      +Math.sin(t*Math.PI*3.7+1.8)*W*0.10   // onda media
-      +Math.sin(t*Math.PI*6.3+3.1)*W*0.055  // onda più rapida
-      +Math.sin(t*Math.PI*10.1+0.9)*W*0.028 // dettaglio
-      +Math.sin(t*Math.PI*16.4+2.4)*W*0.014; // micro-dettaglio
-  }
-
-  function worldToScreen(yWorld){
-    return[riverX(yWorld), boatY+(yWorld-yWorldBoat)];
-  }
-
-  const yStart=yWorldBoat-H*1.2;
-  const yEnd=yWorldBoat+H*1.2;
-  const step=(yEnd-yStart)/N;
-  const centerPts=[];
-  for(let i=0;i<=N;i++){
-    centerPts.push(worldToScreen(yStart+i*step));
-  }
-
+  // ── NOISE PATTERNS (cache per fiume) ──
   if(!trackCanvas._noisePatterns||trackCanvas._noiseRiver!==ACTIVE_RIVER_ID){
     trackCanvas._noisePatterns=topo.layers.map((l,i)=>{
-      const sz=256;
-      const oc=document.createElement('canvas');oc.width=sz;oc.height=sz;
+      const sz=256,oc=document.createElement('canvas');
+      oc.width=sz;oc.height=sz;
       const octx=oc.getContext('2d');
       const img=octx.createImageData(sz,sz);const d=img.data;
       let s=(i*1337+42)*9301+49297;
       const rnd=()=>{s=(s*9301+49297)%233280;return s/233280;};
       const[r,g,bl]=l.c;
       for(let j=0;j<sz*sz;j++){
-        const v=(rnd()-0.5)*28;
-        const idx=j*4;
+        const v=(rnd()-0.5)*28;const idx=j*4;
         d[idx]=Math.max(0,Math.min(255,r+v));
         d[idx+1]=Math.max(0,Math.min(255,g+v));
         d[idx+2]=Math.max(0,Math.min(255,bl+v));
@@ -995,155 +963,186 @@ function drawTrack(meters){
     });
     trackCanvas._noiseRiver=ACTIVE_RIVER_ID;
   }
-  const patterns=trackCanvas._noisePatterns;
+  const pats=trackCanvas._noisePatterns;
 
-  function offsetPath(pts,dist,seed){
-    return pts.map(([x,y],i)=>{
-      const prev=pts[Math.max(i-1,0)];
-      const next=pts[Math.min(i+1,pts.length-1)];
-      const tx=next[0]-prev[0],ty=next[1]-prev[1];
-      const len=Math.sqrt(tx*tx+ty*ty)+0.001;
-      const nx=-ty/len,ny=tx/len;
-      const t=i/pts.length;
-      const na=Math.max(3,dist*0.20);
-      const noise=
-        Math.sin(t*Math.PI*18+seed*1.5)*na*0.40
-       +Math.sin(t*Math.PI*31+seed*2.8)*na*0.28
-       +Math.sin(t*Math.PI*47+seed*4.3)*na*0.18
-       +Math.sin(t*Math.PI*68+seed*6.1)*na*0.10
-       +Math.sin(t*Math.PI*91+seed*8.4)*na*0.05;
-      return[x+nx*(dist+noise),y+ny*(dist+noise)];
-    });
+  // ── GEOMETRIA FIUME ──
+  // Il fiume scorre verso il basso. La barca è fissa a metà schermo.
+  // scroll aumenta con i metri — i bordi si spostano verso il basso.
+  const SCROLL_SPEED=2.5; // px per metro — velocità scorrimento
+  const scroll=meters*SCROLL_SPEED;
+
+  // Centro X del fiume in ogni riga Y dello schermo.
+  // Il fiume meandra sinistra-destra mentre scorre.
+  // Usiamo (Y+scroll) come parametro così il disegno si sposta verso il basso.
+  function cxAt(y){
+    const t=(y+scroll)/800; // ciclo ogni 800px — meandri frequenti e visibili
+    return W*0.50
+      + Math.sin(t*2.1+0.3)*W*0.13
+      + Math.sin(t*3.8+1.7)*W*0.07
+      + Math.sin(t*6.5+0.9)*W*0.035
+      + Math.sin(t*10.8+2.4)*W*0.018;
   }
 
-  function drawSharp(pts){
-    if(pts.length<2)return;
-    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
-    for(let i=1;i<pts.length-1;i++){
-      const p=pts[i-1],c=pts[i],n=pts[i+1];
-      const dx1=c[0]-p[0],dy1=c[1]-p[1],dx2=n[0]-c[0],dy2=n[1]-c[1];
-      const l1=Math.sqrt(dx1*dx1+dy1*dy1)+0.001,l2=Math.sqrt(dx2*dx2+dy2*dy2)+0.001;
-      const dot=(dx1*dx2+dy1*dy2)/(l1*l2);
-      if(dot<-0.18){
-        const r=Math.min(l1,l2)*0.20;
-        ctx.lineTo(c[0]-dx1/l1*r,c[1]-dy1/l1*r);
-        ctx.quadraticCurveTo(c[0],c[1],c[0]+dx2/l2*r,c[1]+dy2/l2*r);
-      } else ctx.lineTo(c[0],c[1]);
+  // Larghezza del canale centrale (zona più scura) in px
+  const CANAL_W=36;
+
+  // Per ogni strato: distanza laterale dal centro e larghezza
+  // Gli strati si allargano dal centro verso la riva
+  const LAYERS=topo.layers;
+
+  // Genera i bordi sinistro e destro di ogni strato
+  // con noise frastagliato diverso per ogni strato
+  // Noise: frequenze alte per bordi mossi come nell'immagine
+  function borderNoise(y, seed, amp){
+    const t=(y+scroll*0.7)/120; // frequenza più alta del meandro principale
+    return Math.sin(t*4.1+seed)*amp*0.40
+         + Math.sin(t*7.3+seed*1.7)*amp*0.28
+         + Math.sin(t*12.1+seed*2.9)*amp*0.18
+         + Math.sin(t*19.4+seed*4.5)*amp*0.10
+         + Math.sin(t*28.7+seed*6.8)*amp*0.06;
+  }
+
+  // Per ogni strato disegno un poligono che riempie lo schermo
+  // dall'esterno verso l'interno — così il centro copre tutto
+  ctx.lineCap='butt';ctx.lineJoin='miter';
+
+  // Costruisce il percorso del bordo destro o sinistro di uno strato
+  // side: +1=destra, -1=sinistra
+  // dist: distanza dal centro
+  // seed: seme del noise
+  function drawLayer(layerIdx, distR, distL){
+    const noiseSeedR=layerIdx*3.7+1.1;
+    const noiseSeedL=layerIdx*3.7+5.8;
+    const noiseAmp=Math.max(4, distR*0.22);
+
+    // Percorso: scendi lungo il bordo destro, risali lungo il sinistro
+    ctx.beginPath();
+
+    // Bordo destro — dall'alto verso il basso
+    ctx.moveTo(cxAt(-10)+distR+borderNoise(-10,noiseSeedR,noiseAmp), -10);
+    for(let y=0;y<=H+10;y+=6){
+      const cx2=cxAt(y);
+      const bx=cx2+distR+borderNoise(y,noiseSeedR,noiseAmp);
+      ctx.lineTo(bx,y);
     }
-    ctx.lineTo(pts[pts.length-1][0],pts[pts.length-1][1]);
-  }
 
-  ctx.lineCap='butt';ctx.lineJoin='miter';ctx.miterLimit=6;
+    // Chiudi a destra fuori schermo
+    ctx.lineTo(W+50,H+10);
+    ctx.lineTo(W+50,-10);
+    ctx.closePath();
+    ctx.fillStyle=pats[layerIdx];
+    ctx.fill();
 
-  const LWIDTHS=[36,8,12,20,32,W*3];
-  for(let i=topo.layers.length-1;i>=0;i--){
-    const l=topo.layers[i];
-    const dist=l.d*2.2;
-    const nm=Math.max(3,dist*0.20);
-    const lw=l.w===999?W*3:LWIDTHS[i]*2+nm*2+6;
-    ctx.lineWidth=lw;
-    ctx.strokeStyle=patterns[i];
-    if(i===0){
-      drawSharp(centerPts);ctx.stroke();
-    } else {
-      drawSharp(offsetPath(centerPts, dist, i*4.2+1.1));ctx.stroke();
-      drawSharp(offsetPath(centerPts,-dist, i*4.2+6.8));ctx.stroke();
+    // Specchio: bordo sinistro
+    ctx.beginPath();
+    ctx.moveTo(cxAt(-10)-distL-borderNoise(-10,noiseSeedL,noiseAmp), -10);
+    for(let y=0;y<=H+10;y+=6){
+      const cx2=cxAt(y);
+      const bx=cx2-distL-borderNoise(y,noiseSeedL,noiseAmp);
+      ctx.lineTo(bx,y);
     }
+    ctx.lineTo(-50,H+10);
+    ctx.lineTo(-50,-10);
+    ctx.closePath();
+    ctx.fillStyle=pats[layerIdx];
+    ctx.fill();
   }
 
-  // Sassi/scogli
+  // Distanze cumulative degli strati dal centro
+  const dists=[0,18,31,43,62,999];
+
+  // Disegna dall'esterno al centro
+  for(let i=LAYERS.length-1;i>=1;i--){
+    drawLayer(i, dists[i]*2, dists[i]*2);
+  }
+
+  // Canale centrale — striscia scura
+  ctx.beginPath();
+  ctx.moveTo(cxAt(-10)-CANAL_W,-10);
+  for(let y=0;y<=H+10;y+=6){
+    ctx.lineTo(cxAt(y)-CANAL_W,y);
+  }
+  for(let y=H+10;y>=-10;y-=6){
+    ctx.lineTo(cxAt(y)+CANAL_W,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle=pats[0];
+  ctx.fill();
+
+  // ── SASSI sulle rive ──
   ctx.lineCap='round';
-  for(let r=0;r<18;r++){
-    const yW=yWorldBoat-H*0.7+((r*2654.4+scroll*0.3)%(H*1.4));
-    const[cx,cy_s]=worldToScreen(yW);
-    if(cy_s<-40||cy_s>H+40) continue;
-    const[x1]=worldToScreen(yW-20);
-    const[x2]=worldToScreen(yW+20);
-    const tang=[x2-x1,40];
-    const tlen=Math.sqrt(tang[0]*tang[0]+1600)+0.001;
-    const nx=-tang[1]/tlen,ny=tang[0]/tlen;
-    const isInner=(r%4!==0);
+  for(let r=0;r<16;r++){
+    // Posizione Y fissa + scroll (scorrono con il fiume)
+    const yBase=((r*2654+scroll)%(H+100))-50;
+    const yR=yBase;
+    if(yR<-60||yR>H+60) continue;
+    const cx2=cxAt(yR);
+    const isInner=(r%5===0);
     const side=(r%2===0)?1:-1;
-    const dc=isInner?(12+r%3*10)*side:(topo.layers[3].d*2.2+20+r%5*18)*side;
-    const rx_p=cx+nx*dc,ry_p=cy_s+ny*dc;
-    if(rx_p<-20||rx_p>W+20) continue;
-    const rw=isInner?(10+r%3*6):(20+r%4*12);
-    const rh=rw*(0.35+r%3*0.15);
-    const angle=Math.atan2(tang[1],tang[0]);
-    ctx.save();ctx.translate(rx_p,ry_p);ctx.rotate(angle);
+    const baseDist=isInner?(CANAL_W*0.6):(dists[3]*2+15+r%4*20);
+    const rx=cx2+side*(baseDist+borderNoise(yR,r*2.3,8));
+    if(rx<0||rx>W) continue;
+    const rw=isInner?(8+r%3*5):(18+r%4*10);
+    const rh=rw*(0.3+r%3*0.15);
+    const angle=Math.atan2(cxAt(yR+10)-cxAt(yR-10),20)*0.5;
+    ctx.save();ctx.translate(rx,yR);ctx.rotate(angle);
     for(let s=2;s>=0;s--){
-      const sc=1-s*0.3;
-      const li=isInner?s:Math.min(s+2,topo.layers.length-1);
+      const sc=1-s*0.28;
+      const li=isInner?s:Math.min(s+2,LAYERS.length-1);
       ctx.beginPath();ctx.ellipse(0,0,rw*sc,rh*sc,0,0,Math.PI*2);
-      ctx.fillStyle=patterns[li];ctx.fill();
+      ctx.fillStyle=pats[li];ctx.fill();
     }
     ctx.beginPath();ctx.ellipse(0,0,rw,rh,0,0,Math.PI*2);
-    ctx.strokeStyle='rgba(105,90,73,0.18)';ctx.lineWidth=1;ctx.stroke();
+    ctx.strokeStyle='rgba(105,90,73,0.15)';ctx.lineWidth=1;ctx.stroke();
     ctx.restore();
   }
 
-  // POI
-  const visRadius=Math.min(W,H)*0.65;
-  ACTIVE_POI.forEach(([poiKm,pname,ptype])=>{
-    const[px,py]=worldToScreen(poiKm*1000*PX_PER_M);
-    const dist=Math.hypot(px-W*0.5,py-boatY);
-    if(dist>visRadius)return;
-    ctx.beginPath();ctx.arc(px,py,18,0,Math.PI*2);
-    ctx.strokeStyle='rgba(105,90,73,0.18)';ctx.lineWidth=1.5;ctx.stroke();
-    ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
-    ctx.fillStyle='rgba(105,90,73,0.85)';ctx.fill();
-    if(dist<240){
-      const opacity=Math.max(0,1-dist/240);
-      ctx.save();ctx.globalAlpha=opacity;
-      const textX=px+55;
-      ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(105,90,73,0.35)';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(px+12,py);ctx.lineTo(textX-4,py);ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.font='700 22px Inter,sans-serif';ctx.textAlign='left';
-      ctx.fillStyle='rgba(55,40,25,0.82)';ctx.shadowColor=bg;ctx.shadowBlur=5;
-      pname.split('\n').forEach((line,li)=>ctx.fillText(line,textX,py+li*26-3));
-      ctx.restore();
+  // ── POI ──
+  const boatY=H*0.52;
+  const visR=H*0.45;
+  ACTIVE_POI.forEach(([poiKm,pname])=>{
+    // Il POI compare quando i metri percorsi si avvicinano alla sua posizione
+    const poiM=poiKm*1000;
+    const deltaM=poiM-meters; // metri ancora da percorrere
+    if(deltaM<-500||deltaM>1500) return; // solo quelli vicini
+    // Converti delta metri in delta pixel (verso l'alto = non ancora raggiunti)
+    const py=boatY-deltaM*SCROLL_SPEED;
+    if(py<0||py>H) return;
+    const px=cxAt(py-boatY+scroll*0)+CANAL_W+40;
+    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);
+    ctx.fillStyle='rgba(105,90,73,0.80)';ctx.fill();
+    if(deltaM>0&&deltaM<800){
+      ctx.font='600 22px Inter,sans-serif';ctx.textAlign='left';
+      ctx.fillStyle='rgba(55,40,25,0.80)';ctx.shadowColor=bg;ctx.shadowBlur=4;
+      pname.split('\n').forEach((l,li)=>ctx.fillText(l,px+16,py+li*24-4));
+      ctx.shadowBlur=0;
     }
   });
 
-  // Sfida
-  if(nextChallenge&&!challengeActive){
-    const[chx,chy]=worldToScreen(nextChallenge.startAt*PX_PER_M);
-    if(Math.abs(chy-boatY)<H*0.5){
-      ctx.beginPath();ctx.arc(chx,chy,10,0,Math.PI*2);
-      ctx.fillStyle='rgba(105,90,73,0.15)';ctx.fill();
-      ctx.strokeStyle='rgba(105,90,73,0.65)';ctx.lineWidth=2;ctx.stroke();
-      ctx.font='bold 13px Inter';ctx.fillStyle='rgba(105,90,73,0.8)';ctx.textAlign='center';
-      ctx.fillText('\u26A1',chx,chy+5);
-      const mToCh=Math.round(nextChallenge.startAt-meters);
-      if(mToCh>0&&mToCh<800){ctx.font='600 11px Inter';ctx.fillStyle='rgba(105,90,73,0.6)';ctx.fillText(mToCh+'m',chx,chy-18);}
-    }
-  }
-
-  // Freccia barca — sempre al centro
-  const mid=Math.floor(centerPts.length/2);
-  const[bx,by2]=centerPts[mid];
-  const[bx2,by3]=centerPts[Math.min(mid+2,centerPts.length-1)];
-  const ba=Math.atan2(by3-by2,bx2-bx)-Math.PI/2;
-  ctx.save();ctx.translate(bx,by2);ctx.rotate(ba);
-  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
-  ctx.closePath();ctx.fillStyle='rgba(180,40,20,0.95)';ctx.fill();
+  // ── BARCA — fissa al centro, sempre nel canale scuro ──
+  const bx=cxAt(boatY); // X del fiume all'altezza della barca
+  // Orienta la barca nella direzione del meandro
+  const dx=cxAt(boatY+15)-cxAt(boatY-15);
+  const ba=Math.atan2(dx,30); // angolo rispetto al basso
+  ctx.save();ctx.translate(bx,boatY);ctx.rotate(ba);
+  // Forma barca più leggibile — ellisse con prua
+  ctx.beginPath();
+  ctx.ellipse(0,0,9,22,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.90)';ctx.fill();
+  ctx.strokeStyle='rgba(180,40,20,0.85)';ctx.lineWidth=2.5;ctx.stroke();
+  // Linea centrale (asse barca)
+  ctx.beginPath();ctx.moveTo(0,-18);ctx.lineTo(0,18);
+  ctx.strokeStyle='rgba(180,40,20,0.60)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.restore();
 
-  // Vignette
+  // ── VIGNETTE ──
   const vr=bgRgb;
-  const gt=ctx.createLinearGradient(0,0,0,H*0.42);
-  gt.addColorStop(0,`rgba(${vr},1)`);gt.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*0.46);
-  const gb2=ctx.createLinearGradient(0,H,0,H*0.72);
-  gb2.addColorStop(0,`rgba(${vr},1)`);gb2.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gb2;ctx.fillRect(0,H*0.68,W,H*0.32);
-  const gl=ctx.createLinearGradient(0,0,W*0.16,0);
-  gl.addColorStop(0,`rgba(${vr},1)`);gl.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gl;ctx.fillRect(0,0,W*0.20,H);
-  const gr=ctx.createLinearGradient(W,0,W*0.84,0);
-  gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gr;ctx.fillRect(W*0.80,0,W*0.20,H);
+  const vt=ctx.createLinearGradient(0,0,0,H*0.38);
+  vt.addColorStop(0,`rgba(${vr},1)`);vt.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=vt;ctx.fillRect(0,0,W,H*0.42);
+  const vb=ctx.createLinearGradient(0,H,0,H*0.70);
+  vb.addColorStop(0,`rgba(${vr},1)`);vb.addColorStop(1,`rgba(${vr},0)`);
+  ctx.fillStyle=vb;ctx.fillRect(0,H*0.66,W,H*0.34);
 }
 
 // ═══════════════════════════════════════════════════════
