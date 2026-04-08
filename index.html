@@ -1732,15 +1732,46 @@ setInterval(tickClock,1000);tickClock();
 //  BLUETOOTH
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
+  if(!navigator.bluetooth){
+    showDbStatus('Bluetooth non disponibile — apri in Chrome');return;
+  }
+  showDbStatus('Ricerca vogatore...');
   try{
-    const dev=await navigator.bluetooth.requestDevice({filters:[{services:[0x1826]}]});
+    const dev=await navigator.bluetooth.requestDevice({
+      filters:[{services:[0x1826]}],
+      optionalServices:[0x1826]
+    });
+    showDbStatus('Connessione...');
     const srv=await dev.gatt.connect();
     const svc=await srv.getPrimaryService(0x1826);
-    const ch=await svc.getCharacteristic(0x2AD1);
+
+    // Prova prima 0x2AD1 (Domyos R/standard), poi 0x2AD2 (Domyos 500B e altri)
+    let ch=null;
+    try{
+      ch=await svc.getCharacteristic(0x2AD1);
+      showDbStatus('Domyos R — connesso');
+    }catch(_){
+      try{
+        ch=await svc.getCharacteristic(0x2AD2);
+        showDbStatus('Domyos 500B — connesso');
+      }catch(e2){
+        showDbStatus('Caratteristica non trovata: '+e2.message.substring(0,30));
+        return;
+      }
+    }
+
     await ch.startNotifications();
-    showGoalScreen();
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-  }catch(e){console.error('BT:',e);switchPage('page-home');}
+    dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso');switchPage('page-home');});
+    setTimeout(()=>showGoalScreen(),600);
+  }catch(e){
+    const msg=String(e.message||e);
+    if(msg.includes('cancel')||msg.includes('Cancel')||msg.includes('chosen'))
+      showDbStatus('Ricerca annullata');
+    else
+      showDbStatus('Errore: '+msg.substring(0,40));
+    console.error('BT:',e);
+  }
 }
 
 // ═══════════════════════════════════════════════════════
