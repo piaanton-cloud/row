@@ -261,7 +261,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
 .res-ch-score{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);}
 
 /* DB status */
-#db-status{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:0.52rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .4s;}
+#db-status{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:2px;color:rgba(42,28,14,0.85);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .3s;background:rgba(224,212,196,0.97);padding:10px 24px;border-radius:20px;white-space:nowrap;border:1px solid rgba(105,90,73,0.20);}
 #db-status.show{opacity:1;}
 </style>
 </head>
@@ -534,7 +534,7 @@ function dbAdd(store,obj){return new Promise((res,rej)=>{const tx=db.transaction
 function dbGetAll(store){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).getAll();req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
 function dbGetByIndex(store,index,value){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).index(index).getAll(value);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
 function dbGet(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).get(key);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);});}
-function showDbStatus(msg){const el=document.getElementById('db-status');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
+function showDbStatus(msg,dur=5000){const el=document.getElementById('db-status');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);if(dur>0)el._t=setTimeout(()=>el.classList.remove('show'),dur);}
 
 // ═══════════════════════════════════════════════════════
 //  DATABASE FIUMI
@@ -1733,43 +1733,45 @@ setInterval(tickClock,1000);tickClock();
 // ═══════════════════════════════════════════════════════
 async function connectBT(){
   if(!navigator.bluetooth){
-    showDbStatus('Bluetooth non disponibile — apri in Chrome');return;
+    showDbStatus('Bluetooth non disponibile — apri in Chrome',8000);return;
   }
-  showDbStatus('Ricerca vogatore...');
+  showDbStatus('1/5 Apertura dialogo BT...',0);
   try{
     const dev=await navigator.bluetooth.requestDevice({
       filters:[{services:[0x1826]}],
       optionalServices:[0x1826]
     });
-    showDbStatus('Connessione...');
+    showDbStatus('2/5 Connessione GATT...',0);
     const srv=await dev.gatt.connect();
+    showDbStatus('3/5 Servizio FTMS...',0);
     const svc=await srv.getPrimaryService(0x1826);
+    showDbStatus('4/5 Caratteristica...',0);
 
-    // Prova prima 0x2AD1 (Domyos R/standard), poi 0x2AD2 (Domyos 500B e altri)
     let ch=null;
     try{
       ch=await svc.getCharacteristic(0x2AD1);
-      showDbStatus('Domyos R — connesso');
     }catch(_){
       try{
         ch=await svc.getCharacteristic(0x2AD2);
-        showDbStatus('Domyos 500B — connesso');
       }catch(e2){
-        showDbStatus('Caratteristica non trovata: '+e2.message.substring(0,30));
+        showDbStatus('Errore: caratteristica non trovata. '+e2.message.substring(0,30),8000);
         return;
       }
     }
 
+    showDbStatus('5/5 Avvio notifiche...',0);
     await ch.startNotifications();
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
-    dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso');switchPage('page-home');});
-    setTimeout(()=>showGoalScreen(),600);
+    dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso',3000);switchPage('page-home');});
+    showDbStatus('Connesso!',2000);
+    setTimeout(()=>showGoalScreen(),400);
+
   }catch(e){
     const msg=String(e.message||e);
-    if(msg.includes('cancel')||msg.includes('Cancel')||msg.includes('chosen'))
-      showDbStatus('Ricerca annullata');
+    if(msg.includes('cancel')||msg.includes('Cancel')||msg.includes('chosen')||msg.includes('No device'))
+      showDbStatus('Ricerca annullata',3000);
     else
-      showDbStatus('Errore: '+msg.substring(0,40));
+      showDbStatus('Errore: '+msg.substring(0,50),8000);
     console.error('BT:',e);
   }
 }
@@ -1902,8 +1904,9 @@ document.addEventListener('click',function fs(){reqFS();document.removeEventList
 // ═══════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════
-openDB().then(()=>showDbStatus('DB pronto')).catch(e=>{console.error(e);showDbStatus('DB non disponibile');});
+openDB().then(()=>showDbStatus('DB pronto',1500)).catch(e=>{console.error(e);showDbStatus('DB non disponibile',5000);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
+window.onerror=function(msg,src,line){showDbStatus('JS ERR ln'+line+': '+String(msg).substring(0,35),10000);return false;};
 
 // Forza landscape — tutti i metodi disponibili
 function lockLandscape(){
