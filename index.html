@@ -1735,44 +1735,73 @@ async function connectBT(){
   if(!navigator.bluetooth){
     showDbStatus('Bluetooth non disponibile — apri in Chrome',8000);return;
   }
-  showDbStatus('1/5 Apertura dialogo BT...',0);
+  showDbStatus('Apertura dialogo BT...',0);
   try{
-    // Prima prova filtro FTMS standard — se fallisce usa acceptAllDevices
-    let dev;
-    try{
-      dev=await navigator.bluetooth.requestDevice({
-        filters:[{services:[0x1826]},{namePrefix:'Domyos-ROW'}],
-        optionalServices:[0x1826]
-      });
-    }catch(e1){
-      const m=String(e1.message||e1);
-      if(m.includes('match')||m.includes('Found')||m.includes('No compatible')){
-        showDbStatus('Ricerca estesa...',0);
-        dev=await navigator.bluetooth.requestDevice({
-          acceptAllDevices:true,
-          optionalServices:[0x1826,0x1816,0x1818]
-        });
-      } else { throw e1; }
-    }
+    // UUID noti Domyos + FTMS standard + generici fitness
+    const KNOWN=[
+      0x1826,0x1816,0x1818,     // FTMS standard
+      0x1800,0x1801,0x180A,     // Generic Access/Attribute/Device Info
+      0x180D,0x180F,            // Heart Rate, Battery
+      // UUID 128-bit proprietari Domyos (come short 16-bit non esistono — scopriamo col dump)
+    ];
+    const dev=await navigator.bluetooth.requestDevice({
+      filters:[{services:[0x1826]},{namePrefix:'Domyos-ROW'}],
+      optionalServices:KNOWN
+    });
 
-    showDbStatus('2/5 Connessione GATT...',0);
+    showDbStatus('Connessione...',0);
     const srv=await dev.gatt.connect();
-    showDbStatus('3/5 Servizio...',0);
 
+    // Enumera TUTTI i servizi disponibili sul dispositivo
+    showDbStatus('Scoperta servizi...',0);
+    let allServices=[];
+    try{ allServices=await srv.getPrimaryServices(); }catch(_){}
+
+    // Mostra gli UUID trovati per debug (visibili 8 secondi)
+    if(allServices.length>0){
+      const uuids=allServices.map(s=>s.uuid).join(' | ');
+      showDbStatus('Servizi: '+uuids.substring(0,80),0);
+      console.log('Servizi trovati:',uuids);
+    }
+
+    // Prova prima FTMS 0x1826, poi tutti gli altri servizi trovati
     let svc=null;
-    for(const uuid of [0x1826,0x1816,0x1818]){
-      try{svc=await srv.getPrimaryService(uuid);break;}catch(_){}
+    for(const s of allServices){
+      // Priorità a FTMS
+      if(s.uuid.includes('1826')){svc=s;break;}
     }
-    if(!svc){showDbStatus('Servizio non trovato',8000);return;}
+    if(!svc&&allServices.length>0) svc=allServices[0];
+    if(!svc){
+      // Fallback diretto
+      for(const uuid of [0x1826,0x1816,0x1818]){
+        try{svc=await srv.getPrimaryService(uuid);break;}catch(_){}
+      }
+    }
+    if(!svc){showDbStatus('Nessun servizio trovato — UUID: ?',8000);return;}
 
-    showDbStatus('4/5 Caratteristica...',0);
+    // Enumera tutte le caratteristiche del servizio trovato
+    let allChars=[];
+    try{ allChars=await svc.getCharacteristics(); }catch(_){}
+    if(allChars.length>0){
+      const cuuids=allChars.map(c=>c.uuid).join(' | ');
+      showDbStatus('Chars: '+cuuids.substring(0,80),0);
+      console.log('Caratteristiche:',cuuids);
+    }
+
+    // Cerca caratteristica con notify (per ricevere dati)
     let ch=null;
-    for(const uuid of [0x2AD1,0x2AD2,0x2A63,0x2A5B]){
-      try{ch=await svc.getCharacteristic(uuid);break;}catch(_){}
+    for(const c of allChars){
+      if(c.properties.notify){ch=c;break;}
     }
-    if(!ch){showDbStatus('Caratteristica non trovata',8000);return;}
+    // Fallback su UUID noti
+    if(!ch){
+      for(const uuid of [0x2AD1,0x2AD2,0x2A63,0x2A5B]){
+        try{ch=await svc.getCharacteristic(uuid);break;}catch(_){}
+      }
+    }
+    if(!ch){showDbStatus('Nessuna caratteristica notify trovata',8000);return;}
 
-    showDbStatus('5/5 Avvio notifiche...',0);
+    showDbStatus('Avvio notifiche...',0);
     await ch.startNotifications();
     ch.addEventListener('characteristicvaluechanged',ev=>{if(!isPaused)updateUI(ev.target.value);});
     dev.addEventListener('gattserverdisconnected',()=>{showDbStatus('Disconnesso',3000);switchPage('page-home');});
@@ -1784,7 +1813,7 @@ async function connectBT(){
     if(msg.includes('cancel')||msg.includes('Cancel')||msg.includes('chosen')||msg.includes('No device selected'))
       showDbStatus('Annullato',2000);
     else
-      showDbStatus('Errore: '+msg.substring(0,50),8000);
+      showDbStatus('Errore: '+msg.substring(0,60),8000);
     console.error('BT:',e);
   }
 }
