@@ -1788,10 +1788,10 @@ async function connectBT(){
       console.log('Caratteristiche:',cuuids);
     }
 
-    // Cerca caratteristica con notify (per ricevere dati)
+    // Cerca caratteristica con notify O indicate (il 500B usa indicate)
     let ch=null;
     for(const c of allChars){
-      if(c.properties.notify){ch=c;break;}
+      if(c.properties.notify||c.properties.indicate){ch=c;break;}
     }
     // Fallback su UUID noti
     if(!ch){
@@ -1799,7 +1799,7 @@ async function connectBT(){
         try{ch=await svc.getCharacteristic(uuid);break;}catch(_){}
       }
     }
-    if(!ch){showDbStatus('Nessuna caratteristica notify trovata',8000);return;}
+    if(!ch){showDbStatus('Nessuna caratteristica notify/indicate trovata',8000);return;}
 
     showDbStatus('Avvio notifiche...',0);
     await ch.startNotifications();
