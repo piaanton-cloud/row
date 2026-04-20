@@ -883,11 +883,11 @@ function drawTrack(meters){
     // Centroide del fiume a questa Y
     const rivX=tevereCXatY(imgYc);
 
-    // srcH = 8% altezza immagine
-    // srcW = aspect ratio canvas, ma cappato alla larghezza immagine
-    let srcH=Math.round(IH*0.08);
-    let srcW=Math.round(srcH*(W/H));
-    if(srcW>IW){ srcW=IW; srcH=Math.round(IW*(H/W)); }
+    // srcH = 5% altezza immagine → srcW = srcH*(W/H) = ~720px < IW(1200px)
+    // Questo lascia ~480px di margine laterale per seguire le curve del fiume
+    // Zoom risultante ~1.5x — abbastanza per percepire il movimento
+    const srcH=Math.round(IH*0.05);
+    const srcW=Math.round(srcH*(W/H));
 
     // Finestra verticale: imgYc sotto il cursore fisso
     const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*(BOAT_Y/H)));
