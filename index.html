@@ -883,14 +883,16 @@ function drawTrack(meters){
     // Centroide del fiume a questa Y
     const rivX=tevereCXatY(imgYc);
 
-    // Zoom aumentato: srcH = 8% dell'immagine → zoom ~12x → movimento percepibile anche a 15km
-    const srcH=Math.round(IH*0.08);
-    const srcW=Math.round(srcH*(W/H));
+    // srcH = 8% altezza immagine
+    // srcW = aspect ratio canvas, ma cappato alla larghezza immagine
+    let srcH=Math.round(IH*0.08);
+    let srcW=Math.round(srcH*(W/H));
+    if(srcW>IW){ srcW=IW; srcH=Math.round(IW*(H/W)); }
 
-    // Top finestra: imgYc sotto il cursore fisso a BOAT_Y
+    // Finestra verticale: imgYc sotto il cursore fisso
     const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*(BOAT_Y/H)));
 
-    // Left finestra: centroide del fiume esattamente sotto BOAT_X
+    // Finestra orizzontale: rivX dell'immagine allineato a BOAT_X del canvas
     const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*(BOAT_X/W)));
 
     ctx.drawImage(rc.img, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
