@@ -46,8 +46,6 @@ body{min-height:100dvh;}
 #page-home{background:#e0d4c4;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{position:absolute;inset:0;width:100%;height:100%;}
-
-/* Contenuto home — centrato verticalmente, a sinistra */
 .home-content{
   position:absolute;inset:0;z-index:10;
   display:flex;flex-direction:column;
@@ -56,8 +54,6 @@ body{min-height:100dvh;}
   pointer-events:none;
 }
 .home-content>*{pointer-events:auto;}
-
-/* ROW — Playfair Display, grande, colore terra scuro */
 .home-logo{
   font-family:'Inter',sans-serif;
   font-size:10rem;font-weight:900;
@@ -66,7 +62,6 @@ body{min-height:100dvh;}
   margin-bottom:8px;
   user-select:none;
 }
-/* Sottotitolo fiume */
 .home-sub{
   font-family:'Inter',sans-serif;
   font-size:0.62rem;font-weight:500;
@@ -143,8 +138,8 @@ body{min-height:100dvh;}
 /* ═══ APP ═══ */
 #page-app{overflow:hidden;}
 #track-canvas{position:absolute;inset:0;width:100%;height:100%;}
-#boat-arrow{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;}
-#ghost-arrow{position:absolute;z-index:45;pointer-events:none;display:none;transform:translate(-50%,-50%);}
+#boat-arrow{display:none;}
+#ghost-arrow{display:none;}
 
 /* ── Header ── */
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
@@ -868,14 +863,11 @@ function drawTrack(meters){
   const topo=river.topo;
   const bg=topo.bg;
   const bgRgb=hexToRgb(bg);
+  const BOAT_X=W*0.50;  // cursore FISSO al centro orizzontale
+  const BOAT_Y=H*0.52;  // cursore FISSO verticalmente
 
-  // ── SFONDO ──
-  ctx.fillStyle=bg;
-  ctx.fillRect(0,0,W,H);
-
-  // ── IMMAGINE FIUME ──
+  // ── IMMAGINE FIUME — scorre sotto il cursore fisso ──
   const rc=RIVER_CANVASES[ACTIVE_RIVER_ID];
-  let boatCanvasX=W*0.50; // posizione X del cursore sul canvas — default centro
 
   if(rc&&rc.isRealImage&&rc.img){
     const IW=rc.w, IH=rc.h;
@@ -883,115 +875,32 @@ function drawTrack(meters){
     const yStart=IH*MARGIN;
     const yEnd=IH*(1-MARGIN);
 
-    // Y nell'immagine corrispondente ai metri percorsi
+    // Y nell'immagine: avanza con i metri
     const imgY=yStart+(meters/15000)*(yEnd-yStart);
     const imgYc=Math.max(yStart,Math.min(yEnd,imgY));
 
-    // Centroide del fiume a questa Y
+    // X centroide del fiume a questa Y
     const rivX=tevereCXatY(imgYc);
 
-    // Finestra sorgente: 15% dell'immagine → zoom ~6.7x → movimento percepibile
+    // Finestra sorgente: 15% dell'altezza → zoom ~6.7x → scorrimento percepibile
     const srcH=Math.round(IH*0.15);
     const srcW=Math.round(srcH*(W/H));
 
-    // Top finestra: imgYc deve apparire a H*0.52 dal top del canvas
-    const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc-srcH*0.52));
-
-    // Left finestra: centroide del fiume al centro del canvas
-    const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW-srcW*0.5));
+    // La finestra si sposta in Y e in X per tenere il centroide sotto il cursore fisso
+    const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*0.52));
+    const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*0.50));
 
     ctx.drawImage(rc.img, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
-    // Posizione X barca sul canvas
-    boatCanvasX=(rivX*IW-srcXtop)*(W/srcW);
-
   } else if(rc&&rc.canvas){
-    // Canvas procedurale — centrato
     const PX_PER_M=rc.h/15000;
     const scrollY=Math.min(meters*PX_PER_M, rc.h-H);
     const srcX=Math.max(0,(rc.w-W)/2);
     ctx.drawImage(rc.canvas, srcX, scrollY, W, H, 0, 0, W, H);
-    boatCanvasX=W*0.50;
 
   } else {
-    // Canvas non ancora pronto
     ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
   }
-
-  // ── POI ──
-  const pos=posAtMeters(meters);
-  const pos2=posAtMeters(Math.min(meters+80,TOTAL_M));
-  const tb=calcBearing(pos,pos2);
-  let delta=tb-currentBearing;
-  if(delta>180)delta-=360;if(delta<-180)delta+=360;
-  currentBearing=(currentBearing+delta*0.1+360)%360;
-  const b=currentBearing*Math.PI/180,refLat=pos[0],refLon=pos[1];
-  function toScreen(lat,lon){const[lx,ly]=latLonToLocal(lat,lon,refLat,refLon);const rx=lx*Math.cos(-b)-ly*Math.sin(-b);const ry=lx*Math.sin(-b)+ly*Math.cos(-b);return[W/2+rx*SCALE,H*0.52+ry*SCALE];}
-
-  const visRadius=Math.min(W,H)*0.68;
-  ACTIVE_POI.forEach(([poiKm,pname,ptype])=>{
-    const poiPos=posAtMeters(poiKm*1000);
-    const[px,py]=toScreen(poiPos[0],poiPos[1]);
-    const dist=Math.hypot(px-W/2,py-H*0.52);
-    if(dist>visRadius)return;
-    const col='rgba(105,90,73,0.90)';
-    ctx.beginPath();ctx.arc(px,py,22,0,Math.PI*2);
-    ctx.strokeStyle='rgba(105,90,73,0.20)';ctx.lineWidth=2;ctx.stroke();
-    ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
-    ctx.fillStyle='rgba(105,90,73,0.30)';ctx.fill();
-    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
-    ctx.fillStyle=col;ctx.fill();
-    if(dist<280){
-      const opacity=Math.max(0,1-(dist/280));
-      ctx.save();ctx.globalAlpha=opacity;
-      const textX=px+70;
-      ctx.strokeStyle='rgba(105,90,73,0.4)';ctx.lineWidth=1.5;
-      ctx.setLineDash([4,4]);
-      ctx.beginPath();ctx.moveTo(px+18,py);ctx.lineTo(textX-4,py);ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.font='700 26px Inter,sans-serif';
-      ctx.textAlign='left';ctx.fillStyle='rgba(55,40,25,0.85)';
-      ctx.shadowColor=bg;ctx.shadowBlur=8;
-      const lns=pname.split('\n');
-      const lineH=30;const totalH=(lns.length-1)*lineH;
-      lns.forEach((line,li)=>ctx.fillText(line,textX,py-totalH/2+li*lineH+9));
-      ctx.restore();
-    }
-  });
-
-  // ── Sfida ──
-  if(nextChallenge&&!challengeActive){
-    const cPos=posAtMeters(nextChallenge.startAt);
-    const[cx,cy]=toScreen(cPos[0],cPos[1]);
-    if(Math.hypot(cx-W/2,cy-H*0.52)<H*0.48){
-      ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);
-      ctx.fillStyle='rgba(105,90,73,0.15)';ctx.fill();
-      ctx.strokeStyle='rgba(105,90,73,0.7)';ctx.lineWidth=2;ctx.stroke();
-      ctx.font='bold 11px Inter,sans-serif';
-      ctx.fillStyle='rgba(105,90,73,0.8)';ctx.textAlign='center';
-      ctx.fillText('\u26A1',cx,cy+4);
-      const mToCh=Math.round(nextChallenge.startAt-meters);
-      if(mToCh>0&&mToCh<800){ctx.font='600 10px Inter,sans-serif';ctx.fillStyle='rgba(105,90,73,0.6)';ctx.fillText(mToCh+'m',cx,cy-16);}
-    }
-  }
-
-  // ── Ghost ──
-  if(ghostSamples.length>0){
-    const gm=getGhostMeters(getElapsedSec());
-    if(gm!==null){
-      const gPos=posAtMeters(gm);
-      const[gx,gy]=toScreen(gPos[0],gPos[1]);
-      const ga=document.getElementById('ghost-arrow');
-      ga.style.display='block';ga.style.left=gx+'px';ga.style.top=gy+'px';
-    }
-  }
-
-  // ── Freccia barca — posizione X segue il corso del fiume ──
-  const boatY=H*0.52;
-  ctx.save();ctx.translate(boatCanvasX,boatY);
-  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
-  ctx.closePath();ctx.fillStyle='rgba(180,40,20,0.95)';ctx.fill();
-  ctx.restore();
 
   // ── Vignette ──
   const vr=bgRgb;
@@ -1007,6 +916,12 @@ function drawTrack(meters){
   const gr=ctx.createLinearGradient(W,0,W*0.82,0);
   gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
   ctx.fillStyle=gr;ctx.fillRect(W*0.78,0,W*0.22,H);
+
+  // ── Cursore — unico, fisso al centro ──
+  ctx.save();ctx.translate(BOAT_X,BOAT_Y);
+  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
+  ctx.closePath();ctx.fillStyle='rgba(180,40,20,0.95)';ctx.fill();
+  ctx.restore();
 }
 
 // ═══════════════════════════════════════════════════════
