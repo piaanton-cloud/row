@@ -875,20 +875,23 @@ function drawTrack(meters){
     const yStart=IH*MARGIN;
     const yEnd=IH*(1-MARGIN);
 
-    // Y nell'immagine: avanza con i metri
-    const imgY=yStart+(meters/15000)*(yEnd-yStart);
+    // Direzione corretta: a 0m mostra la cima (yEnd), a 15km mostra il fondo (yStart)
+    // Così l'immagine scorre dall'alto verso il basso (paesaggio sale = si va avanti)
+    const imgY=yEnd-(meters/15000)*(yEnd-yStart);
     const imgYc=Math.max(yStart,Math.min(yEnd,imgY));
 
-    // X centroide del fiume a questa Y
+    // Centroide del fiume a questa Y
     const rivX=tevereCXatY(imgYc);
 
-    // Finestra sorgente: 15% dell'altezza → zoom ~6.7x → scorrimento percepibile
-    const srcH=Math.round(IH*0.15);
+    // Zoom +25% rispetto al 15% precedente → srcH = 12% dell'immagine
+    const srcH=Math.round(IH*0.12);
     const srcW=Math.round(srcH*(W/H));
 
-    // La finestra si sposta in Y e in X per tenere il centroide sotto il cursore fisso
-    const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*0.52));
-    const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*0.50));
+    // Top finestra: imgYc sotto il cursore fisso a BOAT_Y
+    const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*(BOAT_Y/H)));
+
+    // Left finestra: centroide del fiume esattamente sotto BOAT_X
+    const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*(BOAT_X/W)));
 
     ctx.drawImage(rc.img, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
