@@ -878,49 +878,32 @@ function drawTrack(meters){
   let boatCanvasX=W*0.50; // posizione X del cursore sul canvas — default centro
 
   if(rc&&rc.isRealImage&&rc.img){
-    // TEVERE: immagine reale 1200×5257px
-    //
-    // Strategia:
-    // - Riempie sempre tutta la larghezza dello schermo (no bordi laterali)
-    // - Usa solo la fascia centrale dell'immagine (10% margine top, 10% bottom)
-    //   così non si vedono i bordi dell'immagine a inizio/fine allenamento
-    // - La fascia usabile copre 15km → scala verticale percepibile
-    //
-    const IMG_W=rc.w, IMG_H=rc.h;
-    const MARGIN_FRAC=0.10; // 10% margine top e bottom
-    const srcYStart=Math.floor(IMG_H*MARGIN_FRAC);   // y di partenza nell'immagine
-    const srcYEnd  =Math.floor(IMG_H*(1-MARGIN_FRAC)); // y di fine
-    const usableImgH=srcYEnd-srcYStart; // px usabili dell'immagine
+    const IW=rc.w, IH=rc.h;
+    const MARGIN=0.10;
+    const yStart=IH*MARGIN;
+    const yEnd=IH*(1-MARGIN);
 
-    // 1 metro = usableImgH/15000 pixel sull'immagine originale
-    const PX_PER_M_SRC=usableImgH/15000;
+    // Y nell'immagine corrispondente ai metri percorsi
+    const imgY=yStart+(meters/15000)*(yEnd-yStart);
+    const imgYc=Math.max(yStart,Math.min(yEnd,imgY));
 
-    // Posizione Y nell'immagine corrispondente ai metri percorsi
-    // (clampata per non uscire dalla fascia usabile)
-    const srcYRaw=srcYStart+meters*PX_PER_M_SRC;
-    const srcYClamped=Math.max(srcYStart, Math.min(srcYEnd-1, srcYRaw));
+    // Centroide del fiume a questa Y
+    const rivX=tevereCXatY(imgYc);
 
-    // Altezza sorgente da mostrare in un singolo schermo:
-    // Mappiamo la stessa proporzione che ha lo schermo rispetto ai 15km
-    // ma non meno di H pixel sorgente (per non pixellare troppo)
-    // Vogliamo che scorrendo 15km si percorra tutta la fascia usabile
-    // srcH = porzione dell'immagine da mostrare in ogni frame
-    const srcH=Math.floor(H / (H/usableImgH * 1)); // 1:1 con la fascia usabile
+    // Finestra sorgente: 15% dell'immagine → zoom ~6.7x → movimento percepibile
+    const srcH=Math.round(IH*0.15);
+    const srcW=Math.round(srcH*(W/H));
 
-    // Centroide del fiume a questa Y nell'immagine
-    const rivNormX=tevereCXatY(srcYClamped);
-    // srcX: quale colonna dell'immagine mettere al centro dello schermo
-    const srcX=Math.max(0, Math.min(IMG_W-W, rivNormX*IMG_W - W*0.5));
+    // Top finestra: imgYc deve apparire a H*0.52 dal top del canvas
+    const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc-srcH*0.52));
 
-    // Disegna: prende srcW×srcH dall'immagine e lo allunga su W×H schermo
-    // srcW = larghezza proporzionale alla porzione sorgente (aspect ratio screen)
-    const srcW=Math.floor(W * (srcH/H));
-    const srcXc=Math.max(0, Math.min(IMG_W-srcW, rivNormX*IMG_W - srcW*0.5));
+    // Left finestra: centroide del fiume al centro del canvas
+    const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW-srcW*0.5));
 
-    ctx.drawImage(rc.img, srcXc, srcYClamped, srcW, srcH, 0, 0, W, H);
+    ctx.drawImage(rc.img, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
-    // Cursore: X sul canvas corrisponde al centroide del fiume scalato
-    boatCanvasX=(rivNormX*IMG_W - srcXc) * (W/srcW);
+    // Posizione X barca sul canvas
+    boatCanvasX=(rivX*IW-srcXtop)*(W/srcW);
 
   } else if(rc&&rc.canvas){
     // Canvas procedurale — centrato
