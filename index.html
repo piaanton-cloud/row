@@ -1019,8 +1019,8 @@ function generateRiverFromSVG(riverId){
   const dst=ctx.createImageData(W,H);
   const d=dst.data;
 
-  // Noise nel recolor: ampiezza originale ±14
-  const NOISE_AMP=28; // variazione colore per pixel ±14
+  // Noise nel recolor: nessun noise — colori puliti, il noise è solo nell'overlay
+  const NOISE_AMP=0;
   let ns=(riverId.charCodeAt(0)*1337+42)*9301+49297;
   const nrnd=()=>{ns=(ns*9301+49297)%233280;return ns/233280;};
 
