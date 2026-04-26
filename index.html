@@ -869,8 +869,8 @@ function drawTrack(meters){
   // ── IMMAGINE FIUME — scorre sotto il cursore fisso ──
   const rc=RIVER_CANVASES[ACTIVE_RIVER_ID];
 
-  if(rc&&rc.canvas){
-    // Tutti i fiumi ora usano canvas recolorato con stesse dimensioni SVG
+  if(rc&&(rc.img||rc.canvas)){
+    // Tutti i fiumi usano il proprio SVG con colori già corretti
     const IW=rc.w, IH=rc.h;
     const MARGIN=0.10;
     const yStart=IH*MARGIN;
@@ -888,7 +888,7 @@ function drawTrack(meters){
     const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*(BOAT_Y/H)));
     const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*(BOAT_X/W)));
 
-    ctx.drawImage(rc.canvas, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
+    ctx.drawImage(rc.img||rc.canvas, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
 
   } else {
@@ -959,77 +959,33 @@ const RIVER_PALETTES={
   tamigi: [[6,32,28],[18,55,48],[35,90,80],[72,138,128],[175,162,148],[216,208,192]],    // verde petrolio accentuato
 };
 
-// SVG base condiviso — caricato una volta sola
-let _svgBase=null;
-let _svgBaseW=0, _svgBaseH=0;
+// ── Carica SVG specifico per ogni fiume ──
+// Ogni fiume ha il suo file SVG con colori già corretti
+const RIVER_SVG_FILES={
+  tevere:'fiume_tevere.svg',
+  arno:  'fiume_arno.svg',
+  po:    'fiume_po.svg',
+  senna: 'fiume_senna.svg',
+  tamigi:'fiume_tamigi.svg',
+};
 
-function loadSVGBase(callback){
-  if(_svgBase){callback();return;}
+function loadRiverSVG(riverId, callback){
+  if(RIVER_CANVASES[riverId]){if(callback)callback();return;}
   const img=new Image();
   img.onload=()=>{
-    // Rasterizza SVG su canvas temporaneo alla risoluzione di lavoro
-    const scale=0.08; // 10800*0.08=864px, 50400*0.08=4032px
-    const tmpW=Math.round(TEVERE_IMG_W*scale);
-    const tmpH=Math.round(TEVERE_IMG_H*scale);
-    const tmp=document.createElement('canvas');
-    tmp.width=tmpW; tmp.height=tmpH;
-    const tctx=tmp.getContext('2d');
-    tctx.drawImage(img,0,0,tmpW,tmpH);
-    _svgBase=tctx.getImageData(0,0,tmpW,tmpH);
-    _svgBaseW=tmpW; _svgBaseH=tmpH;
-    callback();
+    RIVER_CANVASES[riverId]={img:img, isRealImage:true, w:10800, h:50400};
+    if(callback)callback();
   };
-  img.onerror=()=>{callback();};
-  img.src='fiume_tevere.svg';
+  img.onerror=()=>{
+    console.warn('SVG non trovato:',riverId);
+    if(callback)callback();
+  };
+  img.src=RIVER_SVG_FILES[riverId]||('fiume_'+riverId+'.svg');
 }
 
-// Genera canvas recolorato per un fiume — sostituisce i colori SVG originali
-// con la palette del fiume specifico
-function generateRiverFromSVG(riverId){
-  if(RIVER_CANVASES[riverId]) return;
-
-  const palette=RIVER_PALETTES[riverId]||RIVER_PALETTES.tevere;
-  const orig=SVG_ORIG_COLORS;
-
-  const W=_svgBaseW, H=_svgBaseH;
-  const oc=document.createElement('canvas');
-  oc.width=W; oc.height=H;
-  const ctx=oc.getContext('2d');
-
-  // Copia pixel recolorati
-  const src=_svgBase.data;
-  const dst=ctx.createImageData(W,H);
-  const d=dst.data;
-
-  for(let i=0;i<src.length;i+=4){
-    const sr=src[i], sg=src[i+1], sb=src[i+2];
-    let bestIdx=0, bestDist=Infinity;
-    for(let c=0;c<orig.length;c++){
-      const dr=sr-orig[c][0], dg=sg-orig[c][1], db=sb-orig[c][2];
-      const dist=dr*dr+dg*dg+db*db;
-      if(dist<bestDist){bestDist=dist;bestIdx=c;}
-    }
-    const [tr,tg,tb]=palette[bestIdx];
-    d[i]=tr; d[i+1]=tg; d[i+2]=tb; d[i+3]=255;
-  }
-
-  ctx.putImageData(dst,0,0);
-  RIVER_CANVASES[riverId]={canvas:oc, isRealImage:true, w:TEVERE_IMG_W, h:TEVERE_IMG_H};
-}
-
-// ── Inizializza tutti i fiumi ──
 function initRiverCanvases(){
-  // Carica SVG base poi genera tutti i fiumi recolorati
-  loadSVGBase(()=>{
-    if(!_svgBase) return; // SVG non disponibile
-    const ids=Object.keys(RIVERS);
-    let i=0;
-    function next(){
-      if(i>=ids.length) return;
-      const id=ids[i++];
-      setTimeout(()=>{generateRiverFromSVG(id);next();},30);
-    }
-    next();
+  Object.keys(RIVER_SVG_FILES).forEach((id,i)=>{
+    setTimeout(()=>loadRiverSVG(id), i*50);
   });
 }
 
