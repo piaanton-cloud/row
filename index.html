@@ -890,7 +890,7 @@ function drawTrack(meters){
 
     ctx.drawImage(rc.canvas, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
-    // ── Noise texture — alpha 22 (+20% rispetto a 18) ──
+    // ── Noise texture — alpha originale 18 ──
     if(!trackCanvas._noiseTex){
       const nz=document.createElement('canvas'); nz.width=256; nz.height=256;
       const nzctx=nz.getContext('2d');
@@ -899,7 +899,7 @@ function drawTrack(meters){
       for(let j=0;j<256*256;j++){
         s=(s*9301+49297)%233280;
         const v=Math.floor((s/233280)*255);
-        nd[j*4]=nd[j*4+1]=nd[j*4+2]=v; nd[j*4+3]=22; // alpha +20%
+        nd[j*4]=nd[j*4+1]=nd[j*4+2]=v; nd[j*4+3]=18; // alpha originale
       }
       nzctx.putImageData(nzimg,0,0);
       trackCanvas._noiseTex=ctx.createPattern(nz,'repeat');
@@ -1019,8 +1019,8 @@ function generateRiverFromSVG(riverId){
   const dst=ctx.createImageData(W,H);
   const d=dst.data;
 
-  // Noise +20% rispetto al Tevere originale (alpha 22 invece di 18)
-  const NOISE_AMP=34; // variazione colore per pixel ±17
+  // Noise nel recolor: ampiezza originale ±14
+  const NOISE_AMP=28; // variazione colore per pixel ±14
   let ns=(riverId.charCodeAt(0)*1337+42)*9301+49297;
   const nrnd=()=>{ns=(ns*9301+49297)%233280;return ns/233280;};
 
