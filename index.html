@@ -869,38 +869,29 @@ function drawTrack(meters){
   // ── IMMAGINE FIUME — scorre sotto il cursore fisso ──
   const rc=RIVER_CANVASES[ACTIVE_RIVER_ID];
 
-  if(rc&&rc.isRealImage&&rc.img){
+  if(rc&&rc.canvas){
+    // Tutti i fiumi ora usano canvas recolorato con stesse dimensioni SVG
     const IW=rc.w, IH=rc.h;
     const MARGIN=0.10;
     const yStart=IH*MARGIN;
     const yEnd=IH*(1-MARGIN);
 
-    // Direzione corretta: a 0m mostra la cima (yEnd), a 15km mostra il fondo (yStart)
-    // Così l'immagine scorre dall'alto verso il basso (paesaggio sale = si va avanti)
     const imgY=yEnd-(meters/15000)*(yEnd-yStart);
     const imgYc=Math.max(yStart,Math.min(yEnd,imgY));
 
-    // Centroide del fiume a questa Y
     const rivX=tevereCXatY(imgYc);
 
-    // srcH = 5% altezza immagine → srcW = srcH*(W/H) = ~720px < IW(1200px)
-    // Questo lascia ~480px di margine laterale per seguire le curve del fiume
-    // Zoom risultante ~1.5x — abbastanza per percepire il movimento
-    const srcH=Math.round(IH*0.04);
-    const srcW=Math.round(srcH*(W/H));
+    let srcH=Math.round(IH*0.04);
+    let srcW=Math.round(srcH*(W/H));
+    if(srcW>IW){ srcW=IW; srcH=Math.round(IW*(H/W)); }
 
-    // Finestra verticale: imgYc sotto il cursore fisso
     const srcYtop=Math.max(0,Math.min(IH-srcH, imgYc - srcH*(BOAT_Y/H)));
-
-    // Finestra orizzontale: rivX dell'immagine allineato a BOAT_X del canvas
     const srcXtop=Math.max(0,Math.min(IW-srcW, rivX*IW - srcW*(BOAT_X/W)));
 
-    ctx.drawImage(rc.img, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
+    ctx.drawImage(rc.canvas, srcXtop, srcYtop, srcW, srcH, 0, 0, W, H);
 
-    // ── Noise texture — aumenta percezione di movimento ──
-    // Il noise scorre verticalmente con i metri (offset = scroll % 256)
+    // ── Noise texture — alpha 22 (+20% rispetto a 18) ──
     if(!trackCanvas._noiseTex){
-      // Genera una volta sola un canvas noise 256x256 tileable
       const nz=document.createElement('canvas'); nz.width=256; nz.height=256;
       const nzctx=nz.getContext('2d');
       const nzimg=nzctx.createImageData(256,256); const nd=nzimg.data;
@@ -908,7 +899,7 @@ function drawTrack(meters){
       for(let j=0;j<256*256;j++){
         s=(s*9301+49297)%233280;
         const v=Math.floor((s/233280)*255);
-        nd[j*4]=nd[j*4+1]=nd[j*4+2]=v; nd[j*4+3]=18; // alpha 7%
+        nd[j*4]=nd[j*4+1]=nd[j*4+2]=v; nd[j*4+3]=22; // alpha +20%
       }
       nzctx.putImageData(nzimg,0,0);
       trackCanvas._noiseTex=ctx.createPattern(nz,'repeat');
@@ -916,16 +907,10 @@ function drawTrack(meters){
     const noiseOffY=(meters*2.5)%256;
     const np=trackCanvas._noiseTex;
     if(np&&np.setTransform) np.setTransform(new DOMMatrix().translateSelf(0,noiseOffY));
-    ctx.fillStyle=np;
-    ctx.fillRect(0,0,W,H);
-
-  } else if(rc&&rc.canvas){
-    const PX_PER_M=rc.h/15000;
-    const scrollY=Math.min(meters*PX_PER_M, rc.h-H);
-    const srcX=Math.max(0,(rc.w-W)/2);
-    ctx.drawImage(rc.canvas, srcX, scrollY, W, H, 0, 0, W, H);
+    ctx.fillStyle=np; ctx.fillRect(0,0,W,H);
 
   } else {
+    // Canvas non ancora pronto — sfondo piatto
     ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
   }
 
@@ -959,113 +944,125 @@ function drawTrack(meters){
 // ═══════════════════════════════════════════════════════
 const RIVER_CANVASES={};
 
-// ── Centroide del fiume Tevere nell'immagine (x normalizzato, campionato ogni 50px) ──
-// Usato per tenere il cursore sempre sul corso d'acqua
+// ── Centroide del fiume (x norm, ogni 200 SVG units) ──
 const TEVERE_CX_DATA=[0.41261, 0.41509, 0.43525, 0.46262, 0.49252, 0.51456, 0.53918, 0.58223, 0.62181, 0.65578, 0.67006, 0.67918, 0.68367, 0.68381, 0.68006, 0.67265, 0.66239, 0.65085, 0.63923, 0.6275, 0.6182, 0.61187, 0.61054, 0.61059, 0.61134, 0.61065, 0.61009, 0.60901, 0.60824, 0.60782, 0.60949, 0.61366, 0.62171, 0.63594, 0.65429, 0.67637, 0.69646, 0.71692, 0.73333, 0.74639, 0.7539, 0.75888, 0.76239, 0.7662, 0.76959, 0.77285, 0.77505, 0.77593, 0.77399, 0.76857, 0.75471, 0.73103, 0.70284, 0.67246, 0.64523, 0.61188, 0.57871, 0.54807, 0.52438, 0.50474, 0.47832, 0.44934, 0.42014, 0.39812, 0.37639, 0.35889, 0.34898, 0.35574, 0.37158, 0.39293, 0.41441, 0.44261, 0.47098, 0.4984, 0.51904, 0.53929, 0.55957, 0.57994, 0.59741, 0.61017, 0.6172, 0.61873, 0.61653, 0.61157, 0.60569, 0.59965, 0.59532, 0.59288, 0.59273, 0.59256, 0.59096, 0.5862, 0.57888, 0.57001, 0.56216, 0.55615, 0.55277, 0.55126, 0.5516, 0.55492, 0.56103, 0.57107, 0.58253, 0.59626, 0.60967, 0.62431, 0.63946, 0.65424, 0.66648, 0.67525, 0.68126, 0.68546, 0.68779, 0.68973, 0.68998, 0.68831, 0.68502, 0.68014, 0.6755, 0.66933, 0.66454, 0.65946, 0.65596, 0.65284, 0.65031, 0.64795, 0.64523, 0.64347, 0.64272, 0.64531, 0.649, 0.65372, 0.6579, 0.66357, 0.67025, 0.67745, 0.68349, 0.68753, 0.68872, 0.68835, 0.68653, 0.68364, 0.67846, 0.66999, 0.6575, 0.64239, 0.62649, 0.61208, 0.59845, 0.58453, 0.5727, 0.56208, 0.55598, 0.55145, 0.55116, 0.55323, 0.55859, 0.56506, 0.57322, 0.58127, 0.58799, 0.5923, 0.59355, 0.59348, 0.59268, 0.59351, 0.59559, 0.59985, 0.60519, 0.61134, 0.61645, 0.61873, 0.6172, 0.61017, 0.59741, 0.57994, 0.55957, 0.53929, 0.51904, 0.4984, 0.47098, 0.44261, 0.41441, 0.39293, 0.37158, 0.35574, 0.34898, 0.35889, 0.37639, 0.39812, 0.42014, 0.44934, 0.47832, 0.50474, 0.52438, 0.54807, 0.57871, 0.61188, 0.64523, 0.67246, 0.70284, 0.73103, 0.75471, 0.76857, 0.77399, 0.77593, 0.77505, 0.77285, 0.76959, 0.7662, 0.76239, 0.75888, 0.7539, 0.74639, 0.73333, 0.71692, 0.69646, 0.67637, 0.65429, 0.63594, 0.62171, 0.61366, 0.60949, 0.60782, 0.60824, 0.60901, 0.61009, 0.61065, 0.61134, 0.61059, 0.61054, 0.61187, 0.6182, 0.6275, 0.63923, 0.65085, 0.66239, 0.67265, 0.68006, 0.68381, 0.68367, 0.67918, 0.67006, 0.65578, 0.62181, 0.58223, 0.53918, 0.51456, 0.49252, 0.46262, 0.43525, 0.41509, 0.41261];
-const TEVERE_IMG_H=50400; // SVG viewBox height
+const TEVERE_IMG_H=50400;
+const TEVERE_IMG_W=10800;
+const TEVERE_CX_STEP=200;
 
-// Interpola il centroide del fiume Tevere a una Y assoluta nell'immagine
 function tevereCXatY(imgY){
-  const step=200;
-  const idx=Math.max(0,Math.min(TEVERE_CX_DATA.length-2, imgY/step));
+  const idx=Math.max(0,Math.min(TEVERE_CX_DATA.length-2, imgY/TEVERE_CX_STEP));
   const i0=Math.floor(idx);
   const t=idx-i0;
   return TEVERE_CX_DATA[i0]*(1-t)+TEVERE_CX_DATA[i0+1]*t;
 }
 
-// ── Carica immagine Tevere (SVG vettoriale) ──
-function loadTevereImage(){
-  if(RIVER_CANVASES.tevere) return;
+// Colori SVG originali del Tevere (in ordine: canale scuro → riva → sfondo)
+// Estratti dal PDF: rgb% → [0-255]
+const SVG_ORIG_COLORS=[
+  [4,78,84],    // rgb(1.57%,30.59%,32.94%) — canale centrale scuro
+  [10,104,112], // rgb(3.92%,40.78%,43.92%) — canale interno
+  [68,164,160], // rgb(26.67%,64.31%,62.74%) — canale chiaro
+  [136,166,136],// rgb(10.20%,53.33%,53.33%) — transizione acqua
+  [180,166,150],// rgb(70.59%,65.10%,58.82%) — riva sabbia
+  [224,212,196],// rgb(87.84%,83.14%,76.86%) — sfondo
+];
+
+// Palette accentuate per ogni fiume — più contrasto tra loro
+const RIVER_PALETTES={
+  tevere: [[4,78,84],[10,104,112],[26,136,136],[68,164,160],[180,166,150],[224,212,196]],
+  arno:   [[18,52,42],[28,82,72],[55,120,108],[100,165,155],[175,162,145],[221,212,192]], // verde smeraldo accentuato
+  po:     [[35,58,22],[55,88,38],[88,125,58],[138,168,98],[178,164,142],[221,212,184]],   // verde fango accentuato
+  senna:  [[8,22,58],[20,45,95],[42,78,138],[88,138,192],[175,162,148],[220,212,200]],   // blu acciaio accentuato
+  tamigi: [[6,32,28],[18,55,48],[35,90,80],[72,138,128],[175,162,148],[216,208,192]],    // verde petrolio accentuato
+};
+
+// SVG base condiviso — caricato una volta sola
+let _svgBase=null;
+let _svgBaseW=0, _svgBaseH=0;
+
+function loadSVGBase(callback){
+  if(_svgBase){callback();return;}
   const img=new Image();
   img.onload=()=>{
-    RIVER_CANVASES.tevere={img:img, isRealImage:true, w:10800, h:50400};
+    // Rasterizza SVG su canvas temporaneo alla risoluzione di lavoro
+    const scale=0.08; // 10800*0.08=864px, 50400*0.08=4032px
+    const tmpW=Math.round(TEVERE_IMG_W*scale);
+    const tmpH=Math.round(TEVERE_IMG_H*scale);
+    const tmp=document.createElement('canvas');
+    tmp.width=tmpW; tmp.height=tmpH;
+    const tctx=tmp.getContext('2d');
+    tctx.drawImage(img,0,0,tmpW,tmpH);
+    _svgBase=tctx.getImageData(0,0,tmpW,tmpH);
+    _svgBaseW=tmpW; _svgBaseH=tmpH;
+    callback();
   };
-  img.onerror=()=>{
-    generateRiverCanvasProc('tevere');
-  };
+  img.onerror=()=>{callback();};
   img.src='fiume_tevere.svg';
 }
 
-// ── Genera canvas procedurale per gli altri fiumi ──
-function generateRiverCanvasProc(riverId){
-  if(RIVER_CANVASES[riverId]&&RIVER_CANVASES[riverId].canvas) return;
-  const river=RIVERS[riverId]||RIVERS.tevere;
-  const topo=river.topo;
-  const layers=topo.layers;
-  const bg=topo.bg;
-  const RC_W=800, RC_H=4000;
+// Genera canvas recolorato per un fiume — sostituisce i colori SVG originali
+// con la palette del fiume specifico
+function generateRiverFromSVG(riverId){
+  if(RIVER_CANVASES[riverId]) return;
+
+  const palette=RIVER_PALETTES[riverId]||RIVER_PALETTES.tevere;
+  const orig=SVG_ORIG_COLORS;
+
+  const W=_svgBaseW, H=_svgBaseH;
   const oc=document.createElement('canvas');
-  oc.width=RC_W; oc.height=RC_H;
+  oc.width=W; oc.height=H;
   const ctx=oc.getContext('2d');
-  ctx.fillStyle=bg; ctx.fillRect(0,0,RC_W,RC_H);
-  const noisePatterns=layers.map((l,i)=>{
-    const sz=256,nc=document.createElement('canvas');
-    nc.width=sz;nc.height=sz;
-    const nctx=nc.getContext('2d');
-    const img2=nctx.createImageData(sz,sz);const d=img2.data;
-    let s=(i*1337+42+(riverId.charCodeAt(0)||0)*31)*9301+49297;
-    const rnd=()=>{s=(s*9301+49297)%233280;return s/233280;};
-    const[r,g,bl]=l.c;
-    for(let j=0;j<sz*sz;j++){
-      const v=(rnd()-0.5)*28;const idx=j*4;
-      d[idx]=Math.max(0,Math.min(255,r+v));
-      d[idx+1]=Math.max(0,Math.min(255,g+v));
-      d[idx+2]=Math.max(0,Math.min(255,bl+v));
-      d[idx+3]=255;
+
+  // Copia pixel recolorati
+  const src=_svgBase.data;
+  const dst=ctx.createImageData(W,H);
+  const d=dst.data;
+
+  // Noise +20% rispetto al Tevere originale (alpha 22 invece di 18)
+  const NOISE_AMP=34; // variazione colore per pixel ±17
+  let ns=(riverId.charCodeAt(0)*1337+42)*9301+49297;
+  const nrnd=()=>{ns=(ns*9301+49297)%233280;return ns/233280;};
+
+  for(let i=0;i<src.length;i+=4){
+    const sr=src[i], sg=src[i+1], sb=src[i+2];
+
+    // Trova il colore originale più vicino
+    let bestIdx=0, bestDist=Infinity;
+    for(let c=0;c<orig.length;c++){
+      const dr=sr-orig[c][0], dg=sg-orig[c][1], db=sb-orig[c][2];
+      const dist=dr*dr+dg*dg+db*db;
+      if(dist<bestDist){bestDist=dist;bestIdx=c;}
     }
-    nctx.putImageData(img2,0,0);
-    return ctx.createPattern(nc,'repeat');
-  });
-  const CX=RC_W*0.50;
-  function riverCX(y){return CX+Math.sin(y/800*2.1+0.4)*RC_W*0.06+Math.sin(y/800*3.7+1.9)*RC_W*0.03+Math.sin(y/800*6.2+3.3)*RC_W*0.015;}
-  function edgeX(y,dist,seed){return riverCX(y)+(dist+(Math.sin(y/71.3+seed)*dist*0.55+Math.sin(y/37.1+seed*1.7)*dist*0.35+Math.sin(y/19.3+seed*3.1)*dist*0.22+Math.sin(y/11.7+seed*5.3)*dist*0.14+Math.sin(y/7.1+seed*8.9)*dist*0.08+Math.sin(y/4.3+seed*13.2)*dist*0.04+Math.sin(y/2.9+seed*19.7)*dist*0.02));}
-  for(let i=layers.length-2;i>=0;i--){
-    const l=layers[i];
-    const seedR=i*4.1+1.3+(riverId.charCodeAt(0)||0)*0.7;
-    const seedL=i*4.1+6.8+(riverId.charCodeAt(0)||0)*0.7;
-    const pat=noisePatterns[i];
-    ctx.fillStyle=pat;
-    ctx.beginPath();
-    ctx.moveTo(edgeX(-10,l.d,seedR),-10);
-    for(let y=0;y<=RC_H+10;y+=4) ctx.lineTo(edgeX(y,l.d,seedR),y);
-    ctx.lineTo(RC_W+10,RC_H+10);ctx.lineTo(RC_W+10,-10);ctx.closePath();ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(riverCX(-10)-(edgeX(-10,l.d,seedL)-riverCX(-10)),-10);
-    for(let y=0;y<=RC_H+10;y+=4){const ex=edgeX(y,l.d,seedL)-riverCX(y);ctx.lineTo(riverCX(y)-ex,y);}
-    ctx.lineTo(-10,RC_H+10);ctx.lineTo(-10,-10);ctx.closePath();ctx.fill();
+
+    // Applica colore palette + noise
+    const nv=(nrnd()-0.5)*NOISE_AMP;
+    const [tr,tg,tb]=palette[bestIdx];
+    d[i  ]=Math.max(0,Math.min(255,tr+nv));
+    d[i+1]=Math.max(0,Math.min(255,tg+nv));
+    d[i+2]=Math.max(0,Math.min(255,tb+nv));
+    d[i+3]=255;
   }
-  let sr=riverId.charCodeAt(0)*31+42;
-  const prnd=()=>{sr=(sr*9301+49297)%233280;return sr/233280;};
-  for(let r=0;r<Math.floor(RC_H/250);r++){
-    const y=r*250+prnd()*200;const cx2=riverCX(y);
-    const side=(prnd()>0.5)?1:-1;const isInner=prnd()<0.35;
-    const baseDist=isInner?layers[1].d*(0.4+prnd()*0.4):layers[3].d*(1.1+prnd()*0.6);
-    const rx=cx2+side*(baseDist+(prnd()-0.5)*20);
-    const rw=(isInner?6:15)+(prnd()*8);const rh=rw*(0.3+prnd()*0.2);
-    const angle=prnd()*Math.PI;
-    ctx.save();ctx.translate(rx,y);ctx.rotate(angle);
-    for(let s=2;s>=0;s--){const sc=1-s*0.28;const li=isInner?Math.min(s,layers.length-1):Math.min(s+2,layers.length-1);ctx.beginPath();ctx.ellipse(0,0,rw*sc,rh*sc,0,0,Math.PI*2);ctx.fillStyle=noisePatterns[li];ctx.fill();}
-    ctx.beginPath();ctx.ellipse(0,0,rw,rh,0,0,Math.PI*2);ctx.strokeStyle='rgba(105,90,73,0.15)';ctx.lineWidth=1;ctx.stroke();
-    ctx.restore();
-  }
-  RIVER_CANVASES[riverId]={canvas:oc, isRealImage:false, w:RC_W, h:RC_H};
+
+  ctx.putImageData(dst,0,0);
+  RIVER_CANVASES[riverId]={canvas:oc, isRealImage:true, w:TEVERE_IMG_W, h:TEVERE_IMG_H};
 }
 
 // ── Inizializza tutti i fiumi ──
 function initRiverCanvases(){
-  // Tevere: immagine reale
-  loadTevereImage();
-  // Altri fiumi: procedurali in background
-  const procIds=Object.keys(RIVERS).filter(id=>id!=='tevere');
-  let idx=0;
-  function next(){
-    if(idx>=procIds.length) return;
-    const id=procIds[idx++];
-    setTimeout(()=>{generateRiverCanvasProc(id);next();},50);
-  }
-  setTimeout(next,100); // piccolo delay per non bloccare il caricamento
+  // Carica SVG base poi genera tutti i fiumi recolorati
+  loadSVGBase(()=>{
+    if(!_svgBase) return; // SVG non disponibile
+    const ids=Object.keys(RIVERS);
+    let i=0;
+    function next(){
+      if(i>=ids.length) return;
+      const id=ids[i++];
+      setTimeout(()=>{generateRiverFromSVG(id);next();},30);
+    }
+    next();
+  });
 }
-
 
 
 function initHomeCanvas(){
