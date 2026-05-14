@@ -43,9 +43,19 @@ body{min-height:100dvh;}
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
-#page-home{background:#e0d4c4;}
+/* ═══ HOME ═══ */
+#page-home{background:#0a0e14;overflow:hidden;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{position:absolute;inset:0;width:100%;height:100%;}
+/* Overlay scuro sopra il canvas per leggibilità testo */
+.home-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to right,
+    rgba(6,10,18,0.88) 0%,
+    rgba(6,10,18,0.55) 45%,
+    rgba(6,10,18,0.08) 100%
+  );
+}
 .home-content{
   position:absolute;inset:0;z-index:10;
   display:flex;flex-direction:column;
@@ -54,36 +64,47 @@ body{min-height:100dvh;}
   pointer-events:none;
 }
 .home-content>*{pointer-events:auto;}
+/* Linea decorativa sottile */
+.home-line{
+  width:40px;height:1px;
+  background:rgba(68,164,160,0.55);
+  margin-bottom:20px;
+}
 .home-logo{
   font-family:'Inter',sans-serif;
-  font-size:10rem;font-weight:900;
-  letter-spacing:-2px;line-height:0.9;
-  color:rgba(42,28,14,0.88);
-  margin-bottom:8px;
+  font-size:clamp(5rem,12vw,10rem);
+  font-weight:900;
+  letter-spacing:-3px;line-height:0.88;
+  color:rgba(255,255,255,0.96);
+  margin-bottom:10px;
   user-select:none;
+  text-shadow:0 2px 40px rgba(0,0,0,0.5);
 }
 .home-sub{
   font-family:'Inter',sans-serif;
-  font-size:0.62rem;font-weight:500;
-  letter-spacing:7px;text-transform:uppercase;
-  color:rgba(105,90,73,0.55);
+  font-size:0.58rem;font-weight:400;
+  letter-spacing:8px;text-transform:uppercase;
+  color:rgba(68,164,160,0.80);
   margin-bottom:52px;
 }
 .home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
 .btn-main{
   background:none;border:none;
-  color:rgba(42,28,14,0.70);
-  font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;
+  color:rgba(255,255,255,0.82);
+  font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;
   letter-spacing:7px;text-transform:uppercase;
   padding:16px 0;cursor:pointer;transition:color .15s;
+  border-top:1px solid rgba(255,255,255,0.10);
 }
+.btn-main:first-child{border-top:none;}
 .btn-main:active{opacity:0.4;}
 .btn-ghost{
   background:none;border:none;
-  color:rgba(105,90,73,0.40);
-  font-family:'Inter',sans-serif;font-size:0.68rem;font-weight:400;
+  color:rgba(255,255,255,0.30);
+  font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:400;
   letter-spacing:7px;text-transform:uppercase;
-  padding:11px 0;cursor:pointer;transition:color .15s;
+  padding:12px 0;cursor:pointer;transition:color .15s;
+  border-top:1px solid rgba(255,255,255,0.07);
 }
 .btn-ghost:active{opacity:0.3;}
 
@@ -228,16 +249,18 @@ body{min-height:100dvh;}
 .btn-pause-action:active{opacity:0.5;}
 
 /* ═══ HISTORY ═══ */
-#page-history{background:#e0d4c4;flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
+#page-history{background:#0e1118;flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
 .hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
-.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(42,28,14,0.85);}
-.hist-scroll{flex:1;overflow-y:auto;}
+.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.92);}
+.hist-scroll{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;}
 table{width:100%;border-collapse:collapse;}
-th{color:rgba(42,28,14,0.55);text-transform:uppercase;letter-spacing:2px;padding:12px 8px;border-bottom:1px solid rgba(42,28,14,0.12);text-align:center;font-size:0.52rem;font-weight:600;}
-td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:center;font-weight:400;color:rgba(42,28,14,0.60);}
-.td-m{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;color:rgba(42,28,14,0.85);}
-.td-date{font-family:'Inter',sans-serif;font-size:1rem;color:rgba(42,28,14,0.70);}
+th{color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:2px;padding:12px 6px;border-bottom:1px solid rgba(255,255,255,0.07);text-align:center;font-size:0.46rem;font-weight:600;white-space:nowrap;}
+td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center;font-weight:400;color:rgba(255,255,255,0.45);font-size:0.85rem;}
+.td-m{font-family:'Inter',sans-serif;font-size:1.15rem;font-weight:700;color:rgba(255,255,255,0.90);}
+.td-date{font-family:'Inter',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.55);}
 .best-v{color:var(--gold)!important;font-weight:700;}
+.btn-back-dark{background:none;border:none;color:rgba(255,255,255,0.35);font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;cursor:pointer;padding:8px 0;}
+.btn-back-dark:active{opacity:0.4;}
 
 /* ═══ RESUME ═══ */
 #page-resume{background:#e0d4c4;}
@@ -273,7 +296,9 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
 <!-- HOME -->
 <div id="page-home" class="page active">
   <div class="home-bg"><canvas id="home-canvas"></canvas></div>
+  <div class="home-overlay"></div>
   <div class="home-content">
+    <div class="home-line"></div>
     <div class="home-logo">ROW</div>
     <div class="home-sub">Ergometer Training</div>
     <div class="home-btns">
@@ -458,12 +483,12 @@ td{padding:10px 8px;border-bottom:1px solid rgba(105,90,73,0.10);text-align:cent
 <div id="page-history" class="page">
   <div class="hist-hdr">
     <div class="hist-title">LOGBOOK</div>
-    <button class="btn-back" onclick="switchPage('page-home')">← HOME</button>
+    <button class="btn-back-dark" onclick="switchPage('page-home')">← HOME</button>
   </div>
   <div class="hist-scroll">
     <table>
       <thead><tr>
-        <th>Data</th><th>Metri</th><th>Tempo</th><th>W med</th><th>W max</th><th>SPM</th><th>BPM</th>
+        <th>Data</th><th>Metri</th><th>Tempo</th><th>Min/500m</th><th>Kcal</th><th>W med</th><th>W max</th><th>SPM</th><th>BPM med</th><th>BPM max</th>
       </tr></thead>
       <tbody id="hist-body"></tbody>
     </table>
@@ -1030,7 +1055,7 @@ function _drawSparkles(ctx,W,H,boatX,t){
     const alpha=raw>.15?Math.pow((raw-.15)/.85,1.5):0;
     if(alpha<.04)return;
     const sy=s.fy*H;
-    const sx=boatX+s.fxOff*(_RIVA_W_C*.7);
+    const sx=boatX+s.fxOff*(_RIVA_W_C*1.19);
     const vf=1-s.fy/.676;
     const fa=alpha*vf*.95;
     if(fa<.04)return;
@@ -1090,31 +1115,23 @@ function drawTrack(meters){
     ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   }
 
-  // ── Rive con vegetazione e edifici ──
-  const sc=meters*0.5;
-  _populateSide(ctx,'L',sc,W,H,BOAT_X);
-  _populateSide(ctx,'R',sc,W,H,BOAT_X);
-  // Reset compositing dopo le rive (sicurezza)
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-
   // ── Scintille ──
   _drawSparkles(ctx,W,H,BOAT_X,performance.now()/1000);
 
-  // ── Vignette ──
+  // ── Vignette (-50%) ──
   const vr=bgRgb;
-  const gt=ctx.createLinearGradient(0,0,0,H*.44);
+  const gt=ctx.createLinearGradient(0,0,0,H*.22);
   gt.addColorStop(0,`rgba(${vr},1)`);gt.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*.48);
-  const gb2=ctx.createLinearGradient(0,H,0,H*.72);
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*.24);
+  const gb2=ctx.createLinearGradient(0,H,0,H*.86);
   gb2.addColorStop(0,`rgba(${vr},1)`);gb2.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gb2;ctx.fillRect(0,H*.68,W,H*.32);
-  const gl=ctx.createLinearGradient(0,0,W*.18,0);
+  ctx.fillStyle=gb2;ctx.fillRect(0,H*.84,W,H*.16);
+  const gl=ctx.createLinearGradient(0,0,W*.09,0);
   gl.addColorStop(0,`rgba(${vr},1)`);gl.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gl;ctx.fillRect(0,0,W*.22,H);
-  const gr=ctx.createLinearGradient(W,0,W*.82,0);
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W*.11,H);
+  const gr=ctx.createLinearGradient(W,0,W*.91,0);
   gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gr;ctx.fillRect(W*.78,0,W*.22,H);
+  ctx.fillStyle=gr;ctx.fillRect(W*.89,0,W*.11,H);
 
   // ── Cursore ──
   ctx.save();ctx.translate(BOAT_X,BOAT_Y);
@@ -1203,16 +1220,16 @@ function initHomeCanvas(){
   const ctx=cv.getContext('2d');
   const W=()=>cv.width,H=()=>cv.height;
 
+  // Palette scura — sfondo quasi-nero, fiume turchese luminoso
   const LAYERS=[
-    {d:0,  w:18,  c:[4,78,84]},
-    {d:18, w:4.1, c:[10,104,112]},
-    {d:26, w:6.1, c:[26,136,136]},
-    {d:38, w:10.2,c:[68,164,160]},
-    {d:59, w:16.2,c:[180,166,150]},
-    {d:91, w:999, c:[224,212,196]},
+    {d:0,  w:18,  c:[6,110,118]},    // canale centrale — turchese brillante
+    {d:18, w:4.1, c:[12,85,92]},
+    {d:26, w:6.1, c:[18,58,66]},
+    {d:38, w:10.2,c:[14,42,50]},
+    {d:59, w:16.2,c:[10,28,36]},
+    {d:91, w:999, c:[10,14,20]},     // sfondo quasi-nero
   ];
 
-  // Pre-genera noise patterns
   const noiseCanvases=LAYERS.map((l,i)=>{
     const sz=256,oc=document.createElement('canvas');
     oc.width=sz;oc.height=sz;
@@ -1222,7 +1239,7 @@ function initHomeCanvas(){
     const rnd=()=>{s=(s*9301+49297)%233280;return s/233280;};
     const[r,g,b]=l.c;
     for(let j=0;j<sz*sz;j++){
-      const v=(rnd()-0.5)*28;
+      const v=(rnd()-0.5)*22;
       const idx=j*4;
       d[idx]=Math.max(0,Math.min(255,r+v));
       d[idx+1]=Math.max(0,Math.min(255,g+v));
@@ -1239,7 +1256,7 @@ function initHomeCanvas(){
     for(let i=0;i<=600;i++){
       const t=i/600;
       const y=t*ch*4.0+scroll;
-      const x=cw*0.52
+      const x=cw*0.62
         +Math.sin(t*Math.PI*2.0+0.5)*cw*0.10
         +Math.sin(t*Math.PI*3.8+1.4)*cw*0.045
         +Math.sin(t*Math.PI*6.8+2.6)*cw*0.020
@@ -1285,15 +1302,15 @@ function initHomeCanvas(){
   }
 
   let scroll=0;
-  // Scorrimento lentissimo — effetto fiume che scorre
   function frame(){
     const cw=W(),ch=H();
     if(!patterns) patterns=noiseCanvases.map(nc=>ctx.createPattern(nc,'repeat'));
 
-    scroll-=0.18; // velocità scorrimento lenta
+    scroll-=0.18;
     if(scroll<-ch*3.0) scroll=0;
 
-    ctx.fillStyle='rgb(224,212,196)';
+    // Sfondo scuro
+    ctx.fillStyle='rgb(10,14,20)';
     ctx.fillRect(0,0,cw,ch);
 
     ctx.save();
@@ -1315,19 +1332,21 @@ function initHomeCanvas(){
       }
     }
 
-    // Vignette top e bottom
-    const vg=ctx.createLinearGradient(0,0,0,ch);
-    vg.addColorStop(0,'rgba(224,212,196,0.98)');
-    vg.addColorStop(0.12,'rgba(224,212,196,0)');
-    vg.addColorStop(0.88,'rgba(224,212,196,0)');
-    vg.addColorStop(1,'rgba(224,212,196,0.98)');
-    ctx.fillStyle=vg;ctx.fillRect(0,0,cw,ch);
+    // Bagliore luminoso sul canale centrale (luce sull'acqua)
+    const cxNow=center[Math.floor(center.length*(0.3-scroll/ch/4+1)%1)||0]?.[0]||cw*0.62;
+    const glow=ctx.createRadialGradient(cxNow,ch*.35,0,cxNow,ch*.35,cw*.18);
+    glow.addColorStop(0,'rgba(40,180,190,0.12)');
+    glow.addColorStop(1,'rgba(40,180,190,0)');
+    ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
 
-    // Vignette sinistra — zona testo
-    const vl=ctx.createLinearGradient(0,0,cw*0.55,0);
-    vl.addColorStop(0,'rgba(224,212,196,0.92)');
-    vl.addColorStop(1,'rgba(224,212,196,0)');
-    ctx.fillStyle=vl;ctx.fillRect(0,0,cw*0.58,ch);
+    // Vignette scura top/bottom sottile
+    const bg='10,14,20';
+    const vg=ctx.createLinearGradient(0,0,0,ch);
+    vg.addColorStop(0,`rgba(${bg},0.96)`);
+    vg.addColorStop(0.10,`rgba(${bg},0)`);
+    vg.addColorStop(0.90,`rgba(${bg},0)`);
+    vg.addColorStop(1,`rgba(${bg},0.96)`);
+    ctx.fillStyle=vg;ctx.fillRect(0,0,cw,ch);
 
     ctx.restore();
     requestAnimationFrame(frame);
@@ -2013,7 +2032,10 @@ async function saveAndFinish(e){
   if(currentSessionId!==null){
     try{
       await flushSamples();
-      await dbPut('sessions',{id:currentSessionId,date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:session.meters,time:dur,timeSec:parseTime(dur),maxWatt:session.maxWatt,avgWatt:avgW,strokes:session.strokes,avgSpm:avgS,avgBpm:avgB,maxBpm:session.maxBpm});
+      const _kcal=Math.round(avgW*parseTime(dur)*0.00104);
+      const _pace=session.meters>0?Math.round(parseTime(dur)/(session.meters/500)):0;
+      const _paceStr=_pace>0?Math.floor(_pace/60)+':'+(('0'+Math.floor(_pace%60)).slice(-2)):'—';
+      await dbPut('sessions',{id:currentSessionId,date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:session.meters,time:dur,timeSec:parseTime(dur),maxWatt:session.maxWatt,avgWatt:avgW,strokes:session.strokes,avgSpm:avgS,avgBpm:avgB,maxBpm:session.maxBpm,kcal:_kcal,avgPace:_paceStr});
       showDbStatus('✓ Salvato');
     }catch{showDbStatus('⚠ Errore salvataggio');}
   }
@@ -2040,7 +2062,18 @@ async function showHistory(){
     const sessions=await dbGetAll('sessions');
     const valid=sessions.filter(s=>s.meters>0);
     const bests={meters:Math.max(0,...valid.map(s=>s.meters||0)),avgWatt:Math.max(0,...valid.map(s=>s.avgWatt||0))};
-    document.getElementById('hist-body').innerHTML=valid.slice().reverse().map(s=>`<tr><td class="td-date">${s.date||'—'}</td><td class="td-m ${s.meters===bests.meters?'best-v':''}">${s.meters}m</td><td>${s.time||'—'}</td><td class="${s.avgWatt===bests.avgWatt?'best-v':''}">${s.avgWatt||0}W</td><td>${s.maxWatt||0}W</td><td>${s.avgSpm||0}</td><td>${s.avgBpm||0}</td></tr>`).join('');
+    document.getElementById('hist-body').innerHTML=valid.slice().reverse().map(s=>`<tr>
+  <td class="td-date">${s.date||'—'}</td>
+  <td class="td-m ${s.meters===bests.meters?'best-v':''}">${s.meters}m</td>
+  <td>${s.time||'—'}</td>
+  <td class="${s.avgPace&&s.avgPace===bests.avgPace?'best-v':''}">${s.avgPace||'—'}</td>
+  <td>${s.kcal||'—'}</td>
+  <td class="${s.avgWatt===bests.avgWatt?'best-v':''}">${s.avgWatt||0}W</td>
+  <td>${s.maxWatt||0}W</td>
+  <td>${s.avgSpm||0}</td>
+  <td>${s.avgBpm||0}</td>
+  <td class="${s.maxBpm===bests.maxBpm?'best-v':''}">${s.maxBpm||0}</td>
+</tr>`).join('');
   }catch{document.getElementById('hist-body').innerHTML='<tr><td colspan="7" style="color:var(--dim);padding:20px">Nessun dato</td></tr>';}
   switchPage('page-history');
 }
