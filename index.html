@@ -834,8 +834,126 @@ function posAtMeters(m){const real=Math.max(0,Math.min(m,TOTAL_M));if(real<=0)re
 function calcBearing(a,b){const dLon=(b[1]-a[1])*Math.PI/180;const lat1=a[0]*Math.PI/180,lat2=b[0]*Math.PI/180;const x=Math.sin(dLon)*Math.cos(lat2);const y=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);return(Math.atan2(x,y)*180/Math.PI+360)%360;}
 
 // ═══════════════════════════════════════════════════════
-//  CANVAS TRACCIATO
+//  SISTEMA 1 — ATMOSFERA DINAMICA
+//  Ciclo: alba → giorno → tramonto → notte
+//  Durata ciclo = durata allenamento (max 40 min)
 // ═══════════════════════════════════════════════════════
+const ATMO_PHASES=[
+  // name, skyRgb (overlay colore cielo), sparkleAlpha, sparkleColor
+  {name:'alba',    sky:[255,160,80],  skyA:0.12, spkA:0.7,  spkC:[255,220,180]},
+  {name:'giorno',  sky:[180,220,255], skyA:0.04, spkA:1.0,  spkC:[255,255,255]},
+  {name:'pomeriggio',sky:[255,200,100],skyA:0.10,spkA:0.85, spkC:[255,235,180]},
+  {name:'tramonto',sky:[255,80,40],   skyA:0.18, spkA:0.6,  spkC:[255,160,100]},
+  {name:'notte',   sky:[20,30,80],    skyA:0.35, spkA:0.4,  spkC:[180,210,255]},
+];
+let atmoPhaseIdx=1; // parte da "giorno"
+let atmoT=0;        // 0..1 dentro la fase corrente
+let atmoSessionSec=0;
+const ATMO_PHASE_DUR=8*60; // ogni fase dura 8 minuti → ciclo 40 min
+
+function updateAtmo(elapsedSec){
+  const totalCycle=ATMO_PHASE_DUR*ATMO_PHASES.length;
+  const t=(elapsedSec%(totalCycle))/totalCycle;
+  const rawPhase=t*ATMO_PHASES.length;
+  atmoPhaseIdx=Math.floor(rawPhase)%ATMO_PHASES.length;
+  atmoT=rawPhase-Math.floor(rawPhase);
+}
+
+function getAtmoBlend(){
+  const a=ATMO_PHASES[atmoPhaseIdx];
+  const b=ATMO_PHASES[(atmoPhaseIdx+1)%ATMO_PHASES.length];
+  const t=atmoT;
+  return{
+    sky:a.sky.map((v,i)=>Math.round(v*(1-t)+b.sky[i]*t)),
+    skyA:a.skyA*(1-t)+b.skyA*t,
+    spkA:a.spkA*(1-t)+b.spkA*t,
+    spkC:a.spkC.map((v,i)=>Math.round(v*(1-t)+b.spkC[i]*t)),
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+//  SISTEMA 2 — GHOST VISIVO
+//  Freccia semitrasparente = record precedente stesso fiume
+// ═══════════════════════════════════════════════════════
+let ghostVisualM=null; // metri del ghost al frame corrente
+
+function updateGhostVisual(elapsedSec){
+  const gm=getGhostMeters(elapsedSec);
+  ghostVisualM=(gm!==null)?gm:null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  SISTEMA 3 — AUDIO AMBIENTALE (Web Audio API)
+//  Acqua: rumore filtrato continuo
+//  Vento: aumenta con la velocità
+// ═══════════════════════════════════════════════════════
+let audioCtx=null,waterGain=null,windGain=null,windFilter=null;
+let audioStarted=false;
+
+function initAudio(){
+  if(audioStarted)return;
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+
+    // ── ACQUA: white noise → bandpass centrato su 800Hz ──
+    const bufLen=audioCtx.sampleRate*2;
+    const buf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<bufLen;i++) data[i]=(Math.random()*2-1);
+    const waterSrc=audioCtx.createBufferSource();
+    waterSrc.buffer=buf; waterSrc.loop=true;
+
+    // Filtro bandpass per suono acqua
+    const waterBP=audioCtx.createBiquadFilter();
+    waterBP.type='bandpass'; waterBP.frequency.value=700; waterBP.Q.value=0.8;
+    const waterBP2=audioCtx.createBiquadFilter();
+    waterBP2.type='bandpass'; waterBP2.frequency.value=300; waterBP2.Q.value=1.2;
+
+    waterGain=audioCtx.createGain(); waterGain.gain.value=0.12;
+    waterSrc.connect(waterBP); waterBP.connect(waterBP2); waterBP2.connect(waterGain);
+    waterGain.connect(audioCtx.destination);
+    waterSrc.start();
+
+    // ── VENTO: white noise → lowpass, volume proporzionale alla velocità ──
+    const windBuf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
+    const wdata=windBuf.getChannelData(0);
+    for(let i=0;i<bufLen;i++) wdata[i]=(Math.random()*2-1);
+    const windSrc=audioCtx.createBufferSource();
+    windSrc.buffer=windBuf; windSrc.loop=true;
+
+    windFilter=audioCtx.createBiquadFilter();
+    windFilter.type='lowpass'; windFilter.frequency.value=180;
+    windGain=audioCtx.createGain(); windGain.gain.value=0;
+    windSrc.connect(windFilter); windFilter.connect(windGain);
+    windGain.connect(audioCtx.destination);
+    windSrc.start();
+
+    audioStarted=true;
+  }catch(e){console.warn('Audio non disponibile:',e);}
+}
+
+function updateAudio(mps){
+  if(!audioStarted||!audioCtx)return;
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  // Acqua: volume fisso con leggera variazione notturna
+  const atmo=getAtmoBlend();
+  const waterVol=atmo.name==='notte'?0.08:0.12;
+  if(waterGain) waterGain.gain.setTargetAtTime(waterVol,audioCtx.currentTime,1.0);
+  // Vento: proporzionale alla velocità (0 → 0vol, 5m/s → 0.18vol)
+  const windVol=Math.min(0.18, mps*0.036);
+  if(windGain) windGain.gain.setTargetAtTime(windVol,audioCtx.currentTime,0.8);
+  // Frequenza vento sale con velocità
+  if(windFilter) windFilter.frequency.setTargetAtTime(120+mps*30,audioCtx.currentTime,0.5);
+}
+
+function stopAudio(){
+  if(!audioStarted||!audioCtx)return;
+  if(waterGain) waterGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.5);
+  if(windGain)  windGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.5);
+  setTimeout(()=>{try{audioCtx.close();}catch(e){}audioStarted=false;audioCtx=null;},1500);
+}
+
+
 let trackCanvas=null,trackCtx=null,currentBearing=0,rafId=null;
 let renderMeters=0;      // metri visualizzati (smooth, continuo)
 let targetMeters=0;      // metri reali dall'ergometro
@@ -864,6 +982,11 @@ function renderLoop(ts){
   }
 
   drawTrack(renderMeters);
+  // Aggiorna sistemi atmosfera, ghost e audio
+  const _el=getElapsedSec();
+  updateAtmo(_el);
+  updateGhostVisual(_el);
+  updateAudio(metersPerSec);
 }
 
 const SCALE=6.5;
@@ -1044,10 +1167,15 @@ const _SPARKLES=(()=>{
   });
 })();
 
-function _drawSparkles(ctx,W,H,boatX,t){
+function _drawSparkles(ctx,W,H,boatX,t,atmo){
+  const spkC=atmo?atmo.spkC:[255,255,255];
+  const spkMult=atmo?atmo.spkA:1.0;
+  const [sr,sg,sb]=spkC;
   // Chiarore diffuso dall'alto
   const lg=ctx.createRadialGradient(boatX,-H*.05,0,boatX,H*.2,H*.45);
-  lg.addColorStop(0,'rgba(255,255,255,0.07)');lg.addColorStop(.6,'rgba(255,255,255,0.02)');lg.addColorStop(1,'rgba(255,255,255,0)');
+  lg.addColorStop(0,`rgba(${sr},${sg},${sb},${0.07*spkMult})`);
+  lg.addColorStop(.6,`rgba(${sr},${sg},${sb},${0.02*spkMult})`);
+  lg.addColorStop(1,'rgba(255,255,255,0)');
   ctx.fillStyle=lg;ctx.fillRect(0,0,W,H*.58);
   const sc=_SCALE_C;
   _SPARKLES.forEach(s=>{
@@ -1063,26 +1191,26 @@ function _drawSparkles(ctx,W,H,boatX,t){
     const l1=sz*5.5,l2=sz*2.2;
     ctx.save();ctx.translate(sx,sy);ctx.rotate(s.angle);
     const glow=ctx.createRadialGradient(0,0,0,0,0,sz*5);
-    glow.addColorStop(0,`rgba(255,255,255,${fa*.22})`);glow.addColorStop(.4,`rgba(200,240,245,${fa*.08})`);glow.addColorStop(1,'rgba(255,255,255,0)');
+    glow.addColorStop(0,`rgba(${sr},${sg},${sb},${fa*spkMult*.22})`);glow.addColorStop(.4,`rgba(${sr},${sg},${sb},${fa*spkMult*.08})`);glow.addColorStop(1,'rgba(255,255,255,0)');
     ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,sz*5,0,Math.PI*2);ctx.fill();
     [[l1,sz*.55,0],[l1,sz*.55,1]].forEach((_x,ax)=>{
       const g=ax===0?ctx.createLinearGradient(-l1,0,l1,0):ctx.createLinearGradient(0,-l1,0,l1);
       g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.35,'rgba(255,255,255,0)');
-      g.addColorStop(.47,`rgba(255,255,255,${fa*.55})`);g.addColorStop(.5,`rgba(255,255,255,${fa})`);
-      g.addColorStop(.53,`rgba(255,255,255,${fa*.55})`);g.addColorStop(.65,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,0)');
+      g.addColorStop(.47,`rgba(${sr},${sg},${sb},${fa*spkMult*.55})`);g.addColorStop(.5,`rgba(${sr},${sg},${sb},${fa*spkMult})`);
+      g.addColorStop(.53,`rgba(${sr},${sg},${sb},${fa*spkMult*.55})`);g.addColorStop(.65,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,0)');
       ctx.fillStyle=g;if(ax===0)ctx.fillRect(-l1,-sz*.55,l1*2,sz*1.1);else ctx.fillRect(-sz*.55,-l1,sz*1.1,l1*2);
     });
     ctx.rotate(Math.PI/4);
     [[l2,sz*.4,0],[l2,sz*.4,1]].forEach((_x,ax)=>{
       const g=ax===0?ctx.createLinearGradient(-l2,0,l2,0):ctx.createLinearGradient(0,-l2,0,l2);
       g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.30,'rgba(255,255,255,0)');
-      g.addColorStop(.46,`rgba(255,255,255,${fa*.35})`);g.addColorStop(.5,`rgba(255,255,255,${fa*.7})`);
-      g.addColorStop(.54,`rgba(255,255,255,${fa*.35})`);g.addColorStop(.70,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,0)');
+      g.addColorStop(.46,`rgba(${sr},${sg},${sb},${fa*spkMult*.35})`);g.addColorStop(.5,`rgba(${sr},${sg},${sb},${fa*spkMult*.7})`);
+      g.addColorStop(.54,`rgba(${sr},${sg},${sb},${fa*spkMult*.35})`);g.addColorStop(.70,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,0)');
       ctx.fillStyle=g;if(ax===0)ctx.fillRect(-l2,-sz*.4,l2*2,sz*.8);else ctx.fillRect(-sz*.4,-l2,sz*.8,l2*2);
     });
     ctx.rotate(-Math.PI/4);
     const core=ctx.createRadialGradient(0,0,0,0,0,sz*1.1);
-    core.addColorStop(0,`rgba(255,255,255,${fa})`);core.addColorStop(.5,`rgba(220,245,248,${fa*.6})`);core.addColorStop(1,'rgba(255,255,255,0)');
+    core.addColorStop(0,`rgba(${sr},${sg},${sb},${fa*spkMult})`);core.addColorStop(.5,`rgba(${sr},${sg},${sb},${fa*spkMult*.6})`);core.addColorStop(1,'rgba(255,255,255,0)');
     ctx.fillStyle=core;ctx.beginPath();ctx.arc(0,0,sz*1.1,0,Math.PI*2);ctx.fill();
     ctx.restore();
   });
@@ -1098,6 +1226,9 @@ function drawTrack(meters){
   const BOAT_X=W*0.50;
   const BOAT_Y=H*0.52;
   _updateRiveConst(W);
+
+  // Atmosfera corrente
+  const atmo=getAtmoBlend();
 
   // ── IMMAGINE FIUME ──
   const rc=RIVER_CANVASES[ACTIVE_RIVER_ID];
@@ -1115,8 +1246,43 @@ function drawTrack(meters){
     ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   }
 
-  // ── Scintille ──
-  _drawSparkles(ctx,W,H,BOAT_X,performance.now()/1000);
+  // ── Overlay atmosferico — tinta colore cielo ──
+  ctx.save();
+  ctx.globalAlpha=atmo.skyA;
+  ctx.fillStyle=`rgb(${atmo.sky[0]},${atmo.sky[1]},${atmo.sky[2]})`;
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+
+  // ── Scintille con colore atmosferico ──
+  _drawSparkles(ctx,W,H,BOAT_X,performance.now()/1000,atmo);
+
+  // ── Ghost visivo ──
+  if(ghostVisualM!==null){
+    const ghostOffset=(meters-ghostVisualM); // positivo = sono avanti al ghost
+    // Il ghost scorre alla stessa velocità del fiume
+    // la sua posizione verticale sul canvas è spostata di ghostOffset in pixel
+    const ghostPxPerM=(H*0.04*0.9); // stima px per metro (approssimazione)
+    const ghostScreenY=BOAT_Y+ghostOffset*ghostPxPerM*0.008;
+    const ghostScreenX=BOAT_X; // stesso X del cursore
+
+    // Freccia ghost — semitrasparente, colore diverso in base a vantaggio/svantaggio
+    const isAhead=ghostOffset>=0;
+    const ghostAlpha=Math.min(0.65, 0.3+Math.abs(ghostOffset)/500*0.3);
+    ctx.save();
+    ctx.globalAlpha=ghostAlpha;
+    ctx.translate(ghostScreenX,Math.max(H*0.15,Math.min(H*0.85,ghostScreenY)));
+    ctx.beginPath();ctx.moveTo(0,-11);ctx.lineTo(6,8);ctx.lineTo(0,4);ctx.lineTo(-6,8);
+    ctx.closePath();
+    ctx.fillStyle=isAhead?'rgba(80,200,120,0.9)':'rgba(220,80,60,0.9)';
+    ctx.fill();
+    // Label delta
+    const deltaText=(isAhead?'+':'')+Math.round(ghostOffset)+'m';
+    ctx.font=`600 ${Math.round(H*0.022)}px Inter,sans-serif`;
+    ctx.fillStyle=isAhead?'rgba(80,200,120,0.85)':'rgba(220,80,60,0.85)';
+    ctx.textAlign='center';
+    ctx.fillText(deltaText,0,-18);
+    ctx.restore();
+  }
 
   // ── Vignette (-50%) ──
   const vr=bgRgb;
@@ -1994,6 +2160,7 @@ async function startWorkout(){
   document.getElementById('page-app').style.color='rgba(55,40,25,0.85)';
   initTrackCanvas();
   fetchWeather();
+  initAudio();
   switchPage('page-app');
   try{
     const id=await dbAdd('sessions',{date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:0,time:'00:00:00',timeSec:0,maxWatt:0,avgWatt:0,strokes:0,avgSpm:0,avgBpm:0,maxBpm:0});
@@ -2046,6 +2213,7 @@ async function saveAndFinish(e){
   document.getElementById('res-ch-count').textContent=challengeResults.filter(c=>c.isNew).length;
   document.getElementById('res-ch-list').innerHTML=challengeResults.map(c=>`<div class="res-ch-item"><div><div class="res-ch-name">${c.title}</div><div style="font-size:.62rem;color:var(--dim)">${c.score}</div></div><div class="res-ch-score">${c.isNew?'🏆 REC':'·'}</div></div>`).join('');
   document.getElementById('pause-overlay').style.display='none';
+  stopAudio();
   switchPage('page-resume');
 }
 
