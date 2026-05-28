@@ -10,13 +10,13 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <title>ROW</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ── LANDSCAPE LOCK ── */
 #rotate-msg{
   display:none;position:fixed;inset:0;z-index:99999;
   background:#050810;flex-direction:column;align-items:center;justify-content:center;gap:24px;
-  color:rgba(255,255,255,0.55);font-family:'Inter',sans-serif;font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);font-family:'DM Sans',sans-serif;font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;
 }
 #rotate-msg svg{animation:spin-hint 1.8s ease-in-out infinite;}
 @keyframes spin-hint{0%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}100%{transform:rotate(-20deg)}}
@@ -35,7 +35,7 @@
   --app-dim:  rgba(105,90,73,0.70);
   --app-dim2: rgba(105,90,73,0.45);
 }
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:var(--text);font-family:'Inter',sans-serif;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-top);color:var(--text);font-family:'DM Sans',sans-serif;}
 /* Copre l'intera finestra compresa la safe area */
 html{height:100dvh;}
 body{min-height:100dvh;}
@@ -43,18 +43,16 @@ body{min-height:100dvh;}
 .page.active{display:flex;}
 
 /* ═══ HOME ═══ */
-/* ═══ HOME ═══ */
 #page-home{background:#0a0e14;overflow:hidden;}
 .home-bg{position:absolute;inset:0;overflow:hidden;}
 .home-bg canvas{position:absolute;inset:0;width:100%;height:100%;}
-/* Overlay scuro sopra il canvas per leggibilità testo */
+/* Vignette leggera — canvas visibile su tutto lo schermo */
 .home-overlay{
   position:absolute;inset:0;z-index:2;
-  background:linear-gradient(to right,
-    rgba(6,10,18,0.88) 0%,
-    rgba(6,10,18,0.55) 45%,
-    rgba(6,10,18,0.08) 100%
-  );
+  background:
+    radial-gradient(ellipse 55% 80% at 18% 50%,rgba(6,10,18,0.78) 0%,transparent 100%),
+    linear-gradient(to top,rgba(6,10,18,0.92) 0%,rgba(6,10,18,0) 36%),
+    linear-gradient(to bottom,rgba(6,10,18,0.55) 0%,rgba(6,10,18,0) 22%);
 }
 .home-content{
   position:absolute;inset:0;z-index:10;
@@ -64,54 +62,73 @@ body{min-height:100dvh;}
   pointer-events:none;
 }
 .home-content>*{pointer-events:auto;}
-/* Linea decorativa sottile */
-.home-line{
-  width:40px;height:1px;
-  background:rgba(68,164,160,0.55);
-  margin-bottom:20px;
-}
 .home-logo{
-  font-family:'Inter',sans-serif;
   font-size:clamp(5rem,12vw,10rem);
   font-weight:900;
   letter-spacing:-3px;line-height:0.88;
-  color:rgba(255,255,255,0.96);
-  margin-bottom:10px;
+  color:#ffffff;
+  margin-bottom:32px;
   user-select:none;
-  text-shadow:0 2px 40px rgba(0,0,0,0.5);
+  text-shadow:
+    0 0 40px rgba(79,195,247,0.55),
+    0 0 80px rgba(79,195,247,0.25),
+    0 2px 8px rgba(0,0,0,0.8);
 }
-.home-sub{
-  font-family:'Inter',sans-serif;
-  font-size:0.58rem;font-weight:400;
-  letter-spacing:8px;text-transform:uppercase;
-  color:rgba(68,164,160,0.80);
-  margin-bottom:52px;
+.home-btns{display:flex;align-items:center;gap:14px;filter:drop-shadow(0 0 28px rgba(79,195,247,0.28));}
+.btn-connect{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(79,195,247,1);
+  border:none;border-radius:100px;
+  color:#021820;
+  font-size:0.70rem;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;
+  padding:14px 24px 14px 18px;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(79,195,247,0.6),0 0 18px rgba(79,195,247,0.7),0 0 48px rgba(79,195,247,0.35),inset 0 1px 0 rgba(255,255,255,0.35);
+  transition:transform .15s;
 }
-.home-btns{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
-.btn-main{
-  background:none;border:none;
-  color:rgba(255,255,255,0.82);
-  font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;
-  letter-spacing:7px;text-transform:uppercase;
-  padding:16px 0;cursor:pointer;transition:color .15s;
-  border-top:1px solid rgba(255,255,255,0.10);
+.btn-connect:active{transform:scale(0.97);}
+.btn-logbook{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.45);
+  border-radius:100px;
+  color:rgba(255,255,255,0.92);
+  font-size:0.70rem;font-weight:600;
+  letter-spacing:4px;text-transform:uppercase;
+  padding:14px 24px 14px 18px;
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 14px rgba(255,255,255,0.10),0 0 36px rgba(255,255,255,0.05),inset 0 1px 0 rgba(255,255,255,0.12);
+  transition:transform .15s;
 }
-.btn-main:first-child{border-top:none;}
-.btn-main:active{opacity:0.4;}
-.btn-ghost{
-  background:none;border:none;
-  color:rgba(255,255,255,0.30);
-  font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:400;
-  letter-spacing:7px;text-transform:uppercase;
-  padding:12px 0;cursor:pointer;transition:color .15s;
+.btn-logbook:active{transform:scale(0.97);}
+/* Barra record migliori */
+.home-best-bar{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  padding:11px 7% 14px;
+  display:flex;align-items:center;
   border-top:1px solid rgba(255,255,255,0.07);
+  background:rgba(6,10,18,0.82);
+  backdrop-filter:blur(12px);
 }
-.btn-ghost:active{opacity:0.3;}
+.home-best-label{
+  font-size:0.45rem;letter-spacing:5px;text-transform:uppercase;
+  color:rgba(79,195,247,0.55);
+  margin-right:20px;flex-shrink:0;
+}
+.home-best-items{display:flex;flex:1;}
+.home-best-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  border-left:1px solid rgba(255,255,255,0.06);padding:0 12px;
+}
+.home-best-item:first-child{border-left:none;padding-left:0;}
+.home-best-val{font-size:1.05rem;font-weight:700;color:rgba(255,255,255,0.88);letter-spacing:-0.5px;line-height:1;}
+.home-best-unit{font-size:0.42rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-top:3px;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;background:#e0d4c4!important;}
 .goal-header{padding:calc(env(safe-area-inset-top,0px)+36px) 28px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.goal-header-title{font-family:'Inter',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:8px;text-transform:uppercase;color:rgba(105,90,73,0.55);}
+.goal-header-title{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:8px;text-transform:uppercase;color:rgba(105,90,73,0.55);}
 
 /* ── Sezione fiumi (metà superiore) ── */
 .goal-rivers-section{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:16px 16px 8px;gap:10px;}
@@ -121,9 +138,9 @@ body{min-height:100dvh;}
 .river-card.selected{border-color:rgba(255,255,255,0.7);transform:scale(1.06);}
 .river-card:active{transform:scale(0.96);}
 .river-card-flag{font-size:1.5rem;line-height:1;margin-bottom:5px;}
-.river-card-name{font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:700;color:rgba(42,28,14,0.80);line-height:1.1;}
-.river-card-city{font-family:'Inter',sans-serif;font-size:0.52rem;font-weight:400;color:rgba(105,90,73,0.60);margin-top:2px;letter-spacing:0.3px;}
-.river-card-km{font-family:'Inter',sans-serif;font-size:0.48rem;font-weight:500;color:rgba(105,90,73,0.45);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
+.river-card-name{font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;color:rgba(42,28,14,0.80);line-height:1.1;}
+.river-card-city{font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:400;color:rgba(105,90,73,0.60);margin-top:2px;letter-spacing:0.3px;}
+.river-card-km{font-family:'DM Sans',sans-serif;font-size:0.48rem;font-weight:500;color:rgba(105,90,73,0.45);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
 
 /* Divisore */
 .goal-divider-h{height:1px;background:rgba(105,90,73,0.15);margin:0 20px;flex-shrink:0;}
@@ -131,7 +148,7 @@ body{min-height:100dvh;}
 /* ── Sezione obiettivo (metà inferiore) ── */
 .goal-obj-section{flex:1;display:flex;flex-direction:column;padding:8px 20px 0;}
 .goal-obj-tabs{display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);}
-.goal-obj-tab{flex:1;padding:10px;text-align:center;font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:rgba(105,90,73,0.40);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.goal-obj-tab{flex:1;padding:10px;text-align:center;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:rgba(105,90,73,0.40);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
 .goal-obj-tab.active{color:rgba(42,28,14,0.80);border-bottom-color:rgba(42,28,14,0.40);}
 .goal-obj-content{flex:1;display:flex;align-items:center;justify-content:center;}
 .goal-carousel-wrap{position:relative;height:160px;width:100%;overflow:hidden;}
@@ -141,7 +158,7 @@ body{min-height:100dvh;}
 .goal-carousel{overflow-y:scroll;height:100%;width:100%;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;flex-direction:column;align-items:center;}
 .goal-carousel::-webkit-scrollbar{display:none;}
 .goal-item{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;cursor:pointer;width:100%;}
-.goal-item-val{font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:700;color:rgba(105,90,73,0.35);transition:all .15s;letter-spacing:-1px;}
+.goal-item-val{font-family:'DM Sans',sans-serif;font-size:2.4rem;font-weight:700;color:rgba(105,90,73,0.35);transition:all .15s;letter-spacing:-1px;}
 .goal-item.selected .goal-item-val{font-size:3.2rem;color:rgba(42,28,14,0.85);font-weight:900;}
 .goal-item-unit{font-size:0.62rem;letter-spacing:3px;color:rgba(105,90,73,0.40);margin-left:6px;text-transform:uppercase;}
 .goal-item.selected .goal-item-unit{color:rgba(105,90,73,0.60);}
@@ -152,7 +169,7 @@ body{min-height:100dvh;}
 
 /* Pulsante avvia */
 .goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
-.btn-start{width:100%;padding:20px;border-radius:0;background:none;border-top:1px solid rgba(105,90,73,0.18);border-bottom:none;border-left:none;border-right:none;color:rgba(105,90,73,0.30);font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-start{width:100%;padding:20px;border-radius:0;background:none;border-top:1px solid rgba(105,90,73,0.18);border-bottom:none;border-left:none;border-right:none;color:rgba(105,90,73,0.30);font-family:'DM Sans',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .btn-start.ready{color:rgba(42,28,14,0.82);border-top-color:rgba(42,28,14,0.20);}
 .btn-start:active{opacity:0.5;}
 
@@ -164,24 +181,24 @@ body{min-height:100dvh;}
 
 /* ── Header ── */
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
-.hdr-timer{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:3px;color:var(--app-dim);}
-.hdr-clock{font-family:'Inter',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:2px;color:var(--app-dim);}
+.hdr-timer{font-family:'DM Sans',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:3px;color:var(--app-dim);}
+.hdr-clock{font-family:'DM Sans',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:2px;color:var(--app-dim);}
 
 /* ── Calorie ── */
 #calories-block{margin-top:26px;}
 .cal-row{display:flex;align-items:center;gap:10px;}
 .cal-icon{color:rgba(105,90,73,0.50);opacity:1;}
-.cal-num{font-family:'Inter',sans-serif;font-size:3.3rem;font-weight:700;color:var(--app-dim);line-height:1;}
+.cal-num{font-family:'DM Sans',sans-serif;font-size:3.3rem;font-weight:700;color:var(--app-dim);line-height:1;}
 .cal-label{font-size:0.78rem;letter-spacing:5px;color:var(--app-dim2);text-transform:uppercase;margin-top:6px;}
 
 /* ── Meteo ── */
 #weather-block{margin-top:26px;text-align:right;}
 .hdr-weather-icon{line-height:1;display:block;text-align:right;color:rgba(105,90,73,0.50);}
-.hdr-weather-temps{font-family:'Inter',sans-serif;font-size:2.4rem;letter-spacing:2px;color:var(--app-dim);display:block;text-align:right;margin-top:6px;}
+.hdr-weather-temps{font-family:'DM Sans',sans-serif;font-size:2.4rem;letter-spacing:2px;color:var(--app-dim);display:block;text-align:right;margin-top:6px;}
 
 /* ── Watt sx ── */
 #watt-block{position:absolute;top:108px;left:26px;z-index:100;pointer-events:none;}
-.watt-num{font-family:'Inter',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--app-text);}
+.watt-num{font-family:'DM Sans',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--app-text);}
 .watt-label{font-size:0.52rem;letter-spacing:5px;color:var(--app-dim2);text-transform:uppercase;margin-top:8px;}
 .watt-bars{margin-top:12px;display:flex;flex-direction:column;gap:5px;width:160px;}
 .watt-bar-track{height:5px;background:rgba(105,90,73,0.12);border-radius:3px;position:relative;overflow:visible;}
@@ -190,25 +207,25 @@ body{min-height:100dvh;}
 
 /* ── Metri dx ── */
 #meters-block{position:absolute;top:108px;right:26px;z-index:100;pointer-events:none;text-align:right;}
-.meters-num{font-family:'Inter',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--app-text);}
+.meters-num{font-family:'DM Sans',sans-serif;font-size:9.4rem;font-weight:900;line-height:0.85;letter-spacing:-4px;color:var(--app-text);}
 .meters-label{font-size:0.52rem;letter-spacing:5px;color:var(--app-dim2);text-transform:uppercase;margin-top:8px;text-align:right;}
 
 /* ── Sfida ── */
 #challenge-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;flex-direction:column;align-items:center;gap:6px;background:rgba(240,232,220,0.96);border:1px solid rgba(105,90,73,0.30);border-radius:8px;padding:20px 36px;backdrop-filter:blur(16px);text-align:center;pointer-events:none;}
 .ch-eyebrow{font-size:0.52rem;letter-spacing:8px;color:rgba(105,90,73,0.65);text-transform:uppercase;}
-.ch-title{font-family:'Inter',sans-serif;font-size:2.2rem;font-weight:900;color:rgba(42,28,14,0.88);}
+.ch-title{font-family:'DM Sans',sans-serif;font-size:2.2rem;font-weight:900;color:rgba(42,28,14,0.88);}
 .ch-desc{font-size:0.72rem;color:rgba(105,90,73,0.60);}
-.ch-progress{font-family:'Inter',sans-serif;font-size:3rem;font-weight:900;color:rgba(42,28,14,0.80);}
+.ch-progress{font-family:'DM Sans',sans-serif;font-size:3rem;font-weight:900;color:rgba(42,28,14,0.80);}
 .ch-bar-track{width:200px;height:3px;background:rgba(105,90,73,0.15);border-radius:2px;}
 #ch-bar-fill{height:100%;background:rgba(105,90,73,0.55);border-radius:2px;width:0%;transition:width .3s;}
 
 #challenge-result{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;flex-direction:column;align-items:center;gap:5px;background:rgba(240,232,220,0.97);border-radius:8px;padding:24px 40px;text-align:center;pointer-events:none;animation:rpop .4s ease-out;}
 @keyframes rpop{0%{transform:translate(-50%,-50%) scale(0.8);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
 .cr-label{font-size:0.52rem;letter-spacing:8px;text-transform:uppercase;color:rgba(105,90,73,0.55);}
-.cr-score{font-family:'Inter',sans-serif;font-size:4rem;font-weight:900;color:rgba(42,28,14,0.88);}
+.cr-score{font-family:'DM Sans',sans-serif;font-size:4rem;font-weight:900;color:rgba(42,28,14,0.88);}
 .cr-vs{font-size:0.65rem;letter-spacing:3px;color:rgba(105,90,73,0.55);}
-.cr-record{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;color:rgba(105,70,20,0.85);}
-.cr-badge{font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:4px;padding:5px 16px;border-radius:3px;margin-top:3px;}
+.cr-record{font-family:'DM Sans',sans-serif;font-size:1.6rem;font-weight:700;color:rgba(105,70,20,0.85);}
+.cr-badge{font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:4px;padding:5px 16px;border-radius:3px;margin-top:3px;}
 .cr-badge.isnew{background:rgba(105,70,20,0.85);color:#f0e8d8;}
 .cr-badge.nope{background:rgba(105,90,73,0.10);color:rgba(105,90,73,0.55);}
 
@@ -237,46 +254,53 @@ body{min-height:100dvh;}
 .stats-row{display:flex;justify-content:space-evenly;padding:14px 26px 36px;}
 .stat-sm{text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .stat-icon{color:rgba(105,90,73,0.45);opacity:1;line-height:1;}
-.stat-sm-val{font-family:'Inter',sans-serif;font-size:6rem;font-weight:700;line-height:1;}
+.stat-sm-val{font-family:'DM Sans',sans-serif;font-size:6rem;font-weight:700;line-height:1;}
 .stat-sm-lbl{font-size:1rem;letter-spacing:2px;color:var(--app-dim2);text-transform:uppercase;}
 .stat-sep{width:1px;background:rgba(105,90,73,0.15);align-self:stretch;margin:4px 0;}
 
+.btn-resume-end{background:none;border:none;border-top:1px solid rgba(42,28,14,0.12);color:rgba(42,28,14,0.50);font-size:0.72rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;padding:18px 40px;cursor:pointer;transition:opacity .2s;width:92%;max-width:900px;}
+.btn-resume-end:active{opacity:0.4;}
+
 /* ═══ PAUSA ═══ */
 #pause-overlay{position:fixed;inset:0;background:rgba(10,11,14,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:48px;}
-.pause-title{font-family:'Inter',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
+.pause-title{font-family:'DM Sans',sans-serif;font-size:6rem;font-weight:900;letter-spacing:20px;color:var(--dim);}
 .pause-btns{display:flex;gap:48px;}
-.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
+.btn-pause-action{background:none;border:none;color:#8a9ab0;font-family:'DM Sans',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;padding:22px 52px;cursor:pointer;transition:opacity .2s;}
 .btn-pause-action:active{opacity:0.5;}
 
 /* ═══ HISTORY ═══ */
 #page-history{background:#0e1118;flex-direction:column;align-items:stretch;padding:52px 36px 36px;}
 .hist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
-.hist-title{font-family:'Inter',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.92);}
+.hist-title{font-family:'DM Sans',sans-serif;font-size:2.8rem;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.92);}
 .hist-scroll{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;}
 table{width:100%;border-collapse:collapse;}
 th{color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:2px;padding:12px 6px;border-bottom:1px solid rgba(255,255,255,0.07);text-align:center;font-size:0.46rem;font-weight:600;white-space:nowrap;}
 td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:center;font-weight:400;color:rgba(255,255,255,0.45);font-size:0.85rem;}
-.td-m{font-family:'Inter',sans-serif;font-size:1.15rem;font-weight:700;color:rgba(255,255,255,0.90);}
-.td-date{font-family:'Inter',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.55);}
+.td-m{font-family:'DM Sans',sans-serif;font-size:1.15rem;font-weight:700;color:rgba(255,255,255,0.90);}
+.td-date{font-family:'DM Sans',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.55);}
 .best-v{color:var(--gold)!important;font-weight:700;}
-.btn-back-dark{background:none;border:none;color:rgba(255,255,255,0.35);font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;cursor:pointer;padding:8px 0;}
+.btn-back-dark{background:none;border:none;color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;cursor:pointer;padding:8px 0;}
 .btn-back-dark:active{opacity:0.4;}
 
 /* ═══ RESUME ═══ */
 #page-resume{background:#e0d4c4;}
 .res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:12px;}
-.res-hero{font-family:'Inter',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
+.res-hero{font-family:'DM Sans',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
 .res-unit{font-size:0.6rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:28px;}
 .res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:92%;max-width:900px;margin-bottom:24px;}
 .res-item{background:rgba(42,28,14,0.05);border:1px solid rgba(42,28,14,0.10);padding:14px 8px;border-radius:6px;text-align:center;}
-.res-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:rgba(42,28,14,0.88);}
+.res-val{font-family:'DM Sans',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:rgba(42,28,14,0.88);}
 .res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(42,28,14,0.45);text-transform:uppercase;margin-top:3px;display:block;}
 .res-ch-wrap{width:92%;max-width:900px;margin-bottom:24px;}
 .res-ch-title{font-size:0.52rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:8px;}
 .res-ch-list{display:flex;flex-direction:column;gap:5px;}
 .res-ch-item{display:flex;justify-content:space-between;align-items:center;background:rgba(42,28,14,0.05);border:1px solid rgba(42,28,14,0.10);border-radius:6px;padding:8px 14px;}
-.res-ch-name{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;color:rgba(42,28,14,0.80);}
-.res-ch-score{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:rgba(120,80,20,0.85);}
+.res-ch-name{font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;color:rgba(42,28,14,0.80);}
+.res-ch-score{font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:rgba(120,80,20,0.85);}
+
+/* Pulsante back goal screen */
+.btn-back{background:none;border:none;color:rgba(105,90,73,0.50);font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;cursor:pointer;padding:8px 0;}
+.btn-back:active{opacity:0.4;}
 
 /* DB status */
 #db-status{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:2px;color:rgba(42,28,14,0.85);text-transform:uppercase;z-index:9999;opacity:0;transition:opacity .3s;background:rgba(224,212,196,0.97);padding:10px 24px;border-radius:20px;white-space:nowrap;border:1px solid rgba(105,90,73,0.20);}
@@ -298,12 +322,25 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
   <div class="home-bg"><canvas id="home-canvas"></canvas></div>
   <div class="home-overlay"></div>
   <div class="home-content">
-    <div class="home-line"></div>
     <div class="home-logo">ROW</div>
-    <div class="home-sub">Ergometer Training</div>
     <div class="home-btns">
-      <button class="btn-main" onclick="connectBT()">Connetti</button>
-      <button class="btn-ghost" onclick="showHistory()">Logbook</button>
+      <button class="btn-connect" onclick="connectBT()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg>
+        Connetti
+      </button>
+      <button class="btn-logbook" onclick="showHistory()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Logbook
+      </button>
+    </div>
+  </div>
+  <div class="home-best-bar">
+    <div class="home-best-label">Record</div>
+    <div class="home-best-items">
+      <div class="home-best-item"><span class="home-best-val" id="hb-dist">—</span><span class="home-best-unit">km · distanza</span></div>
+      <div class="home-best-item"><span class="home-best-val" id="hb-watt">—</span><span class="home-best-unit">W · potenza</span></div>
+      <div class="home-best-item"><span class="home-best-val" id="hb-pace">—</span><span class="home-best-unit">/500m · passo</span></div>
+      <div class="home-best-item"><span class="home-best-val" id="hb-time">—</span><span class="home-best-unit">tempo · max</span></div>
     </div>
   </div>
 </div>
@@ -514,7 +551,7 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
     <div class="res-ch-title">Sfide intervallo</div>
     <div class="res-ch-list" id="res-ch-list"></div>
   </div>
-  <button class="btn-main" onclick="resetSession()">Fine</button>
+  <button class="btn-resume-end" onclick="resetSession()">Fine</button>
 </div>
 
 <!-- PAUSA -->
@@ -813,7 +850,7 @@ const RIVERS = {
 
 const RIVER_ORDER=['tevere','arno','po','senna','tamigi'];
 
-// Fiume e dati correnti (sostituiscono TEVERE, TEVERE_POI_DATA globali)
+// Fiume e dati correnti
 let selectedRiverId='tevere';
 let ACTIVE_PTS=RIVERS.tevere.pts;
 let ACTIVE_POI=RIVERS.tevere.poi;
@@ -834,44 +871,6 @@ function posAtMeters(m){const real=Math.max(0,Math.min(m,TOTAL_M));if(real<=0)re
 function calcBearing(a,b){const dLon=(b[1]-a[1])*Math.PI/180;const lat1=a[0]*Math.PI/180,lat2=b[0]*Math.PI/180;const x=Math.sin(dLon)*Math.cos(lat2);const y=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);return(Math.atan2(x,y)*180/Math.PI+360)%360;}
 
 // ═══════════════════════════════════════════════════════
-//  SISTEMA 1 — ATMOSFERA DINAMICA
-//  Ciclo: alba → giorno → tramonto → notte
-//  Durata ciclo = durata allenamento (max 40 min)
-// ═══════════════════════════════════════════════════════
-const ATMO_PHASES=[
-  // name, skyRgb (overlay colore cielo), sparkleAlpha, sparkleColor
-  {name:'alba',    sky:[255,160,80],  skyA:0.12, spkA:0.7,  spkC:[255,220,180]},
-  {name:'giorno',  sky:[180,220,255], skyA:0.04, spkA:1.0,  spkC:[255,255,255]},
-  {name:'pomeriggio',sky:[255,200,100],skyA:0.10,spkA:0.85, spkC:[255,235,180]},
-  {name:'tramonto',sky:[255,80,40],   skyA:0.18, spkA:0.6,  spkC:[255,160,100]},
-  {name:'notte',   sky:[20,30,80],    skyA:0.35, spkA:0.4,  spkC:[180,210,255]},
-];
-let atmoPhaseIdx=1; // parte da "giorno"
-let atmoT=0;        // 0..1 dentro la fase corrente
-let atmoSessionSec=0;
-const ATMO_PHASE_DUR=8*60; // ogni fase dura 8 minuti → ciclo 40 min
-
-function updateAtmo(elapsedSec){
-  const totalCycle=ATMO_PHASE_DUR*ATMO_PHASES.length;
-  const t=(elapsedSec%(totalCycle))/totalCycle;
-  const rawPhase=t*ATMO_PHASES.length;
-  atmoPhaseIdx=Math.floor(rawPhase)%ATMO_PHASES.length;
-  atmoT=rawPhase-Math.floor(rawPhase);
-}
-
-function getAtmoBlend(){
-  const a=ATMO_PHASES[atmoPhaseIdx];
-  const b=ATMO_PHASES[(atmoPhaseIdx+1)%ATMO_PHASES.length];
-  const t=atmoT;
-  return{
-    sky:a.sky.map((v,i)=>Math.round(v*(1-t)+b.sky[i]*t)),
-    skyA:a.skyA*(1-t)+b.skyA*t,
-    spkA:a.spkA*(1-t)+b.spkA*t,
-    spkC:a.spkC.map((v,i)=>Math.round(v*(1-t)+b.spkC[i]*t)),
-  };
-}
-
-// ═══════════════════════════════════════════════════════
 //  SISTEMA 2 — GHOST VISIVO
 //  Freccia semitrasparente = record precedente stesso fiume
 // ═══════════════════════════════════════════════════════
@@ -882,78 +881,6 @@ function updateGhostVisual(elapsedSec){
   ghostVisualM=(gm!==null)?gm:null;
 }
 
-// ═══════════════════════════════════════════════════════
-//  SISTEMA 3 — AUDIO AMBIENTALE (Web Audio API)
-//  Acqua: rumore filtrato continuo
-//  Vento: aumenta con la velocità
-// ═══════════════════════════════════════════════════════
-let audioCtx=null,waterGain=null,windGain=null,windFilter=null;
-let audioStarted=false;
-
-function initAudio(){
-  if(audioStarted)return;
-  try{
-    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-
-    // ── ACQUA: white noise → bandpass centrato su 800Hz ──
-    const bufLen=audioCtx.sampleRate*2;
-    const buf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
-    const data=buf.getChannelData(0);
-    for(let i=0;i<bufLen;i++) data[i]=(Math.random()*2-1);
-    const waterSrc=audioCtx.createBufferSource();
-    waterSrc.buffer=buf; waterSrc.loop=true;
-
-    // Filtro bandpass per suono acqua
-    const waterBP=audioCtx.createBiquadFilter();
-    waterBP.type='bandpass'; waterBP.frequency.value=700; waterBP.Q.value=0.8;
-    const waterBP2=audioCtx.createBiquadFilter();
-    waterBP2.type='bandpass'; waterBP2.frequency.value=300; waterBP2.Q.value=1.2;
-
-    waterGain=audioCtx.createGain(); waterGain.gain.value=0.12;
-    waterSrc.connect(waterBP); waterBP.connect(waterBP2); waterBP2.connect(waterGain);
-    waterGain.connect(audioCtx.destination);
-    waterSrc.start();
-
-    // ── VENTO: white noise → lowpass, volume proporzionale alla velocità ──
-    const windBuf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
-    const wdata=windBuf.getChannelData(0);
-    for(let i=0;i<bufLen;i++) wdata[i]=(Math.random()*2-1);
-    const windSrc=audioCtx.createBufferSource();
-    windSrc.buffer=windBuf; windSrc.loop=true;
-
-    windFilter=audioCtx.createBiquadFilter();
-    windFilter.type='lowpass'; windFilter.frequency.value=180;
-    windGain=audioCtx.createGain(); windGain.gain.value=0;
-    windSrc.connect(windFilter); windFilter.connect(windGain);
-    windGain.connect(audioCtx.destination);
-    windSrc.start();
-
-    audioStarted=true;
-  }catch(e){console.warn('Audio non disponibile:',e);}
-}
-
-function updateAudio(mps){
-  if(!audioStarted||!audioCtx)return;
-  if(audioCtx.state==='suspended') audioCtx.resume();
-  // Acqua: volume fisso con leggera variazione notturna
-  const atmo=getAtmoBlend();
-  const waterVol=atmo.name==='notte'?0.08:0.12;
-  if(waterGain) waterGain.gain.setTargetAtTime(waterVol,audioCtx.currentTime,1.0);
-  // Vento: proporzionale alla velocità (0 → 0vol, 5m/s → 0.18vol)
-  const windVol=Math.min(0.18, mps*0.036);
-  if(windGain) windGain.gain.setTargetAtTime(windVol,audioCtx.currentTime,0.8);
-  // Frequenza vento sale con velocità
-  if(windFilter) windFilter.frequency.setTargetAtTime(120+mps*30,audioCtx.currentTime,0.5);
-}
-
-function stopAudio(){
-  if(!audioStarted||!audioCtx)return;
-  if(waterGain) waterGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.5);
-  if(windGain)  windGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.5);
-  setTimeout(()=>{try{audioCtx.close();}catch(e){}audioStarted=false;audioCtx=null;},1500);
-}
-
-
 let trackCanvas=null,trackCtx=null,currentBearing=0,rafId=null;
 let renderMeters=0;      // metri visualizzati (smooth, continuo)
 let targetMeters=0;      // metri reali dall'ergometro
@@ -963,6 +890,7 @@ let lastBtMs=0;          // timestamp ultima notifica BT
 
 function renderLoop(ts){
   rafId=requestAnimationFrame(renderLoop);
+  if(isPaused) return;
   if(!lastRenderTs) lastRenderTs=ts;
   const dt=Math.min((ts-lastRenderTs)/1000, 0.05); // max 50ms per frame
   lastRenderTs=ts;
@@ -982,11 +910,9 @@ function renderLoop(ts){
   }
 
   drawTrack(renderMeters);
-  // Aggiorna sistemi atmosfera, ghost e audio
+  // Aggiorna ghost
   const _el=getElapsedSec();
-  updateAtmo(_el);
   updateGhostVisual(_el);
-  updateAudio(metersPerSec);
 }
 
 const SCALE=6.5;
@@ -1227,9 +1153,6 @@ function drawTrack(meters){
   const BOAT_Y=H*0.52;
   _updateRiveConst(W);
 
-  // Atmosfera corrente
-  const atmo=getAtmoBlend();
-
   // ── IMMAGINE FIUME ──
   const rc=RIVER_CANVASES[ACTIVE_RIVER_ID];
   if(rc&&(rc.img||rc.canvas)){
@@ -1246,15 +1169,8 @@ function drawTrack(meters){
     ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   }
 
-  // ── Overlay atmosferico — tinta colore cielo ──
-  ctx.save();
-  ctx.globalAlpha=atmo.skyA;
-  ctx.fillStyle=`rgb(${atmo.sky[0]},${atmo.sky[1]},${atmo.sky[2]})`;
-  ctx.fillRect(0,0,W,H);
-  ctx.restore();
-
-  // ── Scintille con colore atmosferico ──
-  _drawSparkles(ctx,W,H,BOAT_X,performance.now()/1000,atmo);
+  // ── Scintille (colore fisso giorno) ──
+  _drawSparkles(ctx,W,H,BOAT_X,performance.now()/1000,null);
 
   // ── Ghost visivo ──
   if(ghostVisualM!==null){
@@ -1277,7 +1193,7 @@ function drawTrack(meters){
     ctx.fill();
     // Label delta
     const deltaText=(isAhead?'+':'')+Math.round(ghostOffset)+'m';
-    ctx.font=`600 ${Math.round(H*0.022)}px Inter,sans-serif`;
+    ctx.font=`600 ${Math.round(H*0.022)}px DM Sans,sans-serif`;
     ctx.fillStyle=isAhead?'rgba(80,200,120,0.85)':'rgba(220,80,60,0.85)';
     ctx.textAlign='center';
     ctx.fillText(deltaText,0,-18);
@@ -1515,10 +1431,12 @@ function initHomeCanvas(){
     ctx.fillStyle=vg;ctx.fillRect(0,0,cw,ch);
 
     ctx.restore();
-    requestAnimationFrame(frame);
+    homeRafId=requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  homeRafId=requestAnimationFrame(frame);
 }
+
+let homeRafId=null;
 
 // Posiziona i pulsanti sopra la O del SVG
 
@@ -1539,46 +1457,7 @@ function initAppParticles(W, H){
 }
 
 // ═══════════════════════════════════════════════════════
-//  PUNTI DI INTERESSE SUL TEVERE
-//  [distanza_km, lat, lon, nome, tipo]
-// ═══════════════════════════════════════════════════════
-const TEVERE_POI_DATA=[
-  [0.0,  41.9337,12.4669,'Ponte Milvio',       'ponte'],
-  [0.5,  41.9285,12.4680,'Foro Italico',        'monumento'],
-  [1.2,  41.9272,12.4718,'Ponte Flaminio',      'ponte'],
-  [2.0,  41.9220,12.4720,'Auditorium Parco\ndella Musica','architettura'],
-  [2.8,  41.9188,12.4660,'Ponte della Musica',  'ponte'],
-  [3.5,  41.9090,12.4606,'Castel\nSant\'Angelo','monumento'],
-  [4.1,  41.9072,12.4654,'Ponte\nSant\'Angelo', 'ponte'],
-  [4.8,  41.9030,12.4702,'Palazzo di Giustizia','architettura'],
-  [5.2,  41.8992,12.4720,'Ponte V.\nEmanuele II','ponte'],
-  [5.9,  41.8960,12.4680,'Trastevere',          'quartiere'],
-  [6.4,  41.8900,12.4700,'Isola Tiberina',      'isola'],
-  [6.8,  41.8880,12.4710,'Ponte Garibaldi',     'ponte'],
-  [7.2,  41.8860,12.4700,'Tempio di Ercole\nVincitore','monumento'],
-  [7.8,  41.8845,12.4712,'Ponte Palatino',      'ponte'],
-  [8.3,  41.8820,12.4680,'Piramide Cestia',     'monumento'],
-  [8.8,  41.8812,12.4695,'Ponte Testaccio',     'ponte'],
-  // Tratto esteso
-  [9.5,  41.8760,12.4648,'Ponte\nIndustriale',  'ponte'],
-  [10.4, 41.8680,12.4612,'Centrale\nMontemartini','architettura'],
-  [11.2, 41.8568,12.4562,'Ponte\nMarconi',      'ponte'],
-  [12.0, 41.8472,12.4536,'Magliana',            'quartiere'],
-  [13.0, 41.8376,12.4492,'Ponte\ndella Magliana','ponte'],
-  [14.0, 41.8256,12.4428,'Decima',              'quartiere'],
-  [15.0, 41.8136,12.4378,'Ponte\ndi Mezzocammino','ponte'],
-];
-
-// Colori per tipo
-const POI_COLORS={
-  ponte:       'rgba(180,195,220,0.85)',
-  monumento:   'rgba(255,213,79,0.85)',
-  architettura:'rgba(150,200,255,0.85)',
-  quartiere:   'rgba(150,220,150,0.80)',
-  isola:       'rgba(180,230,180,0.85)',
-};
-
-// Genera punti segnalini ogni 5m lungo il percorso
+//  GOAL SCREEN — caroselli
 // Precomputati per performance
 let LANE_MARKERS=[];
 function buildLaneMarkers(){
@@ -1934,7 +1813,11 @@ function resetSessionState(){
   if(paceInterval){clearInterval(paceInterval);paceInterval=null;}
 }
 
-function getElapsedSec(){return isStarted?(Date.now()-startTime+elapsedAtPause)/1000:0;}
+function getElapsedSec(){
+  if(!isStarted) return 0;
+  if(isPaused)   return elapsedAtPause/1000;
+  return (Date.now()-startTime+elapsedAtPause)/1000;
+}
 
 function updateUI(d){
   const strokes=d.getUint16(3,true);
@@ -2160,7 +2043,6 @@ async function startWorkout(){
   document.getElementById('page-app').style.color='rgba(55,40,25,0.85)';
   initTrackCanvas();
   fetchWeather();
-  initAudio();
   switchPage('page-app');
   try{
     const id=await dbAdd('sessions',{date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:0,time:'00:00:00',timeSec:0,maxWatt:0,avgWatt:0,strokes:0,avgSpm:0,avgBpm:0,maxBpm:0});
@@ -2172,12 +2054,17 @@ function initTrackCanvas(){
   trackCanvas=document.getElementById('track-canvas');trackCtx=trackCanvas.getContext('2d');
   trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;
   initAppParticles(trackCanvas.width, trackCanvas.height);
-  window.onresize=()=>{if(trackCanvas){trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;initAppParticles(trackCanvas.width,trackCanvas.height);}};
+  window.addEventListener('resize',()=>{if(trackCanvas){trackCanvas.width=window.innerWidth;trackCanvas.height=window.innerHeight;initAppParticles(trackCanvas.width,trackCanvas.height);}});
   if(rafId)cancelAnimationFrame(rafId);
   renderLoop();
 }
 
-function switchPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id!=='page-home'&&homeRafId){cancelAnimationFrame(homeRafId);homeRafId=null;}
+  if(id==='page-home'){initHomeCanvas();loadHomeBests();}
+}
 
 document.addEventListener('click',e=>{
   if(!isStarted||isPaused||!document.getElementById('page-app').classList.contains('active'))return;
@@ -2213,7 +2100,6 @@ async function saveAndFinish(e){
   document.getElementById('res-ch-count').textContent=challengeResults.filter(c=>c.isNew).length;
   document.getElementById('res-ch-list').innerHTML=challengeResults.map(c=>`<div class="res-ch-item"><div><div class="res-ch-name">${c.title}</div><div style="font-size:.62rem;color:var(--dim)">${c.score}</div></div><div class="res-ch-score">${c.isNew?'🏆 REC':'·'}</div></div>`).join('');
   document.getElementById('pause-overlay').style.display='none';
-  stopAudio();
   switchPage('page-resume');
 }
 
@@ -2225,11 +2111,34 @@ function resetSession(){
   switchPage('page-home');
 }
 
+async function loadHomeBests(){
+  try{
+    const sessions=await dbGetAll('sessions');
+    const valid=sessions.filter(s=>s.meters>0);
+    if(!valid.length)return;
+    const bestDist=Math.max(...valid.map(s=>s.meters||0));
+    const bestWatt=Math.max(...valid.map(s=>s.avgWatt||0));
+    const withPace=valid.filter(s=>s.avgPace&&s.avgPace!=='—');
+    const bestPace=withPace.length
+      ?withPace.reduce((a,b)=>{const ta=a.avgPace.split(':');const tb=b.avgPace.split(':');return(+ta[0]*60+ +ta[1])<(+tb[0]*60+ +tb[1])?a:b;}).avgPace
+      :null;
+    const bestTime=valid.reduce((a,b)=>(a.timeSec||0)>(b.timeSec||0)?a:b).time||null;
+    document.getElementById('hb-dist').textContent=(bestDist/1000).toFixed(1);
+    document.getElementById('hb-watt').textContent=bestWatt||'—';
+    document.getElementById('hb-pace').textContent=bestPace||'—';
+    document.getElementById('hb-time').textContent=bestTime||'—';
+  }catch(e){console.warn('loadHomeBests:',e);}
+}
+
 async function showHistory(){
   try{
     const sessions=await dbGetAll('sessions');
     const valid=sessions.filter(s=>s.meters>0);
-    const bests={meters:Math.max(0,...valid.map(s=>s.meters||0)),avgWatt:Math.max(0,...valid.map(s=>s.avgWatt||0))};
+    const withPace=valid.filter(s=>s.avgPace&&s.avgPace!=='—');
+    const bestPace=withPace.length
+      ?withPace.reduce((a,b)=>{const ta=a.avgPace.split(':');const tb=b.avgPace.split(':');return(+ta[0]*60+ +ta[1])<(+tb[0]*60+ +tb[1])?a:b;}).avgPace
+      :null;
+    const bests={meters:Math.max(0,...valid.map(s=>s.meters||0)),avgWatt:Math.max(0,...valid.map(s=>s.avgWatt||0)),avgPace:bestPace};
     document.getElementById('hist-body').innerHTML=valid.slice().reverse().map(s=>`<tr>
   <td class="td-date">${s.date||'—'}</td>
   <td class="td-m ${s.meters===bests.meters?'best-v':''}">${s.meters}m</td>
@@ -2268,18 +2177,17 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&isStarted&&!isPaused) requestWakeLock();
 });
 // ═══════════════════════════════════════════════════════
-function reqFS(){const el=document.documentElement;const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;if(fn)fn.call(el).catch(()=>{});}
-document.addEventListener('click',function fs(){reqFS();document.removeEventListener('click',fs);},{once:true,capture:true});
-
 // ═══════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════
-openDB().then(()=>showDbStatus('DB pronto',1500)).catch(e=>{console.error(e);showDbStatus('DB non disponibile',5000);});
+openDB().then(()=>{showDbStatus('DB pronto',1500);loadHomeBests();}).catch(e=>{console.error(e);showDbStatus('DB non disponibile',5000);});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/row/sw.js').catch(()=>{});
 window.onerror=function(msg,src,line){showDbStatus('JS ERR ln'+line+': '+String(msg).substring(0,35),10000);return false;};
 
 // Genera le immagini dei 5 fiumi in background
 initRiverCanvases();
+// Avvia canvas home
+initHomeCanvas();
 
 // Forza landscape — tutti i metodi disponibili
 function lockLandscape(){
