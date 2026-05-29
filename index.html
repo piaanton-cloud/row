@@ -74,56 +74,59 @@ body{min-height:100dvh;}
     0 0 80px rgba(79,195,247,0.25),
     0 2px 8px rgba(0,0,0,0.8);
 }
-.home-btns{display:flex;align-items:center;gap:14px;filter:drop-shadow(0 0 28px rgba(79,195,247,0.28));}
+.home-btns{display:flex;align-items:center;gap:14px;filter:drop-shadow(0 0 24px rgba(93,200,210,0.28));}
 .btn-connect{
   display:flex;align-items:center;gap:9px;
-  background:rgba(79,195,247,1);
+  background:rgba(93,200,210,1);
   border:none;border-radius:100px;
   color:#021820;
   font-size:0.70rem;font-weight:700;
   letter-spacing:4px;text-transform:uppercase;
   padding:14px 24px 14px 18px;
   cursor:pointer;
-  box-shadow:0 0 0 1px rgba(79,195,247,0.6),0 0 18px rgba(79,195,247,0.7),0 0 48px rgba(79,195,247,0.35),inset 0 1px 0 rgba(255,255,255,0.35);
+  box-shadow:0 0 0 1px rgba(93,200,210,0.5),0 0 18px rgba(93,200,210,0.5),0 0 44px rgba(93,200,210,0.28),inset 0 1px 0 rgba(255,255,255,0.35);
   transition:transform .15s;
 }
 .btn-connect:active{transform:scale(0.97);}
 .btn-logbook{
   display:flex;align-items:center;gap:9px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.45);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.40);
   border-radius:100px;
-  color:rgba(255,255,255,0.92);
+  color:rgba(255,255,255,0.90);
   font-size:0.70rem;font-weight:600;
   letter-spacing:4px;text-transform:uppercase;
   padding:14px 24px 14px 18px;
   cursor:pointer;
-  box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 14px rgba(255,255,255,0.10),0 0 36px rgba(255,255,255,0.05),inset 0 1px 0 rgba(255,255,255,0.12);
   transition:transform .15s;
 }
 .btn-logbook:active{transform:scale(0.97);}
 /* Barra record migliori */
 .home-best-bar{
   position:absolute;bottom:0;left:0;right:0;z-index:10;
-  padding:11px 7% 14px;
+  padding:9px 6% 12px;
   display:flex;align-items:center;
   border-top:1px solid rgba(255,255,255,0.07);
   background:rgba(6,10,18,0.82);
   backdrop-filter:blur(12px);
 }
 .home-best-label{
-  font-size:0.45rem;letter-spacing:5px;text-transform:uppercase;
-  color:rgba(79,195,247,0.55);
-  margin-right:20px;flex-shrink:0;
+  font-size:0.42rem;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(79,195,247,0.6);font-weight:700;
+  margin-right:16px;flex-shrink:0;
 }
-.home-best-items{display:flex;flex:1;}
-.home-best-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  border-left:1px solid rgba(255,255,255,0.06);padding:0 12px;
+.home-best-items{display:flex;flex:1;gap:7px;}
+.home-chip{
+  flex:1;display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:6px 10px;
 }
-.home-best-item:first-child{border-left:none;padding-left:0;}
-.home-best-val{font-size:1.05rem;font-weight:700;color:rgba(255,255,255,0.88);letter-spacing:-0.5px;line-height:1;}
-.home-best-unit{font-size:0.42rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-top:3px;}
+.home-chip-ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;}
+.home-chip-ico svg{width:12px;height:12px;}
+.home-chip-top{display:flex;align-items:baseline;}
+.home-best-val{font-size:0.95rem;font-weight:700;color:rgba(255,255,255,0.92);line-height:1;letter-spacing:-0.3px;}
+.home-chip-unit{font-size:0.4rem;letter-spacing:1px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-left:2px;}
+.home-chip-lbl{font-size:0.38rem;letter-spacing:1px;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-top:1px;}
 
 /* ═══ GOAL SCREEN ═══ */
 #page-goal{flex-direction:column;justify-content:stretch;align-items:stretch;padding:0;overflow:hidden;background:#e0d4c4!important;}
@@ -281,6 +284,21 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
 .best-v{color:var(--gold)!important;font-weight:700;}
 .btn-back-dark{background:none;border:none;color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;cursor:pointer;padding:8px 0;}
 .btn-back-dark:active{opacity:0.4;}
+/* Logbook — riepilogo + grafici */
+.log-export{background:none;border:1px solid rgba(93,200,210,0.35);color:#5dc8d2;font-family:'DM Sans',sans-serif;font-size:0.55rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:100px;padding:6px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.log-export:active{opacity:0.5;}
+.log-export svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.log-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px;}
+.log-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:11px 14px;}
+.log-stat-v{font-family:'DM Sans',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
+.log-stat-l{font-size:0.46rem;letter-spacing:2px;text-transform:uppercase;color:rgba(232,234,240,0.4);margin-top:4px;}
+.log-charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+.log-chart{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:13px 15px;}
+.lc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.lc-t{font-size:0.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(232,234,240,0.5);}
+.lc-cur{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;}
+.lc-svg{width:100%;height:90px;display:block;}
+.lc-empty{font-size:0.6rem;color:rgba(232,234,240,0.3);text-align:center;padding:28px 0;letter-spacing:1px;}
 
 /* ═══ RESUME ═══ */
 #page-resume{background:#e0d4c4;}
@@ -288,9 +306,12 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
 .res-hero{font-family:'DM Sans',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
 .res-unit{font-size:0.6rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:28px;}
 .res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:92%;max-width:900px;margin-bottom:24px;}
-.res-item{background:rgba(42,28,14,0.05);border:1px solid rgba(42,28,14,0.10);padding:14px 8px;border-radius:6px;text-align:center;}
-.res-val{font-family:'DM Sans',sans-serif;font-size:1.6rem;font-weight:700;display:block;color:rgba(42,28,14,0.88);}
-.res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(42,28,14,0.45);text-transform:uppercase;margin-top:3px;display:block;}
+.res-item{background:rgba(255,255,255,0.38);border:1px solid rgba(105,90,73,0.14);padding:12px 14px;border-radius:9px;display:flex;flex-direction:column;justify-content:center;text-align:left;}
+.res-item-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.res-item-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.res-item-ico svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.res-val{font-family:'DM Sans',sans-serif;font-size:1.5rem;font-weight:700;color:rgba(42,28,14,0.9);line-height:1;font-variant-numeric:tabular-nums;}
+.res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(105,90,73,0.5);text-transform:uppercase;margin-top:0;display:block;}
 .res-ch-wrap{width:92%;max-width:900px;margin-bottom:24px;}
 .res-ch-title{font-size:0.52rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:8px;}
 .res-ch-list{display:flex;flex-direction:column;gap:5px;}
@@ -337,10 +358,22 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
   <div class="home-best-bar">
     <div class="home-best-label">Record</div>
     <div class="home-best-items">
-      <div class="home-best-item"><span class="home-best-val" id="hb-dist">—</span><span class="home-best-unit">km · distanza</span></div>
-      <div class="home-best-item"><span class="home-best-val" id="hb-watt">—</span><span class="home-best-unit">W · potenza</span></div>
-      <div class="home-best-item"><span class="home-best-val" id="hb-pace">—</span><span class="home-best-unit">/500m · passo</span></div>
-      <div class="home-best-item"><span class="home-best-val" id="hb-time">—</span><span class="home-best-unit">tempo · max</span></div>
+      <div class="home-chip">
+        <div class="home-chip-ico" style="background:rgba(93,200,210,0.16);color:#5dc8d2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
+        <div><div class="home-chip-top"><span class="home-best-val" id="hb-dist">—</span><span class="home-chip-unit">km</span></div><div class="home-chip-lbl">distanza</div></div>
+      </div>
+      <div class="home-chip">
+        <div class="home-chip-ico" style="background:rgba(239,159,39,0.18);color:#f0b85a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div><div class="home-chip-top"><span class="home-best-val" id="hb-watt">—</span><span class="home-chip-unit">W</span></div><div class="home-chip-lbl">potenza</div></div>
+      </div>
+      <div class="home-chip">
+        <div class="home-chip-ico" style="background:rgba(93,202,165,0.16);color:#5dcaa5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 8 12 12 14 14"/></svg></div>
+        <div><div class="home-chip-top"><span class="home-best-val" id="hb-pace">—</span><span class="home-chip-unit">/500m</span></div><div class="home-chip-lbl">passo</div></div>
+      </div>
+      <div class="home-chip">
+        <div class="home-chip-ico" style="background:rgba(227,80,70,0.16);color:#ff8a80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        <div><div class="home-chip-top"><span class="home-best-val" id="hb-time">—</span></div><div class="home-chip-lbl">tempo max</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -520,9 +553,23 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
 <div id="page-history" class="page">
   <div class="hist-hdr">
     <div class="hist-title">LOGBOOK</div>
-    <button class="btn-back-dark" onclick="switchPage('page-home')">← HOME</button>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="log-export" onclick="exportCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> CSV</button>
+      <button class="btn-back-dark" onclick="switchPage('page-home')">← HOME</button>
+    </div>
   </div>
   <div class="hist-scroll">
+    <div class="log-summary" id="log-summary"></div>
+    <div class="log-charts">
+      <div class="log-chart">
+        <div class="lc-h"><span class="lc-t">Distanza · ultime 12</span><span class="lc-cur" id="lc-dist-cur" style="color:#5dc8d2">—</span></div>
+        <div id="lc-dist"><div class="lc-empty">Nessun dato</div></div>
+      </div>
+      <div class="log-chart">
+        <div class="lc-h"><span class="lc-t">Watt medi · trend</span><span class="lc-cur" id="lc-watt-cur" style="color:#5dcaa5">—</span></div>
+        <div id="lc-watt"><div class="lc-empty">Nessun dato</div></div>
+      </div>
+    </div>
     <table>
       <thead><tr>
         <th>Data</th><th>Metri</th><th>Tempo</th><th>Min/500m</th><th>Kcal</th><th>W med</th><th>W max</th><th>SPM</th><th>BPM med</th><th>BPM max</th>
@@ -538,14 +585,14 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
   <div class="res-hero" id="res-m">0</div>
   <div class="res-unit">metri percorsi</div>
   <div class="res-grid">
-    <div class="res-item"><span id="res-wa" class="res-val">0</span><span class="res-lab">W medi</span></div>
-    <div class="res-item"><span id="res-wm" class="res-val">0</span><span class="res-lab">W max</span></div>
-    <div class="res-item"><span id="res-t"  class="res-val">–</span><span class="res-lab">Tempo</span></div>
-    <div class="res-item"><span id="res-v"  class="res-val">0</span><span class="res-lab">Vogate</span></div>
-    <div class="res-item"><span id="res-cm" class="res-val">0</span><span class="res-lab">SPM medi</span></div>
-    <div class="res-item"><span id="res-hm" class="res-val">–</span><span class="res-lab">BPM medi</span></div>
-    <div class="res-item"><span id="res-hx" class="res-val">–</span><span class="res-lab">BPM max</span></div>
-    <div class="res-item"><span id="res-ch-count" class="res-val">0</span><span class="res-lab">Record sfide</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(186,117,23,0.16);color:#ba7517"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><span id="res-wa" class="res-val">0</span></div><span class="res-lab">W medi</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(133,79,11,0.16);color:#854f0b"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><span id="res-wm" class="res-val">0</span></div><span class="res-lab">W max</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(15,110,86,0.16);color:#0f6e56"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></span><span id="res-t"  class="res-val">–</span></div><span class="res-lab">Tempo</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(42,28,14,0.10);color:rgba(42,28,14,0.6)"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="4"/><path d="M20 4 Q22 2 20 6 Q18 10 16 8 Q14 6 20 4Z" fill="currentColor" stroke="none"/></svg></span><span id="res-v"  class="res-val">0</span></div><span class="res-lab">Vogate</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(29,158,117,0.16);color:#1d9e75"><svg viewBox="0 0 24 24"><path d="M2 12 Q5 6 8 12 Q11 18 14 12 Q17 6 20 12 Q21.5 15 22 12"/></svg></span><span id="res-cm" class="res-val">0</span></div><span class="res-lab">SPM medi</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(208,64,48,0.16);color:#d04030"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="res-hm" class="res-val">–</span></div><span class="res-lab">BPM medi</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(163,45,45,0.16);color:#a32d2d"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="res-hx" class="res-val">–</span></div><span class="res-lab">BPM max</span></div>
+    <div class="res-item"><div class="res-item-top"><span class="res-item-ico" style="background:rgba(24,95,165,0.16);color:#185fa5"><svg viewBox="0 0 24 24"><path d="M12 2 15 9 22 9.3 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.3 9 9z"/></svg></span><span id="res-ch-count" class="res-val">0</span></div><span class="res-lab">Record sfide</span></div>
   </div>
   <div class="res-ch-wrap">
     <div class="res-ch-title">Sfide intervallo</div>
@@ -2152,7 +2199,93 @@ async function showHistory(){
   <td class="${s.maxBpm===bests.maxBpm?'best-v':''}">${s.maxBpm||0}</td>
 </tr>`).join('');
   }catch{document.getElementById('hist-body').innerHTML='<tr><td colspan="7" style="color:var(--dim);padding:20px">Nessun dato</td></tr>';}
+  renderLogCharts();
   switchPage('page-history');
+}
+
+// ── Riepilogo + grafici logbook ──
+async function renderLogCharts(){
+  try{
+    const sessions=await dbGetAll('sessions');
+    const valid=sessions.filter(s=>s.meters>0);
+    // Riepilogo
+    const totM=valid.reduce((a,s)=>a+(s.meters||0),0);
+    const totSec=valid.reduce((a,s)=>a+(s.time?parseTime(s.time):0),0);
+    const hh=Math.floor(totSec/3600),mm=Math.floor((totSec%3600)/60);
+    const streak=computeStreak(valid);
+    document.getElementById('log-summary').innerHTML=`
+      <div class="log-stat"><div class="log-stat-v">${valid.length}</div><div class="log-stat-l">sessioni</div></div>
+      <div class="log-stat"><div class="log-stat-v">${(totM/1000).toFixed(0)}</div><div class="log-stat-l">km totali</div></div>
+      <div class="log-stat"><div class="log-stat-v">${hh}:${String(mm).padStart(2,'0')}</div><div class="log-stat-l">ore totali</div></div>
+      <div class="log-stat"><div class="log-stat-v">${streak}</div><div class="log-stat-l">streak giorni</div></div>`;
+    // Grafici (ultime 12)
+    const last=valid.slice(-12);
+    drawBarChart('lc-dist',last.map(s=>s.meters||0),'#5dc8d2');
+    drawLineChart('lc-watt',last.map(s=>s.avgWatt||0),'#5dcaa5');
+    if(last.length){
+      document.getElementById('lc-dist-cur').textContent=((last[last.length-1].meters||0)/1000).toFixed(1)+' km';
+      const w=last[last.length-1].avgWatt||0;
+      const wPrev=last.length>1?(last[last.length-2].avgWatt||0):w;
+      document.getElementById('lc-watt-cur').textContent=w+' W '+(w>=wPrev?'↑':'↓');
+    }
+  }catch(e){console.warn('renderLogCharts:',e);}
+}
+
+function computeStreak(valid){
+  if(!valid.length)return 0;
+  const days=[...new Set(valid.map(s=>(s.date||'').slice(0,10)).filter(Boolean))].sort().reverse();
+  if(!days.length)return 0;
+  let streak=1;
+  for(let i=1;i<days.length;i++){
+    const d0=new Date(days[i-1]),d1=new Date(days[i]);
+    const diff=Math.round((d0-d1)/86400000);
+    if(diff===1)streak++;else break;
+  }
+  return streak;
+}
+
+function drawBarChart(id,data,color){
+  const el=document.getElementById(id);
+  if(!data.length){el.innerHTML='<div class="lc-empty">Nessun dato</div>';return;}
+  const max=Math.max(...data,1),n=data.length,gap=4,bw=(200-gap*(n-1))/n;
+  let bars='';
+  data.forEach((v,i)=>{
+    const h=Math.max(3,(v/max)*82),x=i*(bw+gap),y=90-h;
+    const op=0.45+0.4*(i/(n-1||1));
+    bars+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${color}" opacity="${i===n-1?1:op.toFixed(2)}"/>`;
+  });
+  el.innerHTML=`<svg class="lc-svg" viewBox="0 0 200 90" preserveAspectRatio="none">${bars}</svg>`;
+}
+
+function drawLineChart(id,data,color){
+  const el=document.getElementById(id);
+  if(!data.length){el.innerHTML='<div class="lc-empty">Nessun dato</div>';return;}
+  const max=Math.max(...data,1),min=Math.min(...data,0),range=max-min||1,n=data.length;
+  const pts=data.map((v,i)=>{const x=n>1?(i/(n-1))*198:99;const y=86-((v-min)/range)*78;return`${x.toFixed(1)},${y.toFixed(1)}`;});
+  const last=pts[pts.length-1].split(',');
+  el.innerHTML=`<svg class="lc-svg" viewBox="0 0 200 90" preserveAspectRatio="none">
+    <defs><linearGradient id="${id}-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity="0.3"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${pts.join(' ')} 198,90 0,90" fill="url(#${id}-g)"/>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3" fill="#fff"/>
+  </svg>`;
+}
+
+async function exportCSV(){
+  try{
+    const sessions=await dbGetAll('sessions');
+    const valid=sessions.filter(s=>s.meters>0);
+    if(!valid.length){showDbStatus('Nessuna sessione da esportare',2500);return;}
+    const head=['Data','Metri','Tempo','Min/500m','Kcal','W medi','W max','SPM','BPM medi','BPM max'];
+    const rows=valid.map(s=>[s.date||'',s.meters||0,s.time||'',s.avgPace||'',s.kcal||0,s.avgWatt||0,s.maxWatt||0,s.avgSpm||0,s.avgBpm||0,s.maxBpm||0]);
+    const csv=[head,...rows].map(r=>r.join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='row_sessioni.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){console.warn('exportCSV:',e);showDbStatus('Errore export',2500);}
 }
 
 function parseTime(t){const p=t.split(':');return(+p[0])*3600+(+p[1])*60+(+p[2]);}
