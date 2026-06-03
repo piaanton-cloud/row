@@ -150,9 +150,9 @@ body{min-height:100dvh;}
 
 /* ── Sezione obiettivo (metà inferiore) ── */
 .goal-obj-section{flex:1;display:flex;flex-direction:column;padding:8px 20px 0;}
-.goal-obj-tabs{display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border);}
-.goal-obj-tab{flex:1;padding:10px;text-align:center;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:rgba(105,90,73,0.40);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
-.goal-obj-tab.active{color:rgba(42,28,14,0.80);border-bottom-color:rgba(42,28,14,0.40);}
+.goal-obj-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.goal-obj-tab{flex:1;padding:9px;text-align:center;font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(105,90,73,0.5);cursor:pointer;border-radius:8px;background:rgba(105,90,73,0.07);transition:all .2s;}
+.goal-obj-tab.active{color:#fff;background:rgba(24,95,165,0.85);}
 .goal-obj-content{flex:1;display:flex;align-items:center;justify-content:center;}
 .goal-carousel-wrap{position:relative;height:160px;width:100%;overflow:hidden;}
 .goal-carousel-wrap::before,.goal-carousel-wrap::after{content:'';position:absolute;left:0;right:0;height:50px;z-index:10;pointer-events:none;}
@@ -171,10 +171,10 @@ body{min-height:100dvh;}
 .goal-selector-line.bot{top:calc(50% + 28px);}
 
 /* Pulsante avvia */
-.goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+28px);flex-shrink:0;}
-.btn-start{width:100%;padding:20px;border-radius:0;background:none;border-top:1px solid rgba(105,90,73,0.18);border-bottom:none;border-left:none;border-right:none;color:rgba(105,90,73,0.30);font-family:'DM Sans',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.btn-start.ready{color:rgba(42,28,14,0.82);border-top-color:rgba(42,28,14,0.20);}
-.btn-start:active{opacity:0.5;}
+.goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+24px);flex-shrink:0;display:flex;justify-content:center;}
+.btn-start{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 56px;border-radius:100px;background:rgba(105,90,73,0.18);border:none;color:rgba(105,90,73,0.5);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;cursor:pointer;transition:all .25s;}
+.btn-start.ready{background:rgba(24,95,165,0.92);color:#fff;box-shadow:0 0 0 1px rgba(24,95,165,0.5),0 0 22px rgba(24,95,165,0.45),0 0 50px rgba(24,95,165,0.25);}
+.btn-start:active{transform:scale(0.97);}
 
 /* ═══ APP ═══ */
 #page-app{overflow:hidden;}
@@ -520,8 +520,8 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
     <div class="stats-row">
       <div class="stat-sm">
         <!-- cuore bpm -->
-        <div class="stat-icon"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-        <span class="stat-sm-val" id="h-val" style="color:rgba(180,50,30,0.80)">––</span>
+        <div class="stat-icon" style="color:rgba(208,64,48,0.85)"><svg viewBox="0 0 24 24" width="2.2rem" height="2.2rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <span class="stat-sm-val" id="h-val" style="color:rgba(163,45,45,0.85)">––</span>
         <span class="stat-sm-lbl">bpm</span>
       </div>
       <div class="stat-sep"></div>
@@ -1209,6 +1209,13 @@ function drawTrack(meters){
     const rivX=tevereCXatY(imgYc);
     let srcH=Math.round(IH*0.04),srcW=Math.round(srcH*(W/H));
     if(srcW>IW){srcW=IW;srcH=Math.round(IW*(H/W));}
+    // Direzione del fiume (tangente locale) → orienta il cursore
+    const _dY=srcH*0.5;
+    const _cx0=tevereCXatY(imgYc);
+    const _cxA=tevereCXatY(Math.max(0,imgYc-_dY));
+    let _ta=Math.atan2((_cxA-_cx0)*IW,_dY);
+    _ta=Math.max(-0.9,Math.min(0.9,_ta)); // clamp ±51°
+    currentBearing+=(_ta-currentBearing)*0.12; // smoothing
     const srcYtop=Math.max(0,Math.min(IH-srcH,imgYc-srcH*(BOAT_Y/H)));
     const srcXtop=Math.max(0,Math.min(IW-srcW,rivX*IW-srcW*(BOAT_X/W)));
     ctx.drawImage(rc.img||rc.canvas,srcXtop,srcYtop,srcW,srcH,0,0,W,H);
@@ -1262,8 +1269,8 @@ function drawTrack(meters){
   gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
   ctx.fillStyle=gr;ctx.fillRect(W*.89,0,W*.11,H);
 
-  // ── Cursore ──
-  ctx.save();ctx.translate(BOAT_X,BOAT_Y);
+  // ── Cursore (orientato verso la direzione del fiume) ──
+  ctx.save();ctx.translate(BOAT_X,BOAT_Y);ctx.rotate(currentBearing);
   ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(8,10);ctx.lineTo(0,6);ctx.lineTo(-8,10);
   ctx.closePath();ctx.fillStyle='rgba(180,40,20,0.95)';ctx.fill();
   ctx.restore();
@@ -1906,6 +1913,11 @@ function updateUI(d){
     if(watt>0)session.watts.push(watt);
     if(watt>session.maxWatt)session.maxWatt=watt;
     document.getElementById('w-val').textContent=watt;
+    // Zona di sforzo — colore numero + barra
+    const wz=wattZone(watt);
+    const wEl=document.getElementById('w-val');
+    wEl.style.color=wz.color;
+    document.getElementById('watt-bar-curr').style.background=wz.color;
     // Barra blu (corrente)
     document.getElementById('watt-bar-curr').style.width=Math.min((watt/350)*100,100)+'%';
     // Barra rossa (precedente)
@@ -2107,10 +2119,15 @@ function initTrackCanvas(){
 }
 
 function switchPage(id){
+  const leavingApp=document.getElementById('page-app').classList.contains('active')&&id!=='page-app';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target=document.getElementById(id);
+  target.classList.add('active');
   if(id!=='page-home'&&homeRafId){cancelAnimationFrame(homeRafId);homeRafId=null;}
   if(id==='page-home'){initHomeCanvas();loadHomeBests();}
+  if(leavingApp)clearTrackCanvas();
+  // Forza un repaint per evitare pixel fantasma su WebView Android
+  void target.offsetHeight;
 }
 
 document.addEventListener('click',e=>{
@@ -2124,7 +2141,10 @@ function resumeWorkout(e){if(e)e.stopPropagation();isPaused=false;startTime=Date
 
 async function saveAndFinish(e){
   if(e)e.stopPropagation();
+  // 1. Ferma loop e nascondi overlay SUBITO (sincrono) per evitare pixel fantasma
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  document.getElementById('pause-overlay').style.display='none';
+  clearTrackCanvas();
   releaseWakeLock();
   const dur=document.getElementById('app-timer').textContent;
   const avgW=session.watts.length?Math.round(session.watts.reduce((a,b)=>a+b)/session.watts.length):0;
@@ -2138,16 +2158,26 @@ async function saveAndFinish(e){
       const _paceStr=_pace>0?Math.floor(_pace/60)+':'+(('0'+Math.floor(_pace%60)).slice(-2)):'—';
       await dbPut('sessions',{id:currentSessionId,date:new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}),timestamp:Date.now(),meters:session.meters,time:dur,timeSec:parseTime(dur),maxWatt:session.maxWatt,avgWatt:avgW,strokes:session.strokes,avgSpm:avgS,avgBpm:avgB,maxBpm:session.maxBpm,kcal:_kcal,avgPace:_paceStr});
       showDbStatus('✓ Salvato');
-    }catch{showDbStatus('⚠ Errore salvataggio');}
+    }catch(err){console.warn('save:',err);showDbStatus('⚠ Errore salvataggio');}
   }
-  document.getElementById('res-m').textContent=session.meters;
-  document.getElementById('res-wa').textContent=avgW+' W';document.getElementById('res-wm').textContent=session.maxWatt+' W';
-  document.getElementById('res-t').textContent=dur;document.getElementById('res-v').textContent=session.strokes;
-  document.getElementById('res-cm').textContent=avgS;document.getElementById('res-hm').textContent=avgB||'—';document.getElementById('res-hx').textContent=session.maxBpm||'—';
-  document.getElementById('res-ch-count').textContent=challengeResults.filter(c=>c.isNew).length;
-  document.getElementById('res-ch-list').innerHTML=challengeResults.map(c=>`<div class="res-ch-item"><div><div class="res-ch-name">${c.title}</div><div style="font-size:.62rem;color:var(--dim)">${c.score}</div></div><div class="res-ch-score">${c.isNew?'🏆 REC':'·'}</div></div>`).join('');
-  document.getElementById('pause-overlay').style.display='none';
+  // 2. Popola risultati (protetto)
+  try{
+    document.getElementById('res-m').textContent=session.meters;
+    document.getElementById('res-wa').textContent=avgW+' W';document.getElementById('res-wm').textContent=session.maxWatt+' W';
+    document.getElementById('res-t').textContent=dur;document.getElementById('res-v').textContent=session.strokes;
+    document.getElementById('res-cm').textContent=avgS;document.getElementById('res-hm').textContent=avgB||'—';document.getElementById('res-hx').textContent=session.maxBpm||'—';
+    document.getElementById('res-ch-count').textContent=challengeResults.filter(c=>c.isNew).length;
+    document.getElementById('res-ch-list').innerHTML=challengeResults.map(c=>`<div class="res-ch-item"><div><div class="res-ch-name">${c.title}</div><div style="font-size:.62rem;color:var(--dim)">${c.score}</div></div><div class="res-ch-score">${c.isNew?'🏆 REC':'·'}</div></div>`).join('');
+  }catch(err){console.warn('resume fill:',err);}
+  // 3. Vai ai risultati (sempre)
   switchPage('page-resume');
+}
+
+// Ripulisce il canvas dell'allenamento per evitare frame residui (glitch su WebView)
+function clearTrackCanvas(){
+  try{
+    if(trackCtx&&trackCanvas) trackCtx.clearRect(0,0,trackCanvas.width,trackCanvas.height);
+  }catch(e){}
 }
 
 function resetSession(){
@@ -2233,12 +2263,13 @@ async function renderLogCharts(){
 
 function computeStreak(valid){
   if(!valid.length)return 0;
-  const days=[...new Set(valid.map(s=>(s.date||'').slice(0,10)).filter(Boolean))].sort().reverse();
+  // Usa timestamp (ms) → chiave giorno YYYY-MM-DD locale
+  const dayKey=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+  const days=[...new Set(valid.filter(s=>s.timestamp).map(s=>dayKey(s.timestamp)))].sort().reverse();
   if(!days.length)return 0;
   let streak=1;
   for(let i=1;i<days.length;i++){
-    const d0=new Date(days[i-1]),d1=new Date(days[i]);
-    const diff=Math.round((d0-d1)/86400000);
+    const diff=Math.round((new Date(days[i-1])-new Date(days[i]))/86400000);
     if(diff===1)streak++;else break;
   }
   return streak;
@@ -2290,6 +2321,14 @@ async function exportCSV(){
 
 function parseTime(t){const p=t.split(':');return(+p[0])*3600+(+p[1])*60+(+p[2]);}
 
+// Zona di sforzo dei watt (soglie fisse) — colore coerente con la palette app
+function wattZone(w){
+  if(w<100) return {zone:1,color:'rgba(29,158,117,0.9)'};   // verde — recupero
+  if(w<200) return {zone:2,color:'rgba(186,117,23,0.9)'};   // ambra — sostenuto
+  if(w<280) return {zone:3,color:'rgba(208,108,30,0.92)'};  // arancio — soglia
+  return {zone:4,color:'rgba(180,50,30,0.92)'};             // rosso — sprint
+}
+
 // ═══════════════════════════════════════════════════════
 //  WAKE LOCK — schermo sempre acceso durante l'allenamento
 // ═══════════════════════════════════════════════════════
@@ -2334,13 +2373,21 @@ function lockLandscape(){
 }
 lockLandscape();
 
-document.addEventListener('click',function fs(){
+function isFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
+function goFullscreen(){
   const el=document.documentElement;
   const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
-  if(fn)fn.call(el).then(()=>lockLandscape()).catch(()=>{});
+  if(fn){try{const p=fn.call(el);if(p&&p.then)p.then(()=>lockLandscape()).catch(()=>{});}catch(e){}}
   lockLandscape();
-  document.removeEventListener('click',fs);
-},{once:true,capture:true});
+}
+// Riprova a ogni click finché il fullscreen non è attivo (NON {once}, così non si "consuma")
+function fsTry(){
+  if(isFullscreen()){document.removeEventListener('click',fsTry,true);return;}
+  goFullscreen();
+}
+document.addEventListener('click',fsTry,true);
+// Quando si esce dal fullscreen, riarma il listener
+document.addEventListener('fullscreenchange',()=>{if(!isFullscreen())document.addEventListener('click',fsTry,true);});
 </script>
 </body>
 </html>
