@@ -171,7 +171,7 @@ body{min-height:100dvh;}
 .goal-selector-line.bot{top:calc(50% + 28px);}
 
 /* Pulsante avvia */
-.goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+24px);flex-shrink:0;display:flex;justify-content:center;}
+.goal-start-wrap{padding:10px 20px calc(env(safe-area-inset-bottom,0px)+100px);flex-shrink:0;display:flex;justify-content:center;}
 .btn-start{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 56px;border-radius:100px;background:rgba(105,90,73,0.18);border:none;color:rgba(105,90,73,0.5);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;cursor:pointer;transition:all .25s;}
 .btn-start.ready{background:rgba(24,95,165,0.92);color:#fff;box-shadow:0 0 0 1px rgba(24,95,165,0.5),0 0 22px rgba(24,95,165,0.45),0 0 50px rgba(24,95,165,0.25);}
 .btn-start:active{transform:scale(0.97);}
@@ -206,6 +206,8 @@ body{min-height:100dvh;}
 
 /* ── Header ── */
 #app-header{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(env(safe-area-inset-top, 0px) + 44px) 26px 0;z-index:100;pointer-events:none;}
+.hdr-item{display:inline-flex;align-items:center;gap:9px;color:var(--app-dim);}
+.hdr-ico{width:1.5rem;height:1.5rem;opacity:0.85;}
 .hdr-timer{font-family:'DM Sans',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:3px;color:var(--app-dim);}
 .hdr-clock{font-family:'DM Sans',sans-serif;font-size:2.1rem;font-weight:500;letter-spacing:2px;color:var(--app-dim);}
 
@@ -284,7 +286,7 @@ body{min-height:100dvh;}
 .stat-sm-lbl{font-size:1rem;letter-spacing:2px;color:var(--app-dim2);text-transform:uppercase;}
 .stat-sep{width:1px;background:rgba(105,90,73,0.15);align-self:stretch;margin:4px 0;}
 
-.btn-resume-end{background:none;border:none;border-top:1px solid rgba(42,28,14,0.12);color:rgba(42,28,14,0.50);font-size:0.72rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;padding:18px 40px;cursor:pointer;transition:opacity .2s;width:92%;max-width:900px;}
+.btn-resume-end{background:none;border:none;border-top:1px solid rgba(42,28,14,0.12);color:rgba(42,28,14,0.50);font-size:0.65rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;padding:14px 40px;cursor:pointer;transition:opacity .2s;width:96%;max-width:900px;margin-top:4px;}
 .btn-resume-end:active{opacity:0.4;}
 
 /* ═══ PAUSA ═══ */
@@ -328,19 +330,19 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
 .lc-empty{font-size:0.6rem;color:rgba(232,234,240,0.3);text-align:center;padding:28px 0;letter-spacing:1px;}
 
 /* ═══ RESUME ═══ */
-#page-resume{background:#e0d4c4;}
-.res-eyebrow{font-size:0.6rem;letter-spacing:8px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:12px;}
-.res-hero{font-family:'DM Sans',sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:-3px;color:rgba(42,28,14,0.88);}
-.res-unit{font-size:0.6rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:28px;}
-.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:92%;max-width:900px;margin-bottom:24px;}
-.res-item{background:rgba(255,255,255,0.38);border:1px solid rgba(105,90,73,0.14);padding:12px 14px;border-radius:9px;display:flex;flex-direction:column;justify-content:center;text-align:left;}
-.res-item-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
-.res-item-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.res-item-ico svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.res-val{font-family:'DM Sans',sans-serif;font-size:1.5rem;font-weight:700;color:rgba(42,28,14,0.9);line-height:1;font-variant-numeric:tabular-nums;}
-.res-lab{font-size:0.42rem;letter-spacing:2px;color:rgba(105,90,73,0.5);text-transform:uppercase;margin-top:0;display:block;}
-.res-ch-wrap{width:92%;max-width:900px;margin-bottom:24px;}
-.res-ch-title{font-size:0.52rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:8px;}
+#page-resume{background:#e0d4c4;justify-content:flex-start;align-items:center;padding:22px 18px;overflow-y:auto;}
+.res-eyebrow{font-size:0.55rem;letter-spacing:6px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:8px;font-weight:700;}
+.res-hero{font-family:'DM Sans',sans-serif;font-size:3.6rem;font-weight:900;letter-spacing:-2px;color:rgba(42,28,14,0.88);line-height:0.9;}
+.res-unit{font-size:0.5rem;letter-spacing:5px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:18px;}
+.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:96%;max-width:900px;margin-bottom:14px;}
+.res-item{background:rgba(255,255,255,0.38);border:1px solid rgba(105,90,73,0.14);padding:10px 12px;border-radius:8px;display:flex;flex-direction:column;justify-content:center;text-align:left;}
+.res-item-top{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.res-item-ico{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.res-item-ico svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.res-val{font-family:'DM Sans',sans-serif;font-size:1.25rem;font-weight:700;color:rgba(42,28,14,0.9);line-height:1;font-variant-numeric:tabular-nums;}
+.res-lab{font-size:0.4rem;letter-spacing:2px;color:rgba(105,90,73,0.5);text-transform:uppercase;margin-top:0;display:block;}
+.res-ch-wrap{width:96%;max-width:900px;margin-bottom:12px;}
+.res-ch-title{font-size:0.48rem;letter-spacing:5px;color:rgba(42,28,14,0.50);text-transform:uppercase;margin-bottom:6px;font-weight:700;}
 .res-ch-list{display:flex;flex-direction:column;gap:5px;}
 .res-splits{display:flex;flex-wrap:wrap;gap:6px;}
 .res-split{flex:1;min-width:64px;background:rgba(255,255,255,0.38);border:1px solid rgba(105,90,73,0.14);border-radius:8px;padding:8px 6px;text-align:center;}
@@ -484,8 +486,14 @@ td{padding:10px 6px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:ce
 
   <!-- Header -->
   <div id="app-header">
-    <span class="hdr-timer" id="app-timer">00:00:00</span>
-    <span class="hdr-clock" id="app-clock">--:--</span>
+    <span class="hdr-item">
+      <svg class="hdr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v2"/></svg>
+      <span class="hdr-timer" id="app-timer">00:00:00</span>
+    </span>
+    <span class="hdr-item">
+      <svg class="hdr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+      <span class="hdr-clock" id="app-clock">--:--</span>
+    </span>
   </div>
 
   <!-- Watt block sx -->
@@ -1330,20 +1338,20 @@ function drawTrack(meters){
     ctx.restore();
   }
 
-  // ── Vignette (-50%) ──
+  // ── Vignette (estensione -50%) ──
   const vr=bgRgb;
-  const gt=ctx.createLinearGradient(0,0,0,H*.22);
+  const gt=ctx.createLinearGradient(0,0,0,H*.11);
   gt.addColorStop(0,`rgba(${vr},1)`);gt.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*.24);
-  const gb2=ctx.createLinearGradient(0,H,0,H*.86);
+  ctx.fillStyle=gt;ctx.fillRect(0,0,W,H*.12);
+  const gb2=ctx.createLinearGradient(0,H,0,H*.93);
   gb2.addColorStop(0,`rgba(${vr},1)`);gb2.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gb2;ctx.fillRect(0,H*.84,W,H*.16);
-  const gl=ctx.createLinearGradient(0,0,W*.09,0);
+  ctx.fillStyle=gb2;ctx.fillRect(0,H*.92,W,H*.08);
+  const gl=ctx.createLinearGradient(0,0,W*.045,0);
   gl.addColorStop(0,`rgba(${vr},1)`);gl.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gl;ctx.fillRect(0,0,W*.11,H);
-  const gr=ctx.createLinearGradient(W,0,W*.91,0);
+  ctx.fillStyle=gl;ctx.fillRect(0,0,W*.055,H);
+  const gr=ctx.createLinearGradient(W,0,W*.955,0);
   gr.addColorStop(0,`rgba(${vr},1)`);gr.addColorStop(1,`rgba(${vr},0)`);
-  ctx.fillStyle=gr;ctx.fillRect(W*.89,0,W*.11,H);
+  ctx.fillStyle=gr;ctx.fillRect(W*.945,0,W*.055,H);
 
   // ── Cursore (orientato verso la direzione del fiume) ──
   ctx.save();ctx.translate(BOAT_X,BOAT_Y);ctx.rotate(currentBearing);
